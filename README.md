@@ -40,6 +40,7 @@ Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/), the bu
 * [NVIDIA Vulkan Ray Tracing Tutorial] (https://developer.nvidia.com/rtx/raytracing/vkray)
 * [NVIDIA Vulkan Ray Tracing Helpers: Introduction] (https://developer.nvidia.com/rtx/raytracing/vkray_helpers)
 * [Fast and Fun: My First Real-Time Ray Tracing Demo] (https://devblogs.nvidia.com/my-first-ray-tracing-demo/)
+* [Getting Started with RTX Ray Tracing] (https://github.com/NVIDIAGameWorks/GettingStartedWithRTXRayTracing)
 * [D3D12 Raytracing Samples] (https://github.com/Microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12Raytracing)
 * [George Ouzounoudis's vk_exp] (https://github.com/georgeouzou/vk_exp)
 * [NVIDIA Vulkan Forums] (https://devtalk.nvidia.com/default/board/166/vulkan/)
