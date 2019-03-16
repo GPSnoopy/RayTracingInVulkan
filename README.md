@@ -14,7 +14,7 @@ I do intend on implementing the scenes from the second book [Ray Tracing The Nex
 
 Using a GeForce RTX 2080 Ti, the rendering speed is obscenely faster than using the CPU renderer. Obviously both implementations are still quite naive in some places, but I'm really impressed by the performance. The cover scene of the first book reaches ~90fps at 1280x720 using 8 rays per pixel and up to 16 bounces.
 
-I suspect performance could be improved further. I have created each object in the scene as a separate instance in the top level acceleration structure, which is probably not the best for data locality. The same goes displaying multiple [Lucy statues](http://graphics.stanford.edu/data/3Dscanrep/), where I have naively duplicated the geometry rather than instancing it multiple times.
+I suspect performance could be improved further. I have created each object in the scene as a separate instance in the top level acceleration structure, which is probably not the best for data locality. The same goes for displaying multiple [Lucy statues](http://graphics.stanford.edu/data/3Dscanrep/), where I have naively duplicated the geometry rather than instancing it multiple times.
 
 ## Building
 
@@ -35,12 +35,12 @@ Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/), the bu
 
 ## References
 
-* [Vulkan Tutorial] (https://vulkan-tutorial.com/)
+* [Vulkan Tutorial](https://vulkan-tutorial.com/)
 * [Introduction to Real-Time Ray Tracing with Vulkan](https://devblogs.nvidia.com/vulkan-raytracing/)
-* [NVIDIA Vulkan Ray Tracing Tutorial] (https://developer.nvidia.com/rtx/raytracing/vkray)
-* [NVIDIA Vulkan Ray Tracing Helpers: Introduction] (https://developer.nvidia.com/rtx/raytracing/vkray_helpers)
-* [Fast and Fun: My First Real-Time Ray Tracing Demo] (https://devblogs.nvidia.com/my-first-ray-tracing-demo/)
-* [Getting Started with RTX Ray Tracing] (https://github.com/NVIDIAGameWorks/GettingStartedWithRTXRayTracing)
-* [D3D12 Raytracing Samples] (https://github.com/Microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12Raytracing)
-* [George Ouzounoudis's vk_exp] (https://github.com/georgeouzou/vk_exp)
-* [NVIDIA Vulkan Forums] (https://devtalk.nvidia.com/default/board/166/vulkan/)
+* [NVIDIA Vulkan Ray Tracing Tutorial](https://developer.nvidia.com/rtx/raytracing/vkray)
+* [NVIDIA Vulkan Ray Tracing Helpers: Introduction](https://developer.nvidia.com/rtx/raytracing/vkray_helpers)
+* [Fast and Fun: My First Real-Time Ray Tracing Demo](https://devblogs.nvidia.com/my-first-ray-tracing-demo/)
+* [Getting Started with RTX Ray Tracing](https://github.com/NVIDIAGameWorks/GettingStartedWithRTXRayTracing)
+* [D3D12 Raytracing Samples](https://github.com/Microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12Raytracing)
+* [George Ouzounoudis's vk_exp](https://github.com/georgeouzou/vk_exp)
+* [NVIDIA Vulkan Forums](https://devtalk.nvidia.com/default/board/166/vulkan/)
