@@ -74,6 +74,11 @@ UserInterface::UserInterface(
 		Throw(std::runtime_error("failed to initialise ImGui vulkan adapter"));
 	}
 
+	auto& io = ImGui::GetIO();
+
+	// No ini file.
+	io.IniFilename = nullptr;
+
 	// DPI
 	const auto dpi = window.Dpi();
 	const auto scaleFactor = static_cast<float>(dpi / 110);
@@ -82,8 +87,6 @@ UserInterface::UserInterface(
 	ImGui::GetStyle().ScaleAllSizes(scaleFactor);
 
 	// Upload ImGui fonts
-	auto& io = ImGui::GetIO();
-
 	if (!io.Fonts->AddFontFromFileTTF("../assets/fonts/Cousine-Regular.ttf", 13 * scaleFactor))
 	{
 		Throw(std::runtime_error("failed to load ImGui font"));
@@ -173,6 +176,13 @@ void UserInterface::DrawSettings()
 		{
 			scenes.push_back(scene.first.c_str());
 		}
+
+		ImGui::Text("Help");
+		ImGui::Separator();
+		ImGui::BulletText("Press F1 to toggle Settings.");
+		ImGui::BulletText("Press F2 to toggle Statistics.");
+		ImGui::BulletText("Press R to toggle ray tracing.");
+		ImGui::NewLine();
 
 		ImGui::Text("Scene");
 		ImGui::Separator();
