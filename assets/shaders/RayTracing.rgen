@@ -1,0 +1,82 @@
+#version 460
+#extension GL_GOOGLE_include_directive : require
+#extension GL_NV_ray_tracing : require
+#include "Random.glsl"
+#include "RayPayload.glsl"
+#include "UniformBufferObject.glsl"
+
+layout(binding = 0, set = 0) uniform accelerationStructureNV Scene;
+layout(binding = 1, rgba32f) uniform image2D AccumulationImage;
+layout(binding = 2, rgba8) uniform image2D OutputImage;
+layout(binding = 3) readonly uniform UniformBufferObjectStruct { UniformBufferObject Camera; };
+
+layout(location = 0) rayPayloadNV RayPayload Ray;
+
+void main() 
+{
+	// Initialise separate random seeds for the pixel and the rays.
+	// - pixel: we want the same random seed for each pixel to get a homogeneous anti-aliasing.
+	// - ray: we want a noisy random seed, different for each pixel.
+	uint pixelRandomSeed = Camera.RandomSeed;
+	Ray.RandomSeed = InitRandomSeed(InitRandomSeed(gl_LaunchIDNV.x, gl_LaunchIDNV.y), Camera.TotalNumberOfSamples);
+
+	vec3 pixelColor = vec3(0);
+
+	// Accumulate all the rays for this pixels.
+	for (uint s = 0; s < Camera.NumberOfSamples; ++s)
+	{
+		//if (Camera.NumberOfSamples != Camera.TotalNumberOfSamples) break;
+		const vec2 pixel = vec2(gl_LaunchIDNV.x + RandomFloat(pixelRandomSeed), gl_LaunchIDNV.y + RandomFloat(pixelRandomSeed));
+		const vec2 uv = (pixel / gl_LaunchSizeNV.xy) * 2.0 - 1.0;
+
+		vec2 offset = Camera.Aperture/2 * RandomInUnitDisk(Ray.RandomSeed);
+		vec4 origin = Camera.ModelViewInverse * vec4(offset, 0, 1);
+		vec4 target = Camera.ProjectionInverse * (vec4(uv.x, uv.y, 1, 1));
+		vec4 direction = Camera.ModelViewInverse * vec4(normalize(target.xyz * Camera.FocusDistance - vec3(offset, 0)), 0);
+		vec3 rayColor = vec3(1);
+
+		// Ray scatters are handled in this loop. There are no recursive traceNV() calls in other shaders.
+		for (uint b = 0; b < Camera.NumberOfBounces; ++b)
+		{
+			const float tMin = 0.001;
+			const float tMax = 10000.0;
+
+			traceNV(
+				Scene, gl_RayFlagsOpaqueNV, 0xff, 
+				0 /*sbtRecordOffset*/, 0 /*sbtRecordStride*/, 0 /*missIndex*/, 
+				origin.xyz, tMin, direction.xyz, tMax, 0 /*payload*/);
+			
+			const vec3 hitColor = Ray.ColorAndDistance.rgb;
+			const float t = Ray.ColorAndDistance.w;
+			const bool isScattered = Ray.ScatterDirection.w > 0;
+
+			rayColor *= hitColor;
+
+			// Trace missed.
+			if (t < 0 || !isScattered)
+			{				
+				break;
+			}
+
+			// Trace hit.
+			origin = origin + t * direction;
+			direction = vec4(Ray.ScatterDirection.xyz, 0);
+		}
+
+		pixelColor += rayColor;
+	}
+
+	const bool accumulate = Camera.NumberOfSamples != Camera.TotalNumberOfSamples;
+	const vec3 accumulatedColor = (accumulate ? imageLoad(AccumulationImage, ivec2(gl_LaunchIDNV.xy)) : vec4(0)).rgb + pixelColor;
+
+	pixelColor = accumulatedColor / Camera.TotalNumberOfSamples;
+
+	if (Camera.GammaCorrection)
+	{
+		// Apply raytracing-in-one-weekend gamma correction.
+		pixelColor = sqrt(pixelColor);
+	}
+
+	imageStore(AccumulationImage, ivec2(gl_LaunchIDNV.xy), vec4(accumulatedColor, 0));
+    imageStore(OutputImage, ivec2(gl_LaunchIDNV.xy), vec4(pixelColor, 0));
+}
