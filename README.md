@@ -29,11 +29,12 @@ Most of the third party dependencies can be built using [Microsoft's vcpkg](http
 ```
 **Linux (GCC 8 Makefile)**
 ```
+> sudo apt-get install curl unzip tar libxinerama-dev libxcursor-dev
 > ./vcpkg_linux.sh
 > ./build_linux.sh
 ```
 
-Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/), the build should work out-of-the box for Visual Studio. On Linux, you may have to manually install additional dependencies for `vcpkg_linux.sh` to succeed.
+Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/) and [CMake](https://cmake.org/), the build should work out-of-the box for Visual Studio. On Linux, you may have to manually install additional dependencies for `vcpkg_linux.sh` to succeed.
 
 ## References
 
