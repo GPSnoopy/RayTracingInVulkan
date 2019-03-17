@@ -29,6 +29,7 @@ Most of the third party dependencies can be built using [Microsoft's vcpkg](http
 ```
 **Linux (GCC 8 Makefile)**
 ```
+> sudo apt-get install curl unzip tar libxinerama-dev libxcursor-dev
 > ./vcpkg_linux.sh
 > ./build_linux.sh
 ```
