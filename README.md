@@ -34,7 +34,7 @@ Most of the third party dependencies can be built using [Microsoft's vcpkg](http
 > ./build_linux.sh
 ```
 
-Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/), the build should work out-of-the box for Visual Studio. On Linux, you may have to manually install additional dependencies for `vcpkg_linux.sh` to succeed.
+Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/) and [CMake](https://cmake.org/), the build should work out-of-the box for Visual Studio. On Linux, you may have to manually install additional dependencies for `vcpkg_linux.sh` to succeed.
 
 ## References
 
