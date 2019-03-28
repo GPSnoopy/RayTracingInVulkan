@@ -12,9 +12,9 @@ namespace Assets
 			return Material{ glm::vec4(diffuse, 1), 0.0f, 0.0f, Enum::Lambertian };
 		}
 
-		static Material Metalic(const glm::vec3& diffuse, const float fuzziness)
+		static Material Metallic(const glm::vec3& diffuse, const float fuzziness)
 		{
-			return Material{ glm::vec4(diffuse, 1), fuzziness, 0.0f, Enum::Metalic };
+			return Material{ glm::vec4(diffuse, 1), fuzziness, 0.0f, Enum::Metallic };
 		}
 
 		static Material Dielectric(const float refractionIndex)
@@ -22,11 +22,23 @@ namespace Assets
 			return Material{ glm::vec4(0.7f, 0.7f, 1.0f, 1), 0.0f, refractionIndex, Enum::Dielectric };
 		}
 
+		static Material Isotropic(const glm::vec3& diffuse)
+		{
+			return Material{ glm::vec4(diffuse, 1), 0.0f, 0.0f, Enum::DiffuseLight };
+		}
+
+		static Material DiffuseLight(const glm::vec3& diffuse)
+		{
+			return Material{ glm::vec4(diffuse, 1), 0.0f, 0.0f, Enum::DiffuseLight };
+		}
+
 		enum class Enum : uint32_t
 		{
 			Lambertian = 0,
-			Metalic = 1,
-			Dielectric = 2
+			Metallic = 1,
+			Dielectric = 2,
+			Isotropic = 3,
+			DiffuseLight = 4
 		};
 
 		// Note: vec3 and vec4 gets aligned on 16 bytes in Vulkan shaders. 

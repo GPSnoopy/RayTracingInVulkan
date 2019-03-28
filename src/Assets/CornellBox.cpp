@@ -22,6 +22,7 @@ void CornellBox::Create(
 	materials.push_back(Material::Lambertian(vec3(0.65f, 0.05f, 0.05f))); // red
 	materials.push_back(Material::Lambertian(vec3(0.12f, 0.45f, 0.15f))); // green
 	materials.push_back(Material::Lambertian(vec3(0.73f, 0.73f, 0.73f))); // white
+	materials.push_back(Material::DiffuseLight(vec3(15.0f))); // light
 
 	const float s = scale;
 
@@ -81,6 +82,23 @@ void CornellBox::Create(
 	vertices.push_back(Vertex{ r2, vec3(0, -1, 0), vec2(1, 1), 2 });
 	vertices.push_back(Vertex{ r3, vec3(0, -1, 0), vec2(1, 0), 2 });
 	vertices.push_back(Vertex{ l3, vec3(0, -1, 0), vec2(0, 0), 2 });
+
+	AddTriangle(indices, i, 0, 1, 2);
+	AddTriangle(indices, i, 0, 2, 3);
+
+	// Light
+	i = static_cast<uint32_t>(vertices.size());
+
+	const float x0 = s * (213.0f / 555.0f);
+	const float x1 = s * (343.0f / 555.0f);
+	const float z0 = s * (-555.0f + 332.0f) / 555.0f;
+	const float z1 = s * (-555.0f + 227.0f) / 555.0f;
+	const float y1 = s * 0.998f;
+
+	vertices.push_back(Vertex{ vec3(x0, y1, z1), vec3(0, -1, 0), vec2(0, 1), 3 });
+	vertices.push_back(Vertex{ vec3(x1, y1, z1), vec3(0, -1, 0), vec2(1, 1), 3 });
+	vertices.push_back(Vertex{ vec3(x1, y1, z0), vec3(0, -1, 0), vec2(1, 0), 3 });
+	vertices.push_back(Vertex{ vec3(x0, y1, z0), vec3(0, -1, 0), vec2(0, 0), 3 });
 
 	AddTriangle(indices, i, 0, 1, 2);
 	AddTriangle(indices, i, 0, 2, 3);

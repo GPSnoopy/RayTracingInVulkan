@@ -2,8 +2,10 @@
 #include "RayPayload.glsl"
 
 const uint MaterialLambertian = 0;
-const uint MaterialMetalic = 1;
+const uint MaterialMetallic = 1;
 const uint MaterialDielectric = 2;
+const uint MaterialIsotropic = 3;
+const uint MaterialDiffuseLight = 4;
 
 struct Material
 {
@@ -21,6 +23,7 @@ float Schlick(const float cosine, const float refractionIndex)
 	return r0 + (1 - r0) * pow(1 - cosine, 5);
 }
 
+// Lambertian
 RayPayload ScatterLambertian(const Material m, const vec3 normal, const float t, inout uint seed)
 {
 	const vec4 colorAndDistance = vec4(m.Diffuse.rgb, t);
@@ -29,7 +32,8 @@ RayPayload ScatterLambertian(const Material m, const vec3 normal, const float t,
 	return RayPayload(colorAndDistance, scatter, seed);
 }
 
-RayPayload ScatterMetalic(const Material m, const vec3 direction, const vec3 normal, const float t, inout uint seed)
+// Metallic
+RayPayload ScatterMetallic(const Material m, const vec3 direction, const vec3 normal, const float t, inout uint seed)
 {
 	const vec3 reflected = reflect(direction, normal);
 	const bool isScattered = dot(reflected, normal) > 0;
@@ -40,6 +44,7 @@ RayPayload ScatterMetalic(const Material m, const vec3 direction, const vec3 nor
 	return RayPayload(colorAndDistance, scatter, seed);
 }
 
+// Dielectric
 RayPayload ScatterDieletric(const Material m, const vec3 direction, const vec3 normal, const float t, inout uint seed)
 {
 	const float dot = dot(direction, normal);
@@ -55,6 +60,15 @@ RayPayload ScatterDieletric(const Material m, const vec3 direction, const vec3 n
 		: RayPayload(vec4(1, 1, 1, t), vec4(refracted, 1), seed);
 }
 
+// Diffuse Light
+RayPayload ScatterDiffuseLight(const Material m, const float t, inout uint seed)
+{
+	const vec4 colorAndDistance = vec4(m.Diffuse.rgb, t);
+	const vec4 scatter = vec4(1, 0, 0, 0);
+
+	return RayPayload(colorAndDistance, scatter, seed);
+}
+
 RayPayload Scatter(const Material m, const vec3 direction, const vec3 normal, const float t, inout uint seed)
 {
 	const vec3 normDirection = normalize(direction);
@@ -63,10 +77,12 @@ RayPayload Scatter(const Material m, const vec3 direction, const vec3 normal, co
 	{
 	case MaterialLambertian:
 		return ScatterLambertian(m, normal, t, seed);
-	case MaterialMetalic:
-		return ScatterMetalic(m, normDirection, normal, t, seed);
+	case MaterialMetallic:
+		return ScatterMetallic(m, normDirection, normal, t, seed);
 	case MaterialDielectric:
 		return ScatterDieletric(m, normDirection, normal, t, seed);
+	case MaterialDiffuseLight:
+		return ScatterDiffuseLight(m, t, seed);
 	}
 }
 

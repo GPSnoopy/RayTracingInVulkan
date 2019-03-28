@@ -27,7 +27,7 @@ std::vector<Model> SceneList::CubeAndSpheres(CameraInitialSate& camera)
 	std::vector<Model> models;
 
 	models.push_back(Model::LoadModel("../assets/models/cube_multi.obj"));
-	models.push_back(Model::CreateSphere(vec3(1, 0, 0), 0.5, 3, Material::Metalic(vec3(0.7f, 0.5f, 0.8f), 0.2f), true));
+	models.push_back(Model::CreateSphere(vec3(1, 0, 0), 0.5, 3, Material::Metallic(vec3(0.7f, 0.5f, 0.8f), 0.2f), true));
 	models.push_back(Model::CreateSphere(vec3(-1, 0, 0), 0.5, 3, Material::Dielectric(1.5f), true));
 
 	return models;
@@ -70,7 +70,7 @@ std::vector<Model> SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 				}
 				else if (chooseMat < 0.95f) // Metal
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Metalic(
+					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Metallic(
 						vec3(0.5f*(1 + random()), 0.5f*(1 + random()), 0.5f*(1 + random())),
 						0.5f*random()),
 						isProc));
@@ -85,7 +85,7 @@ std::vector<Model> SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 
 	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 1.0f, subdiv, Material::Dielectric(1.5f), isProc));
 	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, subdiv, Material::Lambertian(vec3(0.4f, 0.2f, 0.1f)), isProc));
-	models.push_back(Model::CreateSphere(vec3(4, 1, 0), 1.0f, subdiv, Material::Metalic(vec3(0.7f, 0.6f, 0.5f), 0.0f), isProc));
+	models.push_back(Model::CreateSphere(vec3(4, 1, 0), 1.0f, subdiv, Material::Metallic(vec3(0.7f, 0.6f, 0.5f), 0.0f), isProc));
 
 	return models;
 }
@@ -127,7 +127,7 @@ std::vector<Model> SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 				}
 				else if (chooseMat < 0.95f) // Metal
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Metalic(
+					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Metallic(
 						vec3(0.5f*(1 + random()), 0.5f*(1 + random()), 0.5f*(1 + random())),
 						0.5f*random()),
 						isProc));
@@ -170,7 +170,7 @@ std::vector<Model> SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 
 	lucy0.SetMaterial(Material::Dielectric(1.5f));
 	lucy1.SetMaterial(Material::Lambertian(vec3(0.4f, 0.2f, 0.1f)));
-	lucy2.SetMaterial(Material::Metalic(vec3(0.7f, 0.6f, 0.5f), 0.05f));
+	lucy2.SetMaterial(Material::Metallic(vec3(0.7f, 0.6f, 0.5f), 0.05f));
 
 	models.push_back(std::move(lucy0));
 	models.push_back(std::move(lucy1));
@@ -186,6 +186,7 @@ std::vector<Assets::Model> SceneList::CornellBox(CameraInitialSate& camera)
 	camera.Aperture = 0.0f;
 	camera.FocusDistance = 10.0f;
 	camera.GammaCorrection = true;
+	//sky = false;
 
 	std::vector<Model> models;
 

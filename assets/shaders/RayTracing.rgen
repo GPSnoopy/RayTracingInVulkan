@@ -52,7 +52,7 @@ void main()
 
 			rayColor *= hitColor;
 
-			// Trace missed.
+			// Trace missed, or end of trace.
 			if (t < 0 || !isScattered)
 			{				
 				break;
