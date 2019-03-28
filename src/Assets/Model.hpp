@@ -14,6 +14,7 @@ namespace Assets
 	public:
 
 		static Model LoadModel(const std::string& filename);
+		static Model CreateCornellBox();
 		static Model CreateSphere(const glm::vec3& center, float radius, int subdivision, const Material& material, bool isProcedural);
 
 		Model& operator = (const Model&) = delete;

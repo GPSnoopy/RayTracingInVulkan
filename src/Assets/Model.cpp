@@ -1,4 +1,5 @@
 #include "Model.hpp"
+#include "CornellBox.hpp"
 #include "Icosphere.hpp"
 #include "Procedural.hpp"
 #include "Sphere.hpp"
@@ -18,6 +19,8 @@
 #include <unordered_map>
 #include <vector>
 
+using namespace glm;
+
 namespace std
 {
 	template<> struct hash<Assets::Vertex> final
@@ -25,9 +28,9 @@ namespace std
 		size_t operator()(Assets::Vertex const& vertex) const noexcept
 		{
 			return
-				Combine(hash<glm::vec3>()(vertex.Position),
-					Combine(hash<glm::vec3>()(vertex.Normal),
-						Combine(hash<glm::vec2>()(vertex.TexCoord),
+				Combine(hash<vec3>()(vertex.Position),
+					Combine(hash<vec3>()(vertex.Normal),
+						Combine(hash<vec2>()(vertex.TexCoord),
 							hash<int>()(vertex.MaterialIndex))));
 		}
 
@@ -78,7 +81,7 @@ Model Model::LoadModel(const std::string& filename)
 	{
 		Material m{};
 
-		m.Diffuse = glm::vec4(material.diffuse[0], material.diffuse[1], material.diffuse[2], 1.0);
+		m.Diffuse = vec4(material.diffuse[0], material.diffuse[1], material.diffuse[2], 1.0);
 
 		materials.emplace_back(m);
 	}
@@ -87,7 +90,7 @@ Model Model::LoadModel(const std::string& filename)
 	{
 		Material m{};
 
-		m.Diffuse = glm::vec4(0.7f, 0.7f, 0.7f, 1.0);
+		m.Diffuse = vec4(0.7f, 0.7f, 0.7f, 1.0);
 
 		materials.emplace_back(m);
 	}
@@ -149,7 +152,23 @@ Model Model::LoadModel(const std::string& filename)
 	return Model(std::move(vertices), std::move(indices), std::move(materials), nullptr);
 }
 
-Model Model::CreateSphere(const glm::vec3& center, float radius, int subdivision, const Material& material, const bool isProcedural)
+Model Model::CreateCornellBox()
+{
+	std::vector<Vertex> vertices;
+	std::vector<uint32_t> indices;
+	std::vector<Material> materials;
+
+	CornellBox::Create(555, vertices, indices, materials);
+
+	return Model(
+		std::move(vertices),
+		std::move(indices),
+		std::move(materials),
+		nullptr
+	);
+}
+
+Model Model::CreateSphere(const vec3& center, float radius, int subdivision, const Material& material, const bool isProcedural)
 {
 	const Icosphere icosphere(radius, subdivision, true);
 
@@ -160,9 +179,9 @@ Model Model::CreateSphere(const glm::vec3& center, float radius, int subdivision
 	{
 		Vertex v{};
 
-		v.Position = glm::vec3(icosphere.Vertices()[i * 3 + 0], icosphere.Vertices()[i * 3 + 1], icosphere.Vertices()[i * 3 + 2]) + center;
-		v.Normal = glm::vec3(icosphere.Normals()[i * 3 + 0], icosphere.Normals()[i * 3 + 1], icosphere.Normals()[i * 3 + 2]);
-		v.TexCoord = glm::vec2(icosphere.TexCoords()[i * 2 + 0], icosphere.TexCoords()[i * 2 + 1]);
+		v.Position = vec3(icosphere.Vertices()[i * 3 + 0], icosphere.Vertices()[i * 3 + 1], icosphere.Vertices()[i * 3 + 2]) + center;
+		v.Normal = vec3(icosphere.Normals()[i * 3 + 0], icosphere.Normals()[i * 3 + 1], icosphere.Normals()[i * 3 + 2]);
+		v.TexCoord = vec2(icosphere.TexCoords()[i * 2 + 0], icosphere.TexCoords()[i * 2 + 1]);
 		v.MaterialIndex = 0;
 
 		vertices.push_back(v);
@@ -185,14 +204,14 @@ void Model::SetMaterial(const Material& material)
 	materials_[0] = material;
 }
 
-void Model::Transform(const glm::mat4& transform)
+void Model::Transform(const mat4& transform)
 {
-	const auto transformIT = glm::inverseTranspose(transform);
+	const auto transformIT = inverseTranspose(transform);
 
 	for (auto& vertex : vertices_)
 	{
-		vertex.Position = transform * glm::vec4(vertex.Position, 1);
-		vertex.Normal = transformIT * glm::vec4(vertex.Normal, 0);
+		vertex.Position = transform * vec4(vertex.Position, 1);
+		vertex.Normal = transformIT * vec4(vertex.Normal, 0);
 	}
 }
 

@@ -2,6 +2,8 @@
 set(exe_name RayTracer)
 
 set(src_files_assets
+	Assets/CornellBox.cpp
+	Assets/CornellBox.hpp
 	Assets/Icosphere.cpp
 	Assets/Icosphere.hpp
 	Assets/Material.hpp

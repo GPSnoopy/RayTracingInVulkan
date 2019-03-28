@@ -25,6 +25,7 @@ public:
 	static std::vector<Assets::Model> CubeAndSpheres(CameraInitialSate& camera);
 	static std::vector<Assets::Model> RayTracingInOneWeekend(CameraInitialSate& camera);
 	static std::vector<Assets::Model> LucyInOneWeekend(CameraInitialSate& camera);
+	static std::vector<Assets::Model> CornellBox(CameraInitialSate& camera);
 
 	static const std::vector<std::pair<std::string, std::function<std::vector<Assets::Model>(CameraInitialSate&)>>> AllScenes;
 };

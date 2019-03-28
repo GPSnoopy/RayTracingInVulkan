@@ -12,7 +12,8 @@ const std::vector<std::pair<std::string, std::function<std::vector<Model>(SceneL
 {
 	{"Cube And Spheres", CubeAndSpheres},
 	{"Ray Tracing In One Weekend", RayTracingInOneWeekend},
-	{"Lucy In One Weekend", LucyInOneWeekend}
+	{"Lucy In One Weekend", LucyInOneWeekend},
+	{"Cornell Box", CornellBox}
 };
 
 std::vector<Model> SceneList::CubeAndSpheres(CameraInitialSate& camera)
@@ -174,6 +175,21 @@ std::vector<Model> SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 	models.push_back(std::move(lucy0));
 	models.push_back(std::move(lucy1));
 	models.push_back(std::move(lucy2));
+
+	return models;
+}
+
+std::vector<Assets::Model> SceneList::CornellBox(CameraInitialSate& camera)
+{
+	camera.ModelView = lookAt(vec3(278, 278, 800), vec3(278, 278, 0), vec3(0, 1, 0));
+	camera.FieldOfView = 40;
+	camera.Aperture = 0.0f;
+	camera.FocusDistance = 10.0f;
+	camera.GammaCorrection = true;
+
+	std::vector<Model> models;
+
+	models.push_back(Model::CreateCornellBox());
 
 	return models;
 }
