@@ -117,6 +117,8 @@ set(src_files_vulkan_raytracing
 
 set(src_files
 	main.cpp
+	Options.cpp
+	Options.hpp
 	RayTracer.cpp
 	RayTracer.hpp
 	SceneList.cpp
@@ -155,6 +157,6 @@ if (UNIX)
 	set(extra_libs -lbacktrace -lstdc++fs)
 endif()
 
-target_link_libraries(${exe_name} PRIVATE glfw imgui::imgui ${Vulkan_LIBRARIES} ${extra_libs})
+target_link_libraries(${exe_name} PRIVATE ${Boost_LIBRARIES} glfw imgui::imgui ${Vulkan_LIBRARIES} ${extra_libs})
 
 add_dependencies(${exe_name} Assets)

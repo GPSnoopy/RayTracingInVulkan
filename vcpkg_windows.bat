@@ -5,6 +5,7 @@ cd vcpkg.windows || goto :error
 call bootstrap-vcpkg.bat || goto :error
 
 vcpkg.exe install boost-exception:x64-windows-static || goto :error
+vcpkg.exe install boost-program-options:x64-windows-static || goto :error
 vcpkg.exe install boost-stacktrace:x64-windows-static || goto :error
 vcpkg.exe install glfw3:x64-windows-static || goto :error
 vcpkg.exe install glm:x64-windows-static || goto :error

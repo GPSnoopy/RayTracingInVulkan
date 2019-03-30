@@ -226,7 +226,7 @@ std::vector<Assets::Model> SceneList::CornellBoxLucy(CameraInitialSate& camera)
 		rotate(
 			scale(
 				translate(i, vec3(555 - 300 - 165/2, -9, -295 - 165/2)),
-				vec3(0.6)),
+				vec3(0.6f)),
 			radians(75.0f), vec3(0, 1, 0)));
 
 	std::vector<Model> models;

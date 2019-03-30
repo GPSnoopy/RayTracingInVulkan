@@ -9,8 +9,8 @@
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/Window.hpp"
 
-RayTracer::RayTracer() :
-	Application(Vulkan::WindowConfig{ "Vulkan Window", 1280, 720, false, true }, true)
+RayTracer::RayTracer(const uint32_t width, const uint32_t height, const bool fullscreen) :
+	Application(Vulkan::WindowConfig{ "Vulkan Window", width, height, fullscreen, !fullscreen }, true)
 {
 }
 
@@ -145,6 +145,9 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 	{		
 		switch (key)
 		{
+		case GLFW_KEY_ESCAPE:
+			Window().Close();
+			break;
 		case GLFW_KEY_F1:
 			userSettings_.ShowSettings = !userSettings_.ShowSettings;
 			break;

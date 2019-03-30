@@ -42,7 +42,7 @@ if (UNIX)
 
 endif ()
 
-find_package(Boost REQUIRED COMPONENTS) 
+find_package(Boost REQUIRED COMPONENTS exception program_options) 
 find_package(glfw3 REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)

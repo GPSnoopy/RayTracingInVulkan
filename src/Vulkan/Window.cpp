@@ -138,6 +138,11 @@ VkExtent2D Window::WindowSize() const
 	return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 }
 
+void Window::Close() const
+{
+	glfwSetWindowShouldClose(window_, 1);
+}
+
 bool Window::IsMinimized() const
 {
 	const auto size = FramebufferSize();

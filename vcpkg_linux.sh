@@ -8,6 +8,7 @@ cd vcpkg.linux
 ./bootstrap-vcpkg.sh
 
 ./vcpkg install boost-exception:x64-linux
+./vcpkg install boost-program-options:x64-linux
 ./vcpkg install boost-stacktrace:x64-linux
 ./vcpkg install glfw3:x64-linux
 ./vcpkg install glm:x64-linux

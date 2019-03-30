@@ -4,6 +4,7 @@
 #include "Vulkan/Version.hpp"
 #include "Utilities/Console.hpp"
 #include "Utilities/Exception.hpp"
+#include "Options.hpp"
 #include "RayTracer.hpp"
 
 #include <algorithm>
@@ -17,14 +18,12 @@ namespace
 	void SetVulkanDevice(Vulkan::Application& application);
 }
 
-int main() noexcept
+int main(int argc, const char* argv[]) noexcept
 {
 	try
 	{
-		// TODO - Ray accumulation when camera is not moving
-		// TODO - Dear ImGui https://github.com/ocornut/imgui
-		// TODO - Book2
-		RayTracer application;
+		const Options options(argc, argv);
+		RayTracer application(options.Width, options.Height, options.Fullscreen);
 
 		PrintVulkanDevices(application);
 		PrintVulkanExtensions(application);
@@ -32,6 +31,11 @@ int main() noexcept
 
 		application.Run();
 
+		return EXIT_SUCCESS;
+	}
+
+	catch (const Options::Help&)
+	{
 		return EXIT_SUCCESS;
 	}
 
