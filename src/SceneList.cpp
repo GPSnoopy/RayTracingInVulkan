@@ -13,7 +13,8 @@ const std::vector<std::pair<std::string, std::function<std::vector<Model>(SceneL
 	{"Cube And Spheres", CubeAndSpheres},
 	{"Ray Tracing In One Weekend", RayTracingInOneWeekend},
 	{"Lucy In One Weekend", LucyInOneWeekend},
-	{"Cornell Box", CornellBox}
+	{"Cornell Box", CornellBox},
+	{"Cornell Box & Lucy", CornellBoxLucy},
 };
 
 std::vector<Model> SceneList::CubeAndSpheres(CameraInitialSate& camera)
@@ -191,10 +192,6 @@ std::vector<Assets::Model> SceneList::CornellBox(CameraInitialSate& camera)
 	camera.GammaCorrection = true;
 	camera.HasSky = false;
 
-	std::vector<Model> models;
-
-	models.push_back(Model::CreateCornellBox(555));
-
 	const auto i = mat4(1);
 	const auto white = Material::Lambertian(vec3(0.73f, 0.73f, 0.73f));
 
@@ -204,8 +201,38 @@ std::vector<Assets::Model> SceneList::CornellBox(CameraInitialSate& camera)
 	box0.Transform(rotate(translate(i, vec3(555 - 130 - 165, 0, -65)), radians(-18.0f), vec3(0, 1, 0)));
 	box1.Transform(rotate(translate(i, vec3(555 - 265 - 165, 0, -295)), radians(15.0f), vec3(0, 1, 0)));
 
+	std::vector<Model> models;
+	models.push_back(Model::CreateCornellBox(555));
 	models.push_back(box0);
 	models.push_back(box1);
+
+	return models;
+}
+
+std::vector<Assets::Model> SceneList::CornellBoxLucy(CameraInitialSate& camera)
+{
+	camera.ModelView = lookAt(vec3(278, 278, 800), vec3(278, 278, 0), vec3(0, 1, 0));
+	camera.FieldOfView = 40;
+	camera.Aperture = 0.0f;
+	camera.FocusDistance = 10.0f;
+	camera.GammaCorrection = true;
+	camera.HasSky = false;
+
+	const auto i = mat4(1);
+	const auto sphere = Model::CreateSphere(vec3(555 - 130, 165.0f, -165.0f / 2 - 65), 80.0f, 3, Material::Dielectric(1.5f), true);
+	auto lucy0 = Model::LoadModel("../assets/models/lucy.obj");
+
+	lucy0.Transform(
+		rotate(
+			scale(
+				translate(i, vec3(555 - 300 - 165/2, -9, -295 - 165/2)),
+				vec3(0.6)),
+			radians(75.0f), vec3(0, 1, 0)));
+
+	std::vector<Model> models;
+	models.push_back(Model::CreateCornellBox(555));
+	models.push_back(sphere);
+	models.push_back(lucy0);
 
 	return models;
 }
