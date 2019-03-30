@@ -20,6 +20,7 @@ public:
 		float Aperture;
 		float FocusDistance;
 		bool GammaCorrection;
+		bool HasSky;
 	};
 
 	static std::vector<Assets::Model> CubeAndSpheres(CameraInitialSate& camera);

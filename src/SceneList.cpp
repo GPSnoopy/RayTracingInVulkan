@@ -23,6 +23,7 @@ std::vector<Model> SceneList::CubeAndSpheres(CameraInitialSate& camera)
 	camera.Aperture = 0.05f;
 	camera.FocusDistance = 2.0f;
 	camera.GammaCorrection = false;
+	camera.HasSky = true;
 
 	std::vector<Model> models;
 
@@ -40,6 +41,7 @@ std::vector<Model> SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 	camera.Aperture = 0.1f;
 	camera.FocusDistance = 10.0f;
 	camera.GammaCorrection = true;
+	camera.HasSky = true;
 
 	const int subdiv = 3;
 	const bool isProc = true;
@@ -97,6 +99,7 @@ std::vector<Model> SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 	camera.Aperture = 0.05f;
 	camera.FocusDistance = 10.0f;
 	camera.GammaCorrection = true;
+	camera.HasSky = true;
 
 	const int subdiv = 3;
 	const bool isProc = true;
@@ -186,11 +189,23 @@ std::vector<Assets::Model> SceneList::CornellBox(CameraInitialSate& camera)
 	camera.Aperture = 0.0f;
 	camera.FocusDistance = 10.0f;
 	camera.GammaCorrection = true;
-	//sky = false;
+	camera.HasSky = false;
 
 	std::vector<Model> models;
 
-	models.push_back(Model::CreateCornellBox());
+	models.push_back(Model::CreateCornellBox(555));
+
+	const auto i = mat4(1);
+	const auto white = Material::Lambertian(vec3(0.73f, 0.73f, 0.73f));
+
+	auto box0 = Model::CreateBox(vec3(0, 0, -165), vec3(165, 165, 0), white);
+	auto box1 = Model::CreateBox(vec3(0, 0, -165), vec3(165, 330, 0), white);
+
+	box0.Transform(rotate(translate(i, vec3(555 - 130 - 165, 0, -65)), radians(-18.0f), vec3(0, 1, 0)));
+	box1.Transform(rotate(translate(i, vec3(555 - 265 - 165, 0, -295)), radians(15.0f), vec3(0, 1, 0)));
+
+	models.push_back(box0);
+	models.push_back(box1);
 
 	return models;
 }

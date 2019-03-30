@@ -26,7 +26,8 @@ namespace Assets
 		uint32_t NumberOfSamples;
 		uint32_t NumberOfBounces;
 		uint32_t RandomSeed;
-		bool GammaCorrection;
+		uint32_t GammaCorrection; // bool
+		uint32_t HasSky; // bool
 	};
 
 	class UniformBuffer

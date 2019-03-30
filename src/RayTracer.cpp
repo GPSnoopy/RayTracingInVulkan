@@ -43,6 +43,7 @@ Assets::UniformBufferObject RayTracer::GetUniformBufferObject(const VkExtent2D e
 	ubo.NumberOfBounces = userSettings_.NumberOfBounces;
 	ubo.RandomSeed = 1;
 	ubo.GammaCorrection = userSettings_.GammaCorrection;
+	ubo.HasSky = init.HasSky;
 
 	return ubo;
 }
