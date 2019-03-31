@@ -8,6 +8,8 @@ The real-time ray tracer can also load full geometry from OBJ files as well as r
 
 This personal project follows my own attempts at CPU ray tracing following Peter Shirley's books (see [here](https://github.com/GPSnoopy/RayTracingInOneWeekend) and [here](https://github.com/GPSnoopy/RayTracingTheNextWeek) if you are interested).
 
+## Gallery
+
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_CornellBox.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_CornellBoxLucy.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_OneWeekend.jpg" width="33%">
 
 ## TODOs
