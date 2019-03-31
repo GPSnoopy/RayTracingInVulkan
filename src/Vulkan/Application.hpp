@@ -30,7 +30,7 @@ namespace Vulkan
 
 	protected:
 
-		Application(const WindowConfig& windowConfig, bool enableValidationLayers);
+		Application(const WindowConfig& windowConfig, bool vsync, bool enableValidationLayers);
 
 		const class Window& Window() const { return *window_; }
 		const class Device& Device() const { return *device_; }
@@ -61,6 +61,7 @@ namespace Vulkan
 		void UpdateUniformBuffer(uint32_t imageIndex);
 		void RecreateSwapChain();
 
+		const bool vsync_;
 		std::unique_ptr<class Window> window_;
 		std::unique_ptr<class Instance> instance_;
 		std::unique_ptr<class DebugUtilsMessenger> debugUtilsMessenger_;

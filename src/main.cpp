@@ -23,7 +23,8 @@ int main(int argc, const char* argv[]) noexcept
 	try
 	{
 		const Options options(argc, argv);
-		RayTracer application(options.Width, options.Height, options.Fullscreen);
+		const Vulkan::WindowConfig windowConfig{ "Vulkan Window", options.Width, options.Height, options.Fullscreen, !options.Fullscreen };
+		RayTracer application(windowConfig, options.VSync);
 
 		PrintVulkanDevices(application);
 		PrintVulkanExtensions(application);

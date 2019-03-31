@@ -9,8 +9,8 @@
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/Window.hpp"
 
-RayTracer::RayTracer(const uint32_t width, const uint32_t height, const bool fullscreen) :
-	Application(Vulkan::WindowConfig{ "Vulkan Window", width, height, fullscreen, !fullscreen }, true)
+RayTracer::RayTracer(const Vulkan::WindowConfig& windowConfig, const bool vsync) :
+	Application(windowConfig, vsync, true)
 {
 }
 

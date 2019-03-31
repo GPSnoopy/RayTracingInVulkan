@@ -11,7 +11,7 @@
 
 namespace Vulkan {
 
-SwapChain::SwapChain(const class Device& device) :
+SwapChain::SwapChain(const class Device& device, const bool vsync) :
 	physicalDevice_(device.PhysicalDevice()),
 	device_(device)
 {
@@ -25,7 +25,7 @@ SwapChain::SwapChain(const class Device& device) :
 	const auto& window = surface.Instance().Window();
 
 	const auto surfaceFormat = ChooseSwapSurfaceFormat(details.Formats);
-	const auto presentMode = ChooseSwapPresentMode(details.PresentModes);
+	const auto presentMode = ChooseSwapPresentMode(details.PresentModes, vsync);
 	const auto extent = ChooseSwapExtent(window, details.Capabilities);
 	const auto imageCount = ChooseImageCount(details.Capabilities);
 
@@ -115,7 +115,7 @@ VkSurfaceFormatKHR SwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfac
 	Throw(std::runtime_error("found no suitable surface format"));
 }
 
-VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> presentModes) 
+VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes, const bool vsync) 
 {
 	// VK_PRESENT_MODE_IMMEDIATE_KHR: 
 	//   Images submitted by your application are transferred to the screen right away, which may result in tearing.
@@ -134,21 +134,22 @@ VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentMod
 	//   buffering, which allows you to avoid tearing with significantly less latency issues than standard vertical sync 
 	//   that uses double buffering.
 
-	VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
-
-	for (const auto& presentMode : presentModes)
+	if (vsync)
 	{
-		if (presentMode == VK_PRESENT_MODE_MAILBOX_KHR)
-		{
-			return presentMode;
-		}
-		//if (availablePresentMode == VK_PRESENT_MODE_IMMEDIATE_KHR) 
-		//{
-		//	bestMode = availablePresentMode;
-		//}
+		return VK_PRESENT_MODE_FIFO_KHR;
 	}
 
-	return bestMode;
+	if (std::find(presentModes.begin(), presentModes.end(), VK_PRESENT_MODE_MAILBOX_KHR) != presentModes.end())
+	{
+		return VK_PRESENT_MODE_MAILBOX_KHR;
+	}
+
+	if (std::find(presentModes.begin(), presentModes.end(), VK_PRESENT_MODE_IMMEDIATE_KHR) != presentModes.end())
+	{
+		return VK_PRESENT_MODE_IMMEDIATE_KHR;
+	}
+
+	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
 VkExtent2D SwapChain::ChooseSwapExtent(const Window& window, const VkSurfaceCapabilitiesKHR& capabilities)

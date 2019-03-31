@@ -10,7 +10,7 @@ public:
 
 	VULKAN_NON_COPIABLE(RayTracer)
 
-	RayTracer(uint32_t width, uint32_t height, bool fullscreen);
+	RayTracer(const Vulkan::WindowConfig& windowConfig, bool vsync);
 	~RayTracer();
 
 protected:

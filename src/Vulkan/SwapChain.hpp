@@ -16,7 +16,7 @@ namespace Vulkan
 
 		VULKAN_NON_COPIABLE(SwapChain)
 
-		explicit SwapChain(const Device& device);
+		SwapChain(const Device& device, bool vsync);
 		~SwapChain();
 
 		VkPhysicalDevice PhysicalDevice() const { return physicalDevice_; }
@@ -37,7 +37,7 @@ namespace Vulkan
 
 		static SupportDetails QuerySwapChainSupport(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
 		static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats);
-		static VkPresentModeKHR ChooseSwapPresentMode(std::vector<VkPresentModeKHR> presentModes);
+		static VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes, bool vsync);
 		static VkExtent2D ChooseSwapExtent(const Window& window, const VkSurfaceCapabilitiesKHR& capabilities);
 		static uint32_t ChooseImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
 

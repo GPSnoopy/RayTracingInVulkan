@@ -23,7 +23,8 @@
 
 namespace Vulkan {
 
-Application::Application(const WindowConfig& windowConfig, const bool enableValidationLayers)
+Application::Application(const WindowConfig& windowConfig, const bool vsync, const bool enableValidationLayers) :
+	vsync_(vsync)
 {
 	const auto validationLayers = enableValidationLayers
 		? std::vector<const char*>{"VK_LAYER_LUNARG_standard_validation"}
@@ -102,7 +103,7 @@ void Application::CreateSwapChain()
 		window_->WaitForEvents();
 	}
 
-	swapChain_.reset(new class SwapChain(*device_));
+	swapChain_.reset(new class SwapChain(*device_, vsync_));
 	depthBuffer_.reset(new class DepthBuffer(*commandPool_, swapChain_->Extent()));
 
 	for (size_t i = 0; i != swapChain_->ImageViews().size(); ++i)
