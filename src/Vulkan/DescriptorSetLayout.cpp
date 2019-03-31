@@ -1,6 +1,5 @@
 #include "DescriptorSetLayout.hpp"
 #include "Device.hpp"
-#include "Utilities/Exception.hpp"
 
 namespace Vulkan {
 
@@ -25,10 +24,8 @@ DescriptorSetLayout::DescriptorSetLayout(const Device& device, const std::vector
 	layoutInfo.bindingCount = static_cast<uint32_t>(layoutBindings.size());
 	layoutInfo.pBindings = layoutBindings.data();
 
-	if (vkCreateDescriptorSetLayout(device.Handle(), &layoutInfo, nullptr, &layout_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create descriptor set layout"));
-	}
+	Check(vkCreateDescriptorSetLayout(device.Handle(), &layoutInfo, nullptr, &layout_),
+		"create descriptor set layout");
 }
 
 DescriptorSetLayout::~DescriptorSetLayout()

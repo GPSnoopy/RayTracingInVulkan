@@ -1,6 +1,5 @@
 #include "Buffer.hpp"
 #include "SingleTimeCommands.hpp"
-#include "Utilities/Exception.hpp"
 
 namespace Vulkan {
 
@@ -13,10 +12,8 @@ Buffer::Buffer(const class Device& device, const size_t size, const VkBufferUsag
 	bufferInfo.usage = usage;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(device.Handle(), &bufferInfo, nullptr, &buffer_) != VK_SUCCESS) 
-	{
-		Throw(std::runtime_error("failed to create buffer"));
-	}
+	Check(vkCreateBuffer(device.Handle(), &bufferInfo, nullptr, &buffer_),
+		"create buffer");
 }
 
 Buffer::~Buffer()
@@ -33,10 +30,8 @@ DeviceMemory Buffer::AllocateMemory(const VkMemoryPropertyFlags properties) cons
 	const auto requirements = GetMemoryRequirements();
 	DeviceMemory memory(device_, requirements.size, requirements.memoryTypeBits, properties);
 
-	if (vkBindBufferMemory(device_.Handle(), buffer_, memory.Handle(), 0) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to bind buffer memory"));
-	}
+	Check(vkBindBufferMemory(device_.Handle(), buffer_, memory.Handle(), 0),
+		"bind buffer memory");
 
 	return memory;
 }

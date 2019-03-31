@@ -2,7 +2,6 @@
 #include "DepthBuffer.hpp"
 #include "Device.hpp"
 #include "SwapChain.hpp"
-#include "Utilities/Exception.hpp"
 #include <array>
 
 namespace Vulkan {
@@ -72,10 +71,8 @@ RenderPass::RenderPass(
 	renderPassInfo.dependencyCount = 1;
 	renderPassInfo.pDependencies = &dependency;
 
-	if (vkCreateRenderPass(swapChain_.Device().Handle(), &renderPassInfo, nullptr, &renderPass_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create render pass"));
-	}
+	Check(vkCreateRenderPass(swapChain_.Device().Handle(), &renderPassInfo, nullptr, &renderPass_),
+		"create render pass");
 }
 
 RenderPass::~RenderPass()

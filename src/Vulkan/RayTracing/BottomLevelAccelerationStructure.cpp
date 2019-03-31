@@ -76,10 +76,8 @@ void BottomLevelAccelerationStructure::Generate(
 	bindInfo.deviceIndexCount = 0;
 	bindInfo.pDeviceIndices = nullptr;
 
-	if (deviceProcedures_.vkBindAccelerationStructureMemoryNV(Device().Handle(), 1, &bindInfo) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to bind acceleration structure"));
-	}
+	Check(deviceProcedures_.vkBindAccelerationStructureMemoryNV(Device().Handle(), 1, &bindInfo), 
+		"bind acceleration structure");
 
 	// Build the actual bottom-level acceleration structure
 	const auto flags = allowUpdate_ ? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_NV : 0;

@@ -59,10 +59,8 @@ SwapChain::SwapChain(const class Device& device, const bool vsync) :
 		createInfo.pQueueFamilyIndices = nullptr; // Optional
 	}
 
-	if (vkCreateSwapchainKHR(device.Handle(), &createInfo, nullptr, &swapChain_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create swap chain!"));
-	}
+	Check(vkCreateSwapchainKHR(device.Handle(), &createInfo, nullptr, &swapChain_),
+		"create swap chain!");
 
 	format_ = surfaceFormat.format;
 	extent_ = extent;

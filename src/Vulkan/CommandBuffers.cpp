@@ -1,7 +1,6 @@
 #include "CommandBuffers.hpp"
 #include "CommandPool.hpp"
 #include "Device.hpp"
-#include "Utilities/Exception.hpp"
 
 namespace Vulkan {
 
@@ -16,10 +15,8 @@ CommandBuffers::CommandBuffers(CommandPool& commandPool, const uint32_t size) :
 
 	commandBuffers_.resize(size);
 
-	if (vkAllocateCommandBuffers(commandPool.Device().Handle(), &allocInfo, commandBuffers_.data()) != VK_SUCCESS) 
-	{
-		Throw(std::runtime_error("failed to allocate command buffers"));
-	}
+	Check(vkAllocateCommandBuffers(commandPool.Device().Handle(), &allocInfo, commandBuffers_.data()),
+		"allocate command buffers");
 }
 
 CommandBuffers::~CommandBuffers()
@@ -38,20 +35,16 @@ VkCommandBuffer CommandBuffers::Begin(const size_t i)
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
 	beginInfo.pInheritanceInfo = nullptr; // Optional
 
-	if (vkBeginCommandBuffer(commandBuffers_[i], &beginInfo) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to begin recording command buffer"));
-	}
+	Check(vkBeginCommandBuffer(commandBuffers_[i], &beginInfo),
+		"begin recording command buffer");
 
 	return commandBuffers_[i];
 }
 
 void CommandBuffers::End(const size_t i)
 {
-	if (vkEndCommandBuffer(commandBuffers_[i]) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to record command buffer"));
-	}
+	Check(vkEndCommandBuffer(commandBuffers_[i]),
+		"record command buffer");
 }
 
 }

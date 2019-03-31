@@ -26,10 +26,8 @@ DescriptorSets::DescriptorSets(
 
 	descriptorSets_.resize(size);
 
-	if (vkAllocateDescriptorSets(descriptorPool.Device().Handle(), &allocInfo, descriptorSets_.data()) != VK_SUCCESS) 
-	{
-		throw std::runtime_error("failed to allocate descriptor sets");
-	}
+	Check(vkAllocateDescriptorSets(descriptorPool.Device().Handle(), &allocInfo, descriptorSets_.data()),
+		"allocate descriptor sets");
 }
 
 DescriptorSets::~DescriptorSets()

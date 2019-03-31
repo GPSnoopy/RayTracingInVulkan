@@ -1,7 +1,6 @@
 #include "PipelineLayout.hpp"
 #include "DescriptorSetLayout.hpp"
 #include "Device.hpp"
-#include "Utilities/Exception.hpp"
 
 namespace Vulkan {
 
@@ -17,10 +16,8 @@ PipelineLayout::PipelineLayout(const Device & device, const DescriptorSetLayout&
 	pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
 	pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
 
-	if (vkCreatePipelineLayout(device_.Handle(), &pipelineLayoutInfo, nullptr, &pipelineLayout_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create pipeline layout"));
-	}
+	Check(vkCreatePipelineLayout(device_.Handle(), &pipelineLayoutInfo, nullptr, &pipelineLayout_),
+		"create pipeline layout");
 }
 
 PipelineLayout::~PipelineLayout()

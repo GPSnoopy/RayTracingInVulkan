@@ -90,6 +90,7 @@ set(src_files_vulkan
 	Vulkan/SwapChain.cpp
 	Vulkan/SwapChain.hpp
 	Vulkan/Version.hpp
+	Vulkan/Vulkan.cpp
 	Vulkan/Vulkan.hpp
 	Vulkan/Window.cpp
 	Vulkan/Window.hpp

@@ -39,10 +39,8 @@ Image::Image(
 	imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageInfo.flags = 0; // Optional
 
-	if (vkCreateImage(device.Handle(), &imageInfo, nullptr, &image_) != VK_SUCCESS) 
-	{
-		Throw(std::runtime_error("failed to create image"));
-	}
+	Check(vkCreateImage(device.Handle(), &imageInfo, nullptr, &image_),
+		"create image");
 }
 
 Image::Image(Image&& other) noexcept :
@@ -69,10 +67,8 @@ DeviceMemory Image::AllocateMemory(const VkMemoryPropertyFlags properties) const
 	const auto requirements = GetMemoryRequirements();
 	DeviceMemory memory(device_, requirements.size, requirements.memoryTypeBits, properties);
 
-	if (vkBindImageMemory(device_.Handle(), image_, memory.Handle(), 0) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to bind image memory"));
-	}
+	Check(vkBindImageMemory(device_.Handle(), image_, memory.Handle(), 0),
+		"bind image memory");
 
 	return memory;
 }

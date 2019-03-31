@@ -172,10 +172,8 @@ DebugUtilsMessenger::DebugUtilsMessenger(const Instance& instance, VkDebugUtilsM
 	createInfo.pfnUserCallback = VulkanDebugCallback;
 	createInfo.pUserData = nullptr;
 
-	if (CreateDebugUtilsMessengerEXT(instance_.Handle(), &createInfo, nullptr, &messenger_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to set up Vulkan debug callback"));
-	}
+	Check(CreateDebugUtilsMessengerEXT(instance_.Handle(), &createInfo, nullptr, &messenger_),
+		"set up Vulkan debug callback");
 }
 
 DebugUtilsMessenger::~DebugUtilsMessenger()

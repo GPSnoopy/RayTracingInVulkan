@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Vulkan.hpp"
-#include "Utilities/Exception.hpp"
-#include <stdexcept>
 #include <vector>
+
+namespace  Vulkan {
 
 template <class TValue>
 inline std::vector<TValue> GetEnumerateVector(VkResult(enumerate) (uint32_t*, TValue*))
@@ -37,16 +37,12 @@ template <class TValue>
 inline std::vector<TValue> GetEnumerateVector(VkResult(enumerate) (uint32_t*, TValue*), std::vector<TValue>& vector)
 {
 	uint32_t count = 0;
-	if (enumerate(&count, nullptr) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("enumerate call failed"));
-	}
+	Check(enumerate(&count, nullptr),
+		"enumerate");
 
 	vector.resize(count);
-	if (enumerate(&count, vector.data()) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("enumerate call failed"));
-	}
+	Check(enumerate(&count, vector.data()),
+		"enumerate");
 
 	return vector;
 }
@@ -67,16 +63,12 @@ template <class THandle, class TValue>
 inline std::vector<TValue> GetEnumerateVector(THandle handle, VkResult(enumerate) (THandle, uint32_t*, TValue*), std::vector<TValue>& vector)
 {
 	uint32_t count = 0;
-	if (enumerate(handle, &count, nullptr) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("enumerate call failed"));
-	}
+	Check(enumerate(handle, &count, nullptr),
+		"enumerate");
 
 	vector.resize(count);
-	if (enumerate(handle, &count, vector.data()) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("enumerate call failed"));
-	}
+	Check(enumerate(handle, &count, vector.data()),
+		"enumerate");
 
 	return vector;
 }
@@ -85,16 +77,14 @@ template <class THandle1, class THandle2, class TValue>
 inline std::vector<TValue> GetEnumerateVector(THandle1 handle1, THandle2 handle2, VkResult(enumerate) (THandle1, THandle2, uint32_t*, TValue*), std::vector<TValue>& vector)
 {
 	uint32_t count = 0;
-	if (enumerate(handle1, handle2, &count, nullptr) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("enumerate call failed"));
-	}
+	Check(enumerate(handle1, handle2, &count, nullptr),
+		"enumerate");
 
 	vector.resize(count);
-	if (enumerate(handle1, handle2, &count, vector.data()) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("enumerate call failed"));
-	}
+	Check(enumerate(handle1, handle2, &count, vector.data()),
+		"enumerate");
 
 	return vector;
+}
+
 }

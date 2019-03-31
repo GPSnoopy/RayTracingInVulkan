@@ -11,10 +11,8 @@ AccelerationStructure::AccelerationStructure(const class DeviceProcedures& devic
 	allowUpdate_(createInfo.info.flags & VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_NV),
 	device_(deviceProcedures.Device())
 {
-	if (deviceProcedures.vkCreateAccelerationStructureNV(device_.Handle(), &createInfo, nullptr, &accelerationStructure_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create acceleration structure"));
-	}
+	Check(deviceProcedures.vkCreateAccelerationStructureNV(device_.Handle(), &createInfo, nullptr, &accelerationStructure_), 
+		"create acceleration structure");
 }
 
 AccelerationStructure::AccelerationStructure(AccelerationStructure&& other) noexcept :

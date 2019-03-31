@@ -209,10 +209,8 @@ RayTracingPipeline::RayTracingPipeline(
 	pipelineInfo.basePipelineHandle = nullptr;
 	pipelineInfo.basePipelineIndex = 0;
 
-	if (deviceProcedures.vkCreateRayTracingPipelinesNV(device.Handle(), nullptr, 1, &pipelineInfo, nullptr, &pipeline_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create ray tracing pipeline"));
-	}
+	Check(deviceProcedures.vkCreateRayTracingPipelinesNV(device.Handle(), nullptr, 1, &pipelineInfo, nullptr, &pipeline_), 
+		"create ray tracing pipeline");
 }
 
 RayTracingPipeline::~RayTracingPipeline()

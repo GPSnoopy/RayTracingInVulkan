@@ -16,3 +16,9 @@ public: \
 	VulkanHandleType Handle() const { return name; } \
 private: \
 	VulkanHandleType name{};
+
+namespace Vulkan
+{
+	void Check(VkResult result, const char* operation);
+	const char* ToString(VkResult result);
+}

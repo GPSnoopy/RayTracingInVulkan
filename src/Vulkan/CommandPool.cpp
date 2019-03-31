@@ -1,6 +1,5 @@
 #include "CommandPool.hpp"
 #include "Device.hpp"
-#include "Utilities/Exception.hpp"
 
 namespace Vulkan {
 
@@ -12,10 +11,8 @@ CommandPool::CommandPool(const class Device& device, const uint32_t queueFamilyI
 	poolInfo.queueFamilyIndex = queueFamilyIndex;
 	poolInfo.flags = allowReset ? VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT : 0;
 
-	if (vkCreateCommandPool(device.Handle(), &poolInfo, nullptr, &commandPool_) != VK_SUCCESS) 
-	{
-		Throw(std::runtime_error("failed to create command pool"));
-	}
+	Check(vkCreateCommandPool(device.Handle(), &poolInfo, nullptr, &commandPool_),
+		"create command pool");
 }
 
 CommandPool::~CommandPool()

@@ -158,7 +158,7 @@ void Application::DrawFrame()
 
 	if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 	{
-		Throw(std::runtime_error("failed to acquire next image"));
+		Throw(std::runtime_error(std::string("failed to acquire next image (") + ToString(result) + ")"));
 	}
 
 	const auto commandBuffer = commandBuffers_->Begin(imageIndex);
@@ -185,10 +185,8 @@ void Application::DrawFrame()
 
 	inFlightFence.Reset();
 
-	if (vkQueueSubmit(device_->GraphicsQueue(), 1, &submitInfo, inFlightFence.Handle()) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to submit draw command buffer"));
-	}
+	Check(vkQueueSubmit(device_->GraphicsQueue(), 1, &submitInfo, inFlightFence.Handle()),
+		"submit draw command buffer");
 
 	VkSwapchainKHR swapChains[] = { swapChain_->Handle() };
 	VkPresentInfoKHR presentInfo = {};
@@ -210,7 +208,7 @@ void Application::DrawFrame()
 	
 	if (result != VK_SUCCESS)
 	{
-		Throw(std::runtime_error("failed to present next image"));
+		Throw(std::runtime_error(std::string("failed to present next image (") + ToString(result) + ")"));
 	}
 
 	currentFrame_ = (currentFrame_ + 1) % inFlightFences_.size();

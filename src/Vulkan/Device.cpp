@@ -110,10 +110,8 @@ Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface) :
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(RequiredExtensions.size());
 	createInfo.ppEnabledExtensionNames = RequiredExtensions.data();
 
-	if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create logical device"));
-	}
+	Check(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_),
+		"create logical device");
 
 	vkGetDeviceQueue(device_, graphicsFamilyIndex_, 0, &graphicsQueue_);
 	vkGetDeviceQueue(device_, computeFamilyIndex_, 0, &computeQueue_);
@@ -132,10 +130,8 @@ Device::~Device()
 
 void Device::WaitIdle() const
 {
-	if (vkDeviceWaitIdle(device_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to wait for device idle"));
-	}
+	Check(vkDeviceWaitIdle(device_),
+		"wait for device idle");
 }
 
 void Device::CheckRequiredExtensions(VkPhysicalDevice physicalDevice) const

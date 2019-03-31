@@ -4,7 +4,6 @@
 #include "ImageView.hpp"
 #include "RenderPass.hpp"
 #include "SwapChain.hpp"
-#include "Utilities/Exception.hpp"
 #include <array>
 
 namespace Vulkan {
@@ -28,10 +27,8 @@ FrameBuffer::FrameBuffer(const class ImageView& imageView, const class RenderPas
 	framebufferInfo.height = renderPass.SwapChain().Extent().height;
 	framebufferInfo.layers = 1;
 
-	if (vkCreateFramebuffer(imageView_.Device().Handle(), &framebufferInfo, nullptr, &framebuffer_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create framebuffer"));
-	}
+	Check(vkCreateFramebuffer(imageView_.Device().Handle(), &framebufferInfo, nullptr, &framebuffer_),
+		"create framebuffer");
 }
 
 FrameBuffer::FrameBuffer(FrameBuffer&& other) noexcept :

@@ -1,6 +1,5 @@
 #include "Fence.hpp"
 #include "Device.hpp"
-#include "Utilities/Exception.hpp"
 
 namespace Vulkan {
 
@@ -11,11 +10,8 @@ Fence::Fence(const class Device& device, const bool signaled) :
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
 
-	if (vkCreateFence(device.Handle(), &fenceInfo, nullptr, &fence_) != VK_SUCCESS)
-	{
-
-		Throw(std::runtime_error("failed to create fence"));
-	}
+	Check(vkCreateFence(device.Handle(), &fenceInfo, nullptr, &fence_),
+		"create fence");
 }
 
 Fence::Fence(Fence&& other) noexcept :
@@ -36,18 +32,14 @@ Fence::~Fence()
 
 void Fence::Reset()
 {
-	if (vkResetFences(device_.Handle(), 1, &fence_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to reset fence"));
-	}
+	Check(vkResetFences(device_.Handle(), 1, &fence_),
+		"reset fence");
 }
 
 void Fence::Wait(const uint64_t timeout) const
 {
-	if (vkWaitForFences(device_.Handle(), 1, &fence_, VK_TRUE, timeout) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to wait for fence"));
-	}
+	Check(vkWaitForFences(device_.Handle(), 1, &fence_, VK_TRUE, timeout),
+		"wait for fence");
 }
 
 }

@@ -83,10 +83,8 @@ void TopLevelAccelerationStructure::Generate(
 	bindInfo.deviceIndexCount = 0;
 	bindInfo.pDeviceIndices = nullptr;
 
-	if (deviceProcedures_.vkBindAccelerationStructureMemoryNV(Device().Handle(), 1, &bindInfo) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to bind acceleration structure"));
-	}
+	Check(deviceProcedures_.vkBindAccelerationStructureMemoryNV(Device().Handle(), 1, &bindInfo),
+		"bind acceleration structure");
 
 	// Build the actual bottom-level acceleration structure
 	const auto flags = allowUpdate_ ? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_NV : 0;
@@ -114,10 +112,8 @@ VkGeometryInstance TopLevelAccelerationStructure::CreateGeometryInstance(
 	const auto& deviceProcedures = bottomLevelAs.DeviceProcedures();
 
 	uint64_t accelerationStructureHandle;
-	if (deviceProcedures.vkGetAccelerationStructureHandleNV(device.Handle(), bottomLevelAs.Handle(), sizeof(uint64_t), &accelerationStructureHandle) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to get acceleration structure handle"));
-	}
+	Check(deviceProcedures.vkGetAccelerationStructureHandleNV(device.Handle(), bottomLevelAs.Handle(), sizeof(uint64_t), &accelerationStructureHandle),
+		"get acceleration structure handle");
 
 	VkGeometryInstance geometryInstance = {};
 	std::memcpy(geometryInstance.transform, &transform, sizeof(glm::mat4));

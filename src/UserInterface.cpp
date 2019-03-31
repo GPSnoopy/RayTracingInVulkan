@@ -24,7 +24,7 @@ namespace
 	{
 		if (err != VK_SUCCESS)
 		{
-			Throw(std::runtime_error("ImGui Vulkan error"));
+			Throw(std::runtime_error(std::string("ImGui Vulkan error (") + Vulkan::ToString(err) + ")"));
 		}
 	}
 }

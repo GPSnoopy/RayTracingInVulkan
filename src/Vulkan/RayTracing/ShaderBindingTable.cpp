@@ -89,15 +89,13 @@ ShaderBindingTable::ShaderBindingTable(
 	const size_t groupCount = rayGenPrograms.size() + missPrograms.size() + hitGroups.size();
 	std::vector<uint8_t> shaderHandleStorage(groupCount * handleSize);
 
-	if (deviceProcedures.vkGetRayTracingShaderGroupHandlesNV(
+	Check(deviceProcedures.vkGetRayTracingShaderGroupHandlesNV(
 		device.Handle(), 
 		rayTracingPipeline.Handle(), 
 		0, static_cast<uint32_t>(groupCount),
 		shaderHandleStorage.size(),
-		shaderHandleStorage.data()) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to get ray tracing shader group handles"));
-	}
+		shaderHandleStorage.data()), 
+		"get ray tracing shader group handles");
 
 	// Copy the shader identifiers followed by their resource pointers or root constants: 
 	// first the ray generation, then the miss shaders, and finally the set of hit groups.

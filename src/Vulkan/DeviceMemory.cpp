@@ -16,10 +16,8 @@ DeviceMemory::DeviceMemory(
 	allocInfo.allocationSize = size;
 	allocInfo.memoryTypeIndex = FindMemoryType(memoryTypeBits, properties);
 
-	if (vkAllocateMemory(device.Handle(), &allocInfo, nullptr, &memory_) != VK_SUCCESS) 
-	{
-		Throw(std::runtime_error("failed to allocate memory"));
-	}
+	Check(vkAllocateMemory(device.Handle(), &allocInfo, nullptr, &memory_),
+		"allocate memory");
 }
 
 DeviceMemory::DeviceMemory(DeviceMemory&& other) noexcept :
@@ -41,10 +39,8 @@ DeviceMemory::~DeviceMemory()
 void* DeviceMemory::Map(const size_t offset, const size_t size)
 {
 	void* data;
-	if (vkMapMemory(device_.Handle(), memory_, offset, size, 0, &data) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to map memory"));
-	}
+	Check(vkMapMemory(device_.Handle(), memory_, offset, size, 0, &data),
+		"map memory");
 
 	return data;
 }

@@ -11,7 +11,6 @@
 #include "Assets/Scene.hpp"
 #include "Assets/UniformBuffer.hpp"
 #include "Assets/Vertex.hpp"
-#include "Utilities/Exception.hpp"
 
 namespace Vulkan {
 
@@ -181,10 +180,8 @@ GraphicsPipeline::GraphicsPipeline(
 	pipelineInfo.renderPass = renderPass_->Handle();
 	pipelineInfo.subpass = 0;
 
-	if (vkCreateGraphicsPipelines(device.Handle(), nullptr, 1, &pipelineInfo, nullptr, &pipeline_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create graphics pipeline"));
-	}
+	Check(vkCreateGraphicsPipelines(device.Handle(), nullptr, 1, &pipelineInfo, nullptr, &pipeline_),
+		"create graphics pipeline");
 }
 
 GraphicsPipeline::~GraphicsPipeline()

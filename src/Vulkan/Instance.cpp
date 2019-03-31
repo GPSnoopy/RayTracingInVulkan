@@ -45,10 +45,8 @@ Instance::Instance(const class Window& window, const std::vector<const char*>& v
 	createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
 	createInfo.ppEnabledLayerNames = validationLayers.data();
 
-	if (vkCreateInstance(&createInfo, nullptr, &instance_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create instance"));
-	}
+	Check(vkCreateInstance(&createInfo, nullptr, &instance_),
+		"create instance");
 
 	GetVulkanDevices();
 	GetVulkanExtensions();
@@ -81,10 +79,8 @@ void Instance::GetVulkanExtensions()
 void Instance::CheckVulkanMinimumVersion(const uint32_t minVersion)
 {
 	uint32_t version;
-	if (vkEnumerateInstanceVersion(&version) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to query instance version"));
-	}
+	Check(vkEnumerateInstanceVersion(&version),
+		"query instance version");
 
 	if (minVersion > version)
 	{

@@ -1,6 +1,5 @@
 #include "ImageView.hpp"
 #include "Device.hpp"
-#include "Utilities/Exception.hpp"
 
 namespace Vulkan {
 
@@ -24,10 +23,8 @@ ImageView::ImageView(const class Device& device, const VkImage image, const VkFo
 	createInfo.subresourceRange.baseArrayLayer = 0;
 	createInfo.subresourceRange.layerCount = 1;
 
-	if (vkCreateImageView(device_.Handle(), &createInfo, nullptr, &imageView_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create image view"));
-	}
+	Check(vkCreateImageView(device_.Handle(), &createInfo, nullptr, &imageView_),
+		"create image view");
 }
 
 ImageView::~ImageView()

@@ -1,7 +1,5 @@
 #include "DescriptorPool.hpp"
 #include "Device.hpp"
-#include "Utilities/Exception.hpp"
-#include <array>
 
 namespace Vulkan {
 
@@ -21,10 +19,8 @@ DescriptorPool::DescriptorPool(const Vulkan::Device& device, const std::vector<D
 	poolInfo.pPoolSizes = poolSizes.data();
 	poolInfo.maxSets = static_cast<uint32_t>(maxSets);
 
-	if (vkCreateDescriptorPool(device.Handle(), &poolInfo, nullptr, &descriptorPool_) != VK_SUCCESS)
-	{
-		Throw(std::runtime_error("failed to create descriptor pool"));
-	}
+	Check(vkCreateDescriptorPool(device.Handle(), &poolInfo, nullptr, &descriptorPool_),
+		"create descriptor pool");
 }
 
 DescriptorPool::~DescriptorPool()

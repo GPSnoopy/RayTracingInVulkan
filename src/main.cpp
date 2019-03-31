@@ -119,7 +119,7 @@ namespace
 			}
 
 			// We want a device with a graphics queue.
-			const auto queueFamilies = GetEnumerateVector(device, vkGetPhysicalDeviceQueueFamilyProperties);
+			const auto queueFamilies = Vulkan::GetEnumerateVector(device, vkGetPhysicalDeviceQueueFamilyProperties);
 			const auto hasGraphicsQueue = std::find_if(queueFamilies.begin(), queueFamilies.end(), [](const VkQueueFamilyProperties& queueFamily)
 			{
 				return queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT;
