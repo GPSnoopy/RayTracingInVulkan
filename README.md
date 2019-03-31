@@ -10,7 +10,7 @@ This personal project follows my own attempts at CPU ray tracing following Peter
 
 ## Gallery
 
-<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_CornellBox.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_CornellBoxLucy.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_OneWeekend.jpg" width="33%">
+<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_OneWeekend.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_CornellBox.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_CornellBoxLucy.jpg" width="33%">
 
 ## TODOs
 
