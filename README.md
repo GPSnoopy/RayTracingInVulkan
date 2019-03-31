@@ -1,6 +1,6 @@
 # Ray Tracing In Vulkan
 
-<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/Scene_LucySettings.jpg">
+<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_LucySettings.jpg">
 
 My implementation of [Peter Shirley's Ray Tracing in One Weekend](https://github.com/petershirley/raytracinginoneweekend) books using Vulkan and NVIDIA's RTX extension (VK_NV_ray_tracing). This allows most scenes to be rendered at interactive speed on appropriate hardware.
 
@@ -8,9 +8,7 @@ The real-time ray tracer can also load full geometry from OBJ files as well as r
 
 This personal project follows my own attempts at CPU ray tracing following Peter Shirley's books (see [here](https://github.com/GPSnoopy/RayTracingInOneWeekend) and [here](https://github.com/GPSnoopy/RayTracingTheNextWeek) if you are interested).
 
-<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/Scene_CornellBox.jpg" width="33%">
-<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/Scene_CornellBoxLucy.jpg" width="33%">
-<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/Scene_OneWeekend.jpg" width="33%">
+<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_CornellBox.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_CornellBoxLucy.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/AddGallery/Scene_OneWeekend.jpg" width="33%">
 
 ## TODOs
 
