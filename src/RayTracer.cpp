@@ -9,8 +9,9 @@
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/Window.hpp"
 
-RayTracer::RayTracer(const Vulkan::WindowConfig& windowConfig, const bool vsync) :
-	Application(windowConfig, vsync, true)
+RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, const bool vsync) :
+	Application(windowConfig, vsync, true),
+	userSettings_(userSettings)
 {
 }
 
@@ -74,7 +75,7 @@ void RayTracer::DeleteSwapChain()
 void RayTracer::DrawFrame()
 {
 	// Check if the scene has been changed by the user.
-	if (sceneIndex_ != userSettings_.SceneIndex)
+	if (sceneIndex_ != static_cast<uint32_t>(userSettings_.SceneIndex))
 	{
 		Device().WaitIdle();
 		DeleteSwapChain();
@@ -148,27 +149,38 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 		case GLFW_KEY_ESCAPE:
 			Window().Close();
 			break;
-		case GLFW_KEY_F1:
-			userSettings_.ShowSettings = !userSettings_.ShowSettings;
-			break;
-		case GLFW_KEY_F2:
-			userSettings_.ShowOverlay = !userSettings_.ShowOverlay;
-			break;
-		case GLFW_KEY_R:
-			userSettings_.IsRayTraced = !userSettings_.IsRayTraced;
-			break;
-		case GLFW_KEY_W:
-			isWireFrame_ = !isWireFrame_;
-			break;
 		default:
 			break;
+		}
+
+		if (!userSettings_.Benchmark)
+		{
+			switch (key)
+			{
+			case GLFW_KEY_F1:
+				userSettings_.ShowSettings = !userSettings_.ShowSettings;
+				break;
+			case GLFW_KEY_F2:
+				userSettings_.ShowOverlay = !userSettings_.ShowOverlay;
+				break;
+			case GLFW_KEY_R:
+				userSettings_.IsRayTraced = !userSettings_.IsRayTraced;
+				break;
+			case GLFW_KEY_W:
+				isWireFrame_ = !isWireFrame_;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
 
 void RayTracer::OnCursorPosition(const double xpos, const double ypos)
 {
-	if (userInterface_->WantsToCaptureKeyboard() || userInterface_->WantsToCaptureMouse())
+	if (userSettings_.Benchmark ||
+		userInterface_->WantsToCaptureKeyboard() || 
+		userInterface_->WantsToCaptureMouse())
 	{
 		return;
 	}
@@ -190,7 +202,8 @@ void RayTracer::OnCursorPosition(const double xpos, const double ypos)
 
 void RayTracer::OnMouseButton(const int button, const int action, const int mods)
 {
-	if (userInterface_->WantsToCaptureMouse())
+	if (userSettings_.Benchmark || 
+		userInterface_->WantsToCaptureMouse())
 	{
 		return;
 	}
@@ -201,7 +214,7 @@ void RayTracer::OnMouseButton(const int button, const int action, const int mods
 	}
 }
 
-void RayTracer::LoadScene(const int sceneIndex)
+void RayTracer::LoadScene(const uint32_t sceneIndex)
 {
 	scene_.reset(new Assets::Scene(CommandPool(), SceneList::AllScenes[sceneIndex].second(cameraInitialSate_), true));
 	sceneIndex_ = sceneIndex;

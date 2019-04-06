@@ -2,24 +2,27 @@
 
 struct UserSettings final
 {
+	// Application
+	bool Benchmark;
+
 	// Scene
-	int SceneIndex = 0;
+	int SceneIndex;
 
 	// Renderer
-	bool IsRayTraced = false;
-	bool AccumulateRays = true;
-	uint32_t NumberOfSamples = 8;
-	uint32_t NumberOfBounces = 16;
+	bool IsRayTraced;
+	bool AccumulateRays;
+	uint32_t NumberOfSamples;
+	uint32_t NumberOfBounces;
 
 	// Camera
-	float FieldOfView = 45.0f;
-	float Aperture = 0.0f;
-	float FocusDistance = 1.0f;
-	bool GammaCorrection = true;
+	float FieldOfView;
+	float Aperture;
+	float FocusDistance;
+	bool GammaCorrection;
 
 	// UI
-	bool ShowSettings = true;
-	bool ShowOverlay = true;
+	bool ShowSettings;
+	bool ShowOverlay;
 
 	bool RequiresAccumulationReset(const UserSettings& prev) const
 	{

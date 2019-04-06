@@ -13,6 +13,7 @@
 
 namespace
 {
+	UserSettings CreateUserSettings(const Options& options);
 	void PrintVulkanDevices(const Vulkan::Application& application);
 	void PrintVulkanExtensions(const Vulkan::Application& application);
 	void SetVulkanDevice(Vulkan::Application& application);
@@ -23,8 +24,10 @@ int main(int argc, const char* argv[]) noexcept
 	try
 	{
 		const Options options(argc, argv);
+		const UserSettings userSettings = CreateUserSettings(options);
 		const Vulkan::WindowConfig windowConfig{ "Vulkan Window", options.Width, options.Height, options.Fullscreen, !options.Fullscreen };
-		RayTracer application(windowConfig, options.VSync);
+
+		RayTracer application(userSettings, windowConfig, options.VSync);
 
 		PrintVulkanDevices(application);
 		PrintVulkanExtensions(application);
@@ -68,6 +71,22 @@ int main(int argc, const char* argv[]) noexcept
 
 namespace
 {
+
+	UserSettings CreateUserSettings(const Options& options)
+	{
+		UserSettings userSettings{};
+
+		userSettings.Benchmark = options.Benchmark;
+		userSettings.SceneIndex = options.SceneIndex;
+		userSettings.IsRayTraced = true;
+		userSettings.AccumulateRays = true;
+		userSettings.NumberOfSamples = options.Samples;
+		userSettings.NumberOfBounces = options.Bounces;
+		userSettings.ShowSettings = !options.Benchmark;
+		userSettings.ShowOverlay = true;
+
+		return userSettings;
+	}
 
 	void PrintVulkanDevices(const Vulkan::Application& application)
 	{

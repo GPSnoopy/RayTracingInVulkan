@@ -10,7 +10,7 @@ public:
 
 	VULKAN_NON_COPIABLE(RayTracer)
 
-	RayTracer(const Vulkan::WindowConfig& windowConfig, bool vsync);
+	RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, bool vsync);
 	~RayTracer();
 
 protected:
@@ -30,9 +30,9 @@ protected:
 
 private:
 
-	void LoadScene(int sceneIndex);
+	void LoadScene(uint32_t sceneIndex);
 
-	int sceneIndex_{};
+	uint32_t sceneIndex_{};
 	UserSettings userSettings_{};
 	UserSettings previousSettings_{};
 	SceneList::CameraInitialSate cameraInitialSate_{};
