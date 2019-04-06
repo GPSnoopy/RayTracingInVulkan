@@ -8,8 +8,6 @@ using namespace boost::program_options;
 
 Options::Options(const int argc, const char* argv[])
 {
-
-
 	options_description scene("Scene options");
 	scene.add_options()
 		("scene", value<uint32_t>(&SceneIndex)->default_value(1), "Set the scene to start with.")
@@ -32,7 +30,7 @@ Options::Options(const int argc, const char* argv[])
 	options_description desc("Application options");
 	desc.add_options()
 		("help", "Display help message.")
-		("benchmark", bool_switch(&Benchmark)->default_value(false), "Run the application in benchmark mode")
+		("benchmark", bool_switch(&Benchmark)->default_value(false), "Run the application in benchmark mode.")
 		;
 
 	desc.add(scene);

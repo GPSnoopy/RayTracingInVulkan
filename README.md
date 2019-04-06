@@ -12,15 +12,19 @@ This personal project follows my own attempts at CPU ray tracing following Peter
 
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/OneWeekend.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBox.jpg" width="33%"> <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBoxLucy.jpg" width="33%">
 
-## TODOs
-
-I do intend on implementing the scenes from the second book [Ray Tracing The Next Week](https://github.com/petershirley/raytracingthenextweek) when I get the time. 
-
 ## Performance
 
 Using a GeForce RTX 2080 Ti, the rendering speed is obscenely faster than using the CPU renderer. Obviously both implementations are still quite naive in some places, but I'm really impressed by the performance. The cover scene of the first book reaches ~90fps at 1280x720 using 8 rays per pixel and up to 16 bounces.
 
 I suspect performance could be improved further. I have created each object in the scene as a separate instance in the top level acceleration structure, which is probably not the best for data locality. The same goes for displaying multiple [Lucy statues](http://graphics.stanford.edu/data/3Dscanrep/), where I have naively duplicated the geometry rather than instancing it multiple times.
+
+## Benchmarking
+
+Command line arguments can be used to control various aspects of the application, including running it in benchmark mode. For mode information, use `--help`.
+
+```
+> RayTracer.exe --benchmark --width 2560 --height 1200 --fullscreen --scene 1
+```
 
 ## Building
 
