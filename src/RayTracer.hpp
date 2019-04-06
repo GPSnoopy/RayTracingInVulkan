@@ -51,4 +51,8 @@ private:
 	uint32_t totalNumberOfSamples_{};
 	uint32_t numberOfSamples_{};
 	bool resetAccumulation_{};
+
+	// Benchmark stats
+	double initialTime_{};
+	uint32_t totalFrames_;
 };

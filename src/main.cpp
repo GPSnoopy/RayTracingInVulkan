@@ -15,7 +15,7 @@ namespace
 {
 	UserSettings CreateUserSettings(const Options& options);
 	void PrintVulkanDevices(const Vulkan::Application& application);
-	void PrintVulkanExtensions(const Vulkan::Application& application);
+	void PrintVulkanExtensions(const Vulkan::Application& application, bool benchmark);
 	void SetVulkanDevice(Vulkan::Application& application);
 }
 
@@ -30,7 +30,7 @@ int main(int argc, const char* argv[]) noexcept
 		RayTracer application(userSettings, windowConfig, options.VSync);
 
 		PrintVulkanDevices(application);
-		PrintVulkanExtensions(application);
+		PrintVulkanExtensions(application, options.Benchmark);
 		SetVulkanDevice(application);
 
 		application.Run();
@@ -113,8 +113,13 @@ namespace
 		}
 	}
 
-	void PrintVulkanExtensions(const Vulkan::Application& application)
+	void PrintVulkanExtensions(const Vulkan::Application& application, const bool benchmark)
 	{
+		if (benchmark)
+		{
+			return;
+		}
+
 		std::cout << "Vulkan Instance Extensions: " << std::endl;
 
 		for (const auto& extension : application.Extensions())

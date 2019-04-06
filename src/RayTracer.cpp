@@ -8,9 +8,10 @@
 #include "Vulkan/Device.hpp"
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/Window.hpp"
+#include <iostream>
 
 RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, const bool vsync) :
-	Application(windowConfig, vsync, true),
+	Application(windowConfig, vsync, !userSettings.Benchmark),
 	userSettings_(userSettings)
 {
 }
@@ -111,6 +112,29 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 	const auto prevTime = time_;
 	time_ = Window().Time();
 	const auto deltaTime = time_ - prevTime;
+
+	// Keep track of benchmark time.
+	if (userSettings_.Benchmark)
+	{
+		if (totalFrames_ == 0)
+		{
+			initialTime_ = time_;
+		}
+
+		const double period = 5;
+		const double prevTotalTime = prevTime - initialTime_;
+		const double totalTime = time_ - initialTime_;
+
+		if (static_cast<uint64_t>(prevTotalTime / period) != static_cast<uint64_t>(totalTime / period))
+		{
+			std::cout << "Benchmark: " << totalFrames_ / totalTime << " fps" << std::endl;
+			totalFrames_ = 0;
+		}
+		else
+		{
+			totalFrames_++;
+		}
+	}
 
 	// Render the scene
 	userSettings_.IsRayTraced

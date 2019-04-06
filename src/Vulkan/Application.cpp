@@ -32,7 +32,7 @@ Application::Application(const WindowConfig& windowConfig, const bool vsync, con
 
 	window_.reset(new class Window(windowConfig));
 	instance_.reset(new Instance(*window_, validationLayers));
-	debugUtilsMessenger_.reset(new DebugUtilsMessenger(*instance_, VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT));
+	debugUtilsMessenger_.reset(enableValidationLayers ? new DebugUtilsMessenger(*instance_, VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) : nullptr);
 	surface_.reset(new Surface(*instance_));
 }
 
