@@ -54,5 +54,5 @@ private:
 
 	// Benchmark stats
 	double initialTime_{};
-	uint32_t totalFrames_;
+	uint32_t totalFrames_{};
 };

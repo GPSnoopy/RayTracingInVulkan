@@ -10,8 +10,18 @@
 #include "Vulkan/Window.hpp"
 #include <iostream>
 
+namespace
+{
+	const bool EnableValidationLayers =
+#ifdef NDEBUG
+		false;
+#else
+		true;
+#endif
+}
+
 RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, const bool vsync) :
-	Application(windowConfig, vsync, !userSettings.Benchmark),
+	Application(windowConfig, vsync, EnableValidationLayers),
 	userSettings_(userSettings)
 {
 }
