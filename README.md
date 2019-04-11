@@ -25,6 +25,12 @@ Command line arguments can be used to control various aspects of the application
 ```
 > RayTracer.exe --benchmark --width 2560 --height 1200 --fullscreen --scene 1
 ```
+Here are my results with the command above on two different computers using NVIDIA drivers 425.31.
+
+| Platform | Scene 1 | Scene 4 |
+| --- | ---: | ---: |
+| GeForce RTX 2080 Ti | 25.3 fps | 10.4 fps |
+| GeForce GTX 1080 Ti | 3.6 fps | 1.3 fps |
 
 ## Building
 
