@@ -27,7 +27,7 @@ Application::Application(const WindowConfig& windowConfig, const bool vsync, con
 	vsync_(vsync)
 {
 	const auto validationLayers = enableValidationLayers
-		? std::vector<const char*>{"VK_LAYER_LUNARG_standard_validation"}
+		? std::vector<const char*>{"VK_LAYER_KHRONOS_validation"}
 		: std::vector<const char*>();
 
 	window_.reset(new class Window(windowConfig));

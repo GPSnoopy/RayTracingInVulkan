@@ -62,4 +62,4 @@ endif()
 
 add_subdirectory(assets)
 add_subdirectory(src)
-
+set_property (DIRECTORY PROPERTY VS_STARTUP_PROJECT "RayTracer")

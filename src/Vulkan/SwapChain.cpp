@@ -147,6 +147,11 @@ VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentMod
 		return VK_PRESENT_MODE_IMMEDIATE_KHR;
 	}
 
+	if (std::find(presentModes.begin(), presentModes.end(), VK_PRESENT_MODE_FIFO_RELAXED_KHR) != presentModes.end())
+	{
+		return VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+	}
+
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 
