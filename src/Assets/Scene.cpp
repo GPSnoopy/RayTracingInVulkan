@@ -5,6 +5,7 @@
 #include "Vulkan/Buffer.hpp"
 #include "Vulkan/CommandPool.hpp"
 #include "Utilities/Exception.hpp"
+#include <cstring>
 
 namespace Assets {
 
