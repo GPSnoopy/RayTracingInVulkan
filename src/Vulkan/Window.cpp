@@ -2,7 +2,6 @@
 #include "Utilities/Exception.hpp"
 #include "Utilities/StbImage.hpp"
 #include <iostream>
-#include <sstream>
 
 namespace Vulkan {
 
@@ -102,21 +101,13 @@ std::vector<const char*> Window::GetRequiredInstanceExtensions() const
 	return std::vector<const char*>(glfwExtensions, glfwExtensions + glfwExtensionCount);
 }
 
-double Window::Dpi() const
+double Window::ContentScale() const
 {
-	// TODO in GLFW 3.3, use glfwGetWindowContentScale
-	auto monitor = glfwGetWindowMonitor(window_);
-	if (!monitor)
-	{
-		monitor = glfwGetPrimaryMonitor();
-	}
+	float xscale;
+	float yscale;
+	glfwGetWindowContentScale(window_, &xscale, &yscale);
 
-	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-
-	int widthMM, heightMM;
-	glfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
-
-	return mode->width / (widthMM / 25.4);
+	return xscale;
 }
 
 double Window::Time() const

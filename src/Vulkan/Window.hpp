@@ -21,7 +21,7 @@ namespace Vulkan
 		GLFWwindow* Handle() const { return window_; }
 
 		std::vector<const char*> GetRequiredInstanceExtensions() const;
-		double Dpi() const;
+		double ContentScale() const;
 		double Time() const;
 		VkExtent2D FramebufferSize() const;
 		VkExtent2D WindowSize() const;

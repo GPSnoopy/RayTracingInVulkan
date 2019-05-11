@@ -81,9 +81,8 @@ UserInterface::UserInterface(
 	// No ini file.
 	io.IniFilename = nullptr;
 
-	// DPI
-	const auto dpi = window.Dpi();
-	const auto scaleFactor = static_cast<float>(dpi / 110);
+	// Window scaling and style.
+	const auto scaleFactor = window.ContentScale();
 
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().ScaleAllSizes(scaleFactor);
