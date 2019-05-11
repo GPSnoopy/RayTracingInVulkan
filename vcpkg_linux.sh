@@ -7,11 +7,12 @@ git clone https://github.com/Microsoft/vcpkg.git vcpkg.linux
 cd vcpkg.linux
 ./bootstrap-vcpkg.sh
 
-./vcpkg install boost-exception:x64-linux
-./vcpkg install boost-program-options:x64-linux
-./vcpkg install boost-stacktrace:x64-linux
-./vcpkg install glfw3:x64-linux
-./vcpkg install glm:x64-linux
-./vcpkg install imgui:x64-linux
-./vcpkg install stb:x64-linux
-./vcpkg install tinyobjloader:x64-linux
+./vcpkg install \
+	boost-exception:x64-linux \
+	boost-program-options:x64-linux \
+	boost-stacktrace:x64-linux \
+	glfw3:x64-linux \
+	glm:x64-linux \
+	imgui:x64-linux \
+	stb:x64-linux \
+	tinyobjloader:x64-linux
