@@ -62,6 +62,7 @@ SwapChain::SwapChain(const class Device& device, const bool vsync) :
 	Check(vkCreateSwapchainKHR(device.Handle(), &createInfo, nullptr, &swapChain_),
 		"create swap chain!");
 
+	minImageCount_ = details.Capabilities.minImageCount;
 	format_ = surfaceFormat.format;
 	extent_ = extent;
 	images_ = GetEnumerateVector(device_.Handle(), swapChain_, vkGetSwapchainImagesKHR);

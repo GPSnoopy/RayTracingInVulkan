@@ -21,6 +21,7 @@ namespace Vulkan
 
 		VkPhysicalDevice PhysicalDevice() const { return physicalDevice_; }
 		const class Device& Device() const { return device_; }
+		uint32_t MinImageCount() const { return minImageCount_; }
 		const std::vector<VkImage>& Images() const { return images_; }
 		const std::vector<std::unique_ptr<ImageView>>& ImageViews() const { return imageViews_; }
 		const VkExtent2D& Extent() const { return extent_; }
@@ -46,6 +47,7 @@ namespace Vulkan
 
 		VULKAN_HANDLE(VkSwapchainKHR, swapChain_)
 
+		uint32_t minImageCount_;
 		VkFormat format_;
 		VkExtent2D extent_{};
 		std::vector<VkImage> images_;

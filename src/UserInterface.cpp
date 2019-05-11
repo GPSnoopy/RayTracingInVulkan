@@ -66,6 +66,8 @@ UserInterface::UserInterface(
 	vulkanInit.Queue = device.GraphicsQueue();
 	vulkanInit.PipelineCache = nullptr;
 	vulkanInit.DescriptorPool = descriptorPool_->Handle();
+	vulkanInit.MinImageCount = swapChain.MinImageCount();
+	vulkanInit.ImageCount = static_cast<uint32_t>(swapChain.Images().size());
 	vulkanInit.Allocator = nullptr;
 	vulkanInit.CheckVkResultFn = CheckVulkanResultCallback;
 
@@ -100,8 +102,7 @@ UserInterface::UserInterface(
 		}
 	});
 
-	ImGui_ImplVulkan_InvalidateFontUploadObjects();
-
+	ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
 
 UserInterface::~UserInterface()
