@@ -1,5 +1,5 @@
 
-set(exe_name RayTracer)
+set(exe_name ${MAIN_PROJECT})
 
 set(src_files_assets
 	Assets/CornellBox.cpp

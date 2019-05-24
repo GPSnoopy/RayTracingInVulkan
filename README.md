@@ -36,7 +36,7 @@ Here are my results with the command above on two different computers using NVID
 
 Most of the third party dependencies can be built using [Microsoft's vcpkg](https://github.com/Microsoft/vcpkg).
 
-**Windows (Visual Studio 2017 Win64 solution)**
+**Windows (Visual Studio 2019 x64 solution)**
 ```
 > vcpkg_windows.bat
 > build_windows.bat

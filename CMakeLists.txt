@@ -60,6 +60,7 @@ if (NOT Vulkan_GLSLANG_VALIDATOR)
     message(FATAL_ERROR "glslangValidator not found!")
 endif()
 
+set(MAIN_PROJECT "RayTracer")
 add_subdirectory(assets)
 add_subdirectory(src)
-set_property (DIRECTORY PROPERTY VS_STARTUP_PROJECT "RayTracer")
+set_property (DIRECTORY PROPERTY VS_STARTUP_PROJECT ${MAIN_PROJECT})

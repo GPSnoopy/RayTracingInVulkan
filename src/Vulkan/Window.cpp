@@ -101,7 +101,7 @@ std::vector<const char*> Window::GetRequiredInstanceExtensions() const
 	return std::vector<const char*>(glfwExtensions, glfwExtensions + glfwExtensionCount);
 }
 
-double Window::ContentScale() const
+float Window::ContentScale() const
 {
 	float xscale;
 	float yscale;
