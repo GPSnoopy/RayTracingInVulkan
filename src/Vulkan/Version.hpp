@@ -24,7 +24,7 @@ namespace Vulkan
 		{
 			// NVIDIA specific driver versioning.
 			// https://github.com/SaschaWillems/VulkanCapsViewer/blob/master/vulkanDeviceInfo.cpp
-			// 10 bits = major version (up to r1023)
+			// 10 bits = major version (up to 1023)
 			// 8 bits = minor version (up to 255)
 			// 8 bits = secondary branch version/build version (up to 255)
 			// 6 bits = tertiary branch/build version (up to 63)
