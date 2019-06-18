@@ -101,7 +101,7 @@ namespace
 			vkGetPhysicalDeviceFeatures(device, &features);
 
 			const Vulkan::Version vulkanVersion(prop.apiVersion);
-			const Vulkan::Version driverVersion(prop.driverVersion);
+			const Vulkan::Version driverVersion(prop.driverVersion, prop.vendorID);
 
 			std::cout << "- [" << prop.deviceID << "] ";
 			std::cout << Vulkan::Strings::VendorId(prop.vendorID) << " '" << prop.deviceName;
