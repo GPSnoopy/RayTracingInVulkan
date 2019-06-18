@@ -11,7 +11,7 @@
 typedef boost::error_info<struct tag_stacktrace, boost::stacktrace::stacktrace> traced;
 
 template <class E>
-inline void Throw(const E& e) noexcept(false)
+[[noreturn]] inline void Throw(const E& e) noexcept(false)
 {
 	throw boost::enable_error_info(e) << traced(boost::stacktrace::stacktrace());
 }
