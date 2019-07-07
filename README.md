@@ -25,12 +25,12 @@ Command line arguments can be used to control various aspects of the application
 ```
 > RayTracer.exe --benchmark --width 2560 --height 1200 --fullscreen --scene 1
 ```
-Here are my results with the command above on two different computers using NVIDIA drivers 425.31.
+Here are my results with the command above on two different computers using NVIDIA drivers 430.86.
 
-| Platform | Scene 1 | Scene 4 |
-| --- | ---: | ---: |
-| GeForce RTX 2080 Ti | 25.3 fps | 10.4 fps |
-| GeForce GTX 1080 Ti | 3.6 fps | 1.3 fps |
+| Platform | Scene 1 | Scene 2 | Scene 3 | Scene 4 |
+| --- | ---: | ---: | ---: | ---: |
+| GeForce RTX 2080 Ti | 38.0 fps | 19.8 fps | 57.2 fps | 14.4 fps |
+| GeForce GTX 1080 Ti | 3.8 fps | 2.0 fps | 4.0 fps | 1.3 fps |
 
 ## Building
 
@@ -48,7 +48,7 @@ Most of the third party dependencies can be built using [Microsoft's vcpkg](http
 > ./build_linux.sh
 ```
 
-Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/) and [CMake](https://cmake.org/), the build should work out-of-the box for Visual Studio. On Linux, you may have to manually install additional dependencies for `vcpkg_linux.sh` to succeed.
+Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/), the build should work out-of-the box for Visual Studio. On Linux, you may have to manually install additional dependencies for `vcpkg_linux.sh` to succeed.
 
 ## References
 
