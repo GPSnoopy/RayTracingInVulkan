@@ -88,7 +88,9 @@ void TopLevelAccelerationStructure::Generate(
 		"bind acceleration structure");
 
 	// Build the actual bottom-level acceleration structure
-	const auto flags = allowUpdate_ ? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_NV : 0;
+	const auto flags = allowUpdate_ 
+		? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_NV 
+		: VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_NV;
 
 	VkAccelerationStructureInfoNV buildInfo = {};
 	buildInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
