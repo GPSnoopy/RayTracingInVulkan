@@ -24,10 +24,11 @@ float Schlick(const float cosine, const float refractionIndex)
 }
 
 // Lambertian
-RayPayload ScatterLambertian(const Material m, const vec3 normal, const float t, inout uint seed)
+RayPayload ScatterLambertian(const Material m, const vec3 direction, const vec3 normal, const float t, inout uint seed)
 {
+	const bool isScattered = dot(direction, normal) < 0;
 	const vec4 colorAndDistance = vec4(m.Diffuse.rgb, t);
-	const vec4 scatter = vec4(normal + RandomInUnitSphere(seed), 1);
+	const vec4 scatter = vec4(normal + RandomInUnitSphere(seed), isScattered ? 1 : 0);
 
 	return RayPayload(colorAndDistance, scatter, seed);
 }
@@ -76,7 +77,7 @@ RayPayload Scatter(const Material m, const vec3 direction, const vec3 normal, co
 	switch (m.MaterialModel)
 	{
 	case MaterialLambertian:
-		return ScatterLambertian(m, normal, t, seed);
+		return ScatterLambertian(m, normDirection, normal, t, seed);
 	case MaterialMetallic:
 		return ScatterMetallic(m, normDirection, normal, t, seed);
 	case MaterialDielectric:
