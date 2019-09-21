@@ -84,6 +84,7 @@ namespace
 		userSettings.AccumulateRays = true;
 		userSettings.NumberOfSamples = options.Samples;
 		userSettings.NumberOfBounces = options.Bounces;
+		userSettings.MaxNumberOfSamples = options.MaxSamples;
 		userSettings.ShowSettings = !options.Benchmark;
 		userSettings.ShowOverlay = true;
 

@@ -103,15 +103,21 @@ void RayTracer::DrawFrame()
 		!userSettings_.AccumulateRays)
 	{
 		totalNumberOfSamples_ = 0;
-		numberOfSamples_ = userSettings_.NumberOfSamples;
 		resetAccumulation_ = false;
 	}
 
 	previousSettings_ = userSettings_;
 
 	// Keep track of our sample count.
+	numberOfSamples_ = glm::clamp(userSettings_.MaxNumberOfSamples - totalNumberOfSamples_, 0u, userSettings_.NumberOfSamples);
 	totalNumberOfSamples_ += numberOfSamples_;
-	numberOfSamples_ = totalNumberOfSamples_ < 64*1024 ? userSettings_.NumberOfSamples : 0;
+
+	// If in benchmark mode, bail out if we've reacher the sample limit.
+	if (userSettings_.Benchmark && numberOfSamples_ == 0)
+	{
+		Window().Close();
+		return;
+	}
 	
 	Application::DrawFrame();
 }

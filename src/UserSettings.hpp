@@ -13,6 +13,7 @@ struct UserSettings final
 	bool AccumulateRays;
 	uint32_t NumberOfSamples;
 	uint32_t NumberOfBounces;
+	uint32_t MaxNumberOfSamples;
 
 	// Camera
 	float FieldOfView;

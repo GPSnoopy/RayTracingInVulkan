@@ -22,11 +22,12 @@ public:
 	bool Benchmark{};
 
 	// Scene options.
-	uint32_t SceneIndex = 0;
+	uint32_t SceneIndex;
 
 	// Renderer options.
-	uint32_t Samples = 8;
-	uint32_t Bounces = 16;
+	uint32_t Samples;
+	uint32_t Bounces;
+	uint32_t MaxSamples;
 
 	// Window options
 	uint32_t Width{};
