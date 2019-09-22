@@ -25,7 +25,7 @@ Command line arguments can be used to control various aspects of the application
 ```
 > RayTracer.exe --benchmark --width 2560 --height 1200 --fullscreen --scene 1
 ```
-Here are my results with the command above on two different computers using NVIDIA drivers 430.86.
+Here are my results with the command above on two different computers using NVIDIA drivers 430.86 and Release 3 of the RayTracer.
 
 | Platform | Scene 1 | Scene 2 | Scene 3 | Scene 4 |
 | --- | ---: | ---: | ---: | ---: |
