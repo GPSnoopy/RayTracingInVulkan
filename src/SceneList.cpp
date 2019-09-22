@@ -35,9 +35,9 @@ SceneAssets SceneList::CubeAndSpheres(CameraInitialSate& camera)
 	std::vector<Texture> textures;
 
 	models.push_back(Model::LoadModel("../assets/models/cube_multi.obj"));
-	models.push_back(Model::CreateSphere(vec3(1, 0, 0), 0.5, 3, Material::Metallic(vec3(0.7f, 0.5f, 0.8f), 0.2f), true));
-	models.push_back(Model::CreateSphere(vec3(-1, 0, 0), 0.5, 3, Material::Dielectric(1.5f), true));
-	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 0.5, 3, Material::Lambertian(vec3(1.0f), 0), true));
+	models.push_back(Model::CreateSphere(vec3(1, 0, 0), 0.5, Material::Metallic(vec3(0.7f, 0.5f, 0.8f), 0.2f), true));
+	models.push_back(Model::CreateSphere(vec3(-1, 0, 0), 0.5, Material::Dielectric(1.5f), true));
+	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 0.5, Material::Lambertian(vec3(1.0f), 0), true));
 
 	textures.push_back(Texture::LoadTexture("../assets/textures/land_ocean_ice_cloud_2048.png", Vulkan::SamplerConfig()));
 
@@ -55,7 +55,6 @@ SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 	camera.GammaCorrection = true;
 	camera.HasSky = true;
 
-	const int subdiv = 3;
 	const bool isProc = true;
 
 	std::mt19937 engine(42);
@@ -63,7 +62,7 @@ SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 
 	std::vector<Model> models;
 
-	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, subdiv + 2, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
+	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
 
 	for (int a = -11; a < 11; ++a)
 	{
@@ -76,7 +75,7 @@ SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 			{
 				if (chooseMat < 0.8f) // Diffuse
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Lambertian(vec3(
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Lambertian(vec3(
 						random()*random(),
 						random()*random(),
 						random()*random())),
@@ -84,22 +83,22 @@ SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 				}
 				else if (chooseMat < 0.95f) // Metal
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Metallic(
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Metallic(
 						vec3(0.5f*(1 + random()), 0.5f*(1 + random()), 0.5f*(1 + random())),
 						0.5f*random()),
 						isProc));
 				}
 				else // Glass
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Dielectric(1.5f), isProc));
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Dielectric(1.5f), isProc));
 				}
 			}
 		}
 	}
 
-	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 1.0f, subdiv, Material::Dielectric(1.5f), isProc));
-	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, subdiv, Material::Lambertian(vec3(0.4f, 0.2f, 0.1f)), isProc));
-	models.push_back(Model::CreateSphere(vec3(4, 1, 0), 1.0f, subdiv, Material::Metallic(vec3(0.7f, 0.6f, 0.5f), 0.0f), isProc));
+	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 1.0f, Material::Dielectric(1.5f), isProc));
+	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, Material::Lambertian(vec3(0.4f, 0.2f, 0.1f)), isProc));
+	models.push_back(Model::CreateSphere(vec3(4, 1, 0), 1.0f, Material::Metallic(vec3(0.7f, 0.6f, 0.5f), 0.0f), isProc));
 
 	return std::forward_as_tuple(std::move(models), std::vector<Texture>());
 }
@@ -116,7 +115,6 @@ SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 	camera.GammaCorrection = true;
 	camera.HasSky = true;
 
-	const int subdiv = 3;
 	const bool isProc = true;
 
 	std::mt19937 engine(42);
@@ -125,7 +123,7 @@ SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 	std::vector<Model> models;
 	std::vector<Texture> textures;
 
-	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, subdiv + 2, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
+	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
 
 	for (int a = -11; a < 11; ++a)
 	{
@@ -138,7 +136,7 @@ SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 			{
 				if (chooseMat < 0.8f) // Diffuse
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Lambertian(vec3(
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Lambertian(vec3(
 						random() * random(),
 						random() * random(),
 						random() * random())),
@@ -146,22 +144,22 @@ SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 				}
 				else if (chooseMat < 0.95f) // Metal
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Metallic(
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Metallic(
 						vec3(0.5f * (1 + random()), 0.5f * (1 + random()), 0.5f * (1 + random())),
 						0.5f * random()),
 						isProc));
 				}
 				else // Glass
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Dielectric(1.5f), isProc));
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Dielectric(1.5f), isProc));
 				}
 			}
 		}
 	}
 
-	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 1.0f, subdiv, Material::Metallic(vec3(1.0f), 0.1f, 2), isProc));
-	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, subdiv, Material::Lambertian(vec3(1.0f), 0), isProc));
-	models.push_back(Model::CreateSphere(vec3(4, 1, 0), 1.0f, subdiv, Material::Metallic(vec3(1.0f), 0.0f, 1), isProc));
+	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 1.0f, Material::Metallic(vec3(1.0f), 0.1f, 2), isProc));
+	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, Material::Lambertian(vec3(1.0f), 0), isProc));
+	models.push_back(Model::CreateSphere(vec3(4, 1, 0), 1.0f, Material::Metallic(vec3(1.0f), 0.0f, 1), isProc));
 
 	textures.push_back(Texture::LoadTexture("../assets/textures/2k_mars.jpg", Vulkan::SamplerConfig()));
 	textures.push_back(Texture::LoadTexture("../assets/textures/2k_moon.jpg", Vulkan::SamplerConfig()));
@@ -181,7 +179,6 @@ SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 	camera.GammaCorrection = true;
 	camera.HasSky = true;
 
-	const int subdiv = 3;
 	const bool isProc = true;
 
 	std::mt19937 engine(42);
@@ -189,7 +186,7 @@ SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 
 	std::vector<Model> models;
 	
-	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, subdiv + 2, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
+	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
 
 	for (int a = -11; a < 11; ++a)
 	{
@@ -202,7 +199,7 @@ SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 			{
 				if (chooseMat < 0.8f) // Diffuse
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Lambertian(vec3(
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Lambertian(vec3(
 						random()*random(),
 						random()*random(),
 						random()*random())),
@@ -210,14 +207,14 @@ SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 				}
 				else if (chooseMat < 0.95f) // Metal
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Metallic(
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Metallic(
 						vec3(0.5f*(1 + random()), 0.5f*(1 + random()), 0.5f*(1 + random())),
 						0.5f*random()),
 						isProc));
 				}
 				else // Glass
 				{
-					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Dielectric(1.5f), isProc));
+					models.push_back(Model::CreateSphere(center, 0.2f, Material::Dielectric(1.5f), isProc));
 				}
 			}
 		}
@@ -298,7 +295,7 @@ SceneAssets SceneList::CornellBoxLucy(CameraInitialSate& camera)
 	camera.HasSky = false;
 
 	const auto i = mat4(1);
-	const auto sphere = Model::CreateSphere(vec3(555 - 130, 165.0f, -165.0f / 2 - 65), 80.0f, 3, Material::Dielectric(1.5f), true);
+	const auto sphere = Model::CreateSphere(vec3(555 - 130, 165.0f, -165.0f / 2 - 65), 80.0f, Material::Dielectric(1.5f), true);
 	auto lucy0 = Model::LoadModel("../assets/models/lucy.obj");
 
 	lucy0.Transform(

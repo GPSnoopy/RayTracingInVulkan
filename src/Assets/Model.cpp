@@ -1,9 +1,7 @@
 #include "Model.hpp"
 #include "CornellBox.hpp"
-#include "Icosphere.hpp"
 #include "Procedural.hpp"
 #include "Sphere.hpp"
-//#include "TextureImage.hpp"
 #include "Utilities/Exception.hpp"
 #include "Utilities/Console.hpp"
 
@@ -222,28 +220,72 @@ Model Model::CreateBox(const vec3& p0, const vec3& p1, const Material& material)
 		nullptr);
 }
 
-Model Model::CreateSphere(const vec3& center, float radius, int subdivision, const Material& material, const bool isProcedural)
+Model Model::CreateSphere(const vec3& center, float radius, const Material& material, const bool isProcedural)
 {
-	const Icosphere icosphere(radius, subdivision, true);
-
+	const int slices = 32;
+	const int stacks = 16;
+	
 	std::vector<Vertex> vertices;
-	vertices.reserve(icosphere.VertexCount());
+	std::vector<uint32_t> indices;
 
-	for (size_t i = 0; i != icosphere.VertexCount(); ++i)
+	const float pi = 3.14159265358979f;
+	
+	for (int j = 0; j <= stacks; ++j) 
 	{
-		Vertex v{};
+		const float j0 = pi * j / stacks;
 
-		v.Position = vec3(icosphere.Vertices()[i * 3 + 0], icosphere.Vertices()[i * 3 + 1], icosphere.Vertices()[i * 3 + 2]) + center;
-		v.Normal = vec3(icosphere.Normals()[i * 3 + 0], icosphere.Normals()[i * 3 + 1], icosphere.Normals()[i * 3 + 2]);
-		v.TexCoord = vec2(icosphere.TexCoords()[i * 2 + 0], icosphere.TexCoords()[i * 2 + 1]);
-		v.MaterialIndex = 0;
+		// Vertex
+		const float v = radius * -std::sin(j0);
+		const float z = radius * std::cos(j0);
+		
+		// Normals		
+		const float n0 = -std::sin(j0);
+		const float n1 = std::cos(j0);
 
-		vertices.push_back(v);
+		for (int i = 0; i <= slices; ++i) 
+		{
+			const float i0 = 2 * pi * i / slices;
+
+			const vec3 position(
+				center.x + v * std::sin(i0),
+				center.y + z,
+				center.z + v * std::cos(i0));
+			
+			const vec3 normal(
+				n0 * std::sin(i0),
+				n1,
+				n0 * std::cos(i0));
+
+			const vec2 texCoord(
+				static_cast<float>(i) / slices,
+				static_cast<float>(j) / stacks);
+
+			vertices.push_back(Vertex{ position, normal, texCoord, 0 });
+		}
+	}
+
+	for (int j = 0; j < stacks; ++j)
+	{
+		for (int i = 0; i < slices; ++i)
+		{
+			const auto j0 = (j + 0) * (slices + 1);
+			const auto j1 = (j + 1) * (slices + 1);
+			const auto i0 = i + 0;
+			const auto i1 = i + 1;
+			
+			indices.push_back(j0 + i0);
+			indices.push_back(j1 + i0);
+			indices.push_back(j1 + i1);
+			
+			indices.push_back(j0 + i0);
+			indices.push_back(j1 + i1);
+			indices.push_back(j0 + i1);
+		}
 	}
 
 	return Model(
-		std::move(vertices), 
-		std::vector<uint32_t>(icosphere.Indices()), 
+		std::move(vertices),
+		std::move(indices),
 		std::vector<Material>{material},
 		isProcedural ? new Sphere(center, radius) : nullptr);
 }
