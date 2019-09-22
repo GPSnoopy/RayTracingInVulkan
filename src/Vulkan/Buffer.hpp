@@ -19,7 +19,7 @@ namespace Vulkan
 
 		const class Device& Device() const { return device_; }
 
-		DeviceMemory AllocateMemory(VkMemoryPropertyFlags properties) const;
+		DeviceMemory AllocateMemory(VkMemoryPropertyFlags properties);
 		VkMemoryRequirements GetMemoryRequirements() const;
 
 		void CopyFrom(CommandPool& commandPool, const Buffer& src, VkDeviceSize size);

@@ -2,7 +2,7 @@
 #extension GL_GOOGLE_include_directive : require
 #extension GL_NV_ray_tracing : require
 
-layout(binding = 8) readonly buffer SphereArray { vec4[] Spheres; };
+layout(binding = 9) readonly buffer SphereArray { vec4[] Spheres; };
 
 hitAttributeNV vec4 Sphere;
 

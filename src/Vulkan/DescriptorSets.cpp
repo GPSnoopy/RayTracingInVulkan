@@ -44,7 +44,7 @@ DescriptorSets::~DescriptorSets()
 	//}
 }
 
-VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t binding, const VkDescriptorBufferInfo& bufferInfo) const
+VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t binding, const VkDescriptorBufferInfo& bufferInfo, const uint32_t count) const
 {
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -52,13 +52,13 @@ VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t b
 	descriptorWrite.dstBinding = binding;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = GetBindingType(binding);
-	descriptorWrite.descriptorCount = 1;
+	descriptorWrite.descriptorCount = count;
 	descriptorWrite.pBufferInfo = &bufferInfo;
 
 	return descriptorWrite;
 }
 
-VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t binding, const VkDescriptorImageInfo& imageInfo) const
+VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t binding, const VkDescriptorImageInfo& imageInfo, const uint32_t count) const
 {
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -66,13 +66,13 @@ VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t b
 	descriptorWrite.dstBinding = binding;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = GetBindingType(binding);
-	descriptorWrite.descriptorCount = 1;
+	descriptorWrite.descriptorCount = count;
 	descriptorWrite.pImageInfo = &imageInfo;
 
 	return descriptorWrite;
 }
 
-VkWriteDescriptorSet DescriptorSets::Bind(uint32_t index, uint32_t binding, const VkWriteDescriptorSetAccelerationStructureNV& structureInfo) const
+VkWriteDescriptorSet DescriptorSets::Bind(uint32_t index, uint32_t binding, const VkWriteDescriptorSetAccelerationStructureNV& structureInfo, const uint32_t count) const
 {
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -80,7 +80,7 @@ VkWriteDescriptorSet DescriptorSets::Bind(uint32_t index, uint32_t binding, cons
 	descriptorWrite.dstBinding = binding;
 	descriptorWrite.dstArrayElement = 0;
 	descriptorWrite.descriptorType = GetBindingType(binding);
-	descriptorWrite.descriptorCount = 1;
+	descriptorWrite.descriptorCount = count;
 	descriptorWrite.pNext = &structureInfo;
 
 	return descriptorWrite;

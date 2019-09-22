@@ -3,6 +3,7 @@
 #include "UserSettings.hpp"
 #include "Assets/Model.hpp"
 #include "Assets/Scene.hpp"
+#include "Assets/Texture.hpp"
 #include "Assets/UniformBuffer.hpp"
 #include "Utilities/Glm.hpp"
 #include "Vulkan/Device.hpp"
@@ -256,7 +257,15 @@ void RayTracer::OnMouseButton(const int button, const int action, const int mods
 
 void RayTracer::LoadScene(const uint32_t sceneIndex)
 {
-	scene_.reset(new Assets::Scene(CommandPool(), SceneList::AllScenes[sceneIndex].second(cameraInitialSate_), true));
+	auto [models, textures] = SceneList::AllScenes[sceneIndex].second(cameraInitialSate_);
+
+	// If there are no texture, add a dummy one. It makes the pipeline setup a lot easier.
+	if (textures.empty())
+	{
+		textures.push_back(Assets::Texture::LoadTexture("../assets/textures/white.png", Vulkan::SamplerConfig()));
+	}
+	
+	scene_.reset(new Assets::Scene(CommandPool(), std::move(models), std::move(textures), true));
 	sceneIndex_ = sceneIndex;
 
 	userSettings_.FieldOfView = cameraInitialSate_.FieldOfView;

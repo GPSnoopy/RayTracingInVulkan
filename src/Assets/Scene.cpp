@@ -1,9 +1,12 @@
 #include "Scene.hpp"
 #include "Model.hpp"
 #include "Sphere.hpp"
-//#include "TextureImage.hpp"
+#include "Texture.hpp"
+#include "TextureImage.hpp"
 #include "Vulkan/Buffer.hpp"
 #include "Vulkan/CommandPool.hpp"
+#include "Vulkan/ImageView.hpp"
+#include "Vulkan/Sampler.hpp"
 #include "Utilities/Exception.hpp"
 #include <cstring>
 
@@ -53,8 +56,9 @@ namespace
 
 }
 
-Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, bool usedForRayTracing) :
-	models_(std::move(models))
+Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std::vector<Texture>&& textures, bool usedForRayTracing) :
+	models_(std::move(models)),
+	textures_(std::move(textures))
 {
 	// Concatenate all the models
 	std::vector<Vertex> vertices;
@@ -108,13 +112,24 @@ Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, bool
 	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, aabbs, aabbBuffer_, aabbBufferMemory_);
 	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, procedurals, proceduralBuffer_, proceduralBufferMemory_);
 
-	//textureImage_.reset(new ::TextureImage(commandPool, "../assets/textures/chalet.jpg"));
+	// Upload all textures
+	textureImages_.reserve(textures_.size());
+	textureImageViewHandles_.resize(textures_.size());
+	textureSamplerHandles_.resize(textures_.size());
+	
+	for (size_t i = 0; i != textures_.size(); ++i)
+	{
+		textureImages_.emplace_back(new TextureImage(commandPool, textures_[i]));
+		textureImageViewHandles_[i] = textureImages_[i]->ImageView().Handle();
+		textureSamplerHandles_[i] = textureImages_[i]->Sampler().Handle();
+	}
 }
 
 Scene::~Scene()
 {
-	//textureImage_.reset();
-
+	textureSamplerHandles_.clear();
+	textureImageViewHandles_.clear();
+	textureImages_.clear();
 	proceduralBuffer_.reset();
 	proceduralBufferMemory_.reset(); // release memory after bound buffer has been destroyed
 	aabbBuffer_.reset();

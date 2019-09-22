@@ -46,11 +46,11 @@ RayTracingPipeline::RayTracingPipeline(
 		{6, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV},
 		{7, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV},
 
-		// The Procedural buffer.
-		{8, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV | VK_SHADER_STAGE_INTERSECTION_BIT_NV},
+		// Textures and image samplers
+		{8, static_cast<uint32_t>(scene.TextureSamplers().size()), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV},
 
-		// Texture
-		{9, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV}
+		// The Procedural buffer.
+		{9, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV | VK_SHADER_STAGE_INTERSECTION_BIT_NV}
 	};
 
 	descriptorSetManager_.reset(new DescriptorSetManager(device, descriptorBindings, uniformBuffers.size()));
@@ -102,9 +102,19 @@ RayTracingPipeline::RayTracingPipeline(
 		offsetsBufferInfo.buffer = scene.OffsetsBuffer().Handle();
 		offsetsBufferInfo.range = VK_WHOLE_SIZE;
 
+		// Image and texture samplers.
+		std::vector<VkDescriptorImageInfo> imageInfos(scene.TextureSamplers().size());
+
+		for (size_t t = 0; t != imageInfos.size(); ++t)
+		{
+			auto& imageInfo = imageInfos[t];
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfo.imageView = scene.TextureImageViews()[t];
+			imageInfo.sampler = scene.TextureSamplers()[t];
+		}
+
 		std::vector<VkWriteDescriptorSet> descriptorWrites =
 		{
-
 			descriptorSets.Bind(i, 0, structureInfo),
 			descriptorSets.Bind(i, 1, accumulationImageInfo),
 			descriptorSets.Bind(i, 2, outputImageInfo),
@@ -112,17 +122,19 @@ RayTracingPipeline::RayTracingPipeline(
 			descriptorSets.Bind(i, 4, vertexBufferInfo),
 			descriptorSets.Bind(i, 5, indexBufferInfo),
 			descriptorSets.Bind(i, 6, materialBufferInfo),
-			descriptorSets.Bind(i, 7, offsetsBufferInfo)
+			descriptorSets.Bind(i, 7, offsetsBufferInfo),
+			descriptorSets.Bind(i, 8, *imageInfos.data(), static_cast<uint32_t>(imageInfos.size()))
 		};
 
 		// Procedural buffer (optional)
+		VkDescriptorBufferInfo proceduralBufferInfo = {};
+		
 		if (scene.HasProcedurals())
 		{
-			VkDescriptorBufferInfo proceduralBufferInfo = {};
 			proceduralBufferInfo.buffer = scene.ProceduralBuffer().Handle();
 			proceduralBufferInfo.range = VK_WHOLE_SIZE;
 
-			descriptorWrites.push_back(descriptorSets.Bind(i, 8, proceduralBufferInfo));
+			descriptorWrites.push_back(descriptorSets.Bind(i, 9, proceduralBufferInfo));
 		}
 
 		descriptorSets.UpdateDescriptors(i, descriptorWrites);

@@ -2,12 +2,16 @@
 #include "Utilities/Glm.hpp"
 #include <functional>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace Assets
 {
 	class Model;
+	class Texture;
 }
+
+typedef std::tuple<std::vector<Assets::Model>, std::vector<Assets::Texture>> SceneAssets;
 
 class SceneList final
 {
@@ -23,11 +27,12 @@ public:
 		bool HasSky;
 	};
 
-	static std::vector<Assets::Model> CubeAndSpheres(CameraInitialSate& camera);
-	static std::vector<Assets::Model> RayTracingInOneWeekend(CameraInitialSate& camera);
-	static std::vector<Assets::Model> LucyInOneWeekend(CameraInitialSate& camera);
-	static std::vector<Assets::Model> CornellBox(CameraInitialSate& camera);
-	static std::vector<Assets::Model> CornellBoxLucy(CameraInitialSate& camera);
+	static SceneAssets CubeAndSpheres(CameraInitialSate& camera);
+	static SceneAssets RayTracingInOneWeekend(CameraInitialSate& camera);
+	static SceneAssets PlanetsInOneWeekend(CameraInitialSate& camera);
+	static SceneAssets LucyInOneWeekend(CameraInitialSate& camera);
+	static SceneAssets CornellBox(CameraInitialSate& camera);
+	static SceneAssets CornellBoxLucy(CameraInitialSate& camera);
 
-	static const std::vector<std::pair<std::string, std::function<std::vector<Assets::Model>(CameraInitialSate&)>>> AllScenes;
+	static const std::vector<std::pair<std::string, std::function<SceneAssets (CameraInitialSate&)>>> AllScenes;
 };

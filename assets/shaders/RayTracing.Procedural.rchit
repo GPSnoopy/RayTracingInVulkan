@@ -1,4 +1,5 @@
 #version 460
+#extension GL_EXT_nonuniform_qualifier : require
 #extension GL_GOOGLE_include_directive : require
 #extension GL_NV_ray_tracing : require
 #include "Material.glsl"
@@ -7,7 +8,10 @@ layout(binding = 4) readonly buffer VertexArray { float Vertices[]; };
 layout(binding = 5) readonly buffer IndexArray { uint Indices[]; };
 layout(binding = 6) readonly buffer MaterialArray { Material[] Materials; };
 layout(binding = 7) readonly buffer OffsetArray { uvec2[] Offsets; };
-layout(binding = 8) readonly buffer SphereArray { vec4[] Spheres; };
+layout(binding = 8) uniform sampler2D[] TextureSamplers;
+layout(binding = 9) readonly buffer SphereArray { vec4[] Spheres; };
+
+#include "Scatter.glsl"
 #include "Vertex.glsl"
 
 hitAttributeNV vec4 Sphere;
@@ -21,8 +25,8 @@ vec2 GetSphereTexCoord(const vec3 point)
 
 	return vec2
 	(
-		1 - (phi + pi) / (2* pi),
-		(theta + pi /2) / pi
+		(phi + pi) / (2* pi),
+		1 - (theta + pi /2) / pi
 	);
 }
 
@@ -43,5 +47,5 @@ void main()
 	const vec3 normal = (point - center) / radius;
 	const vec2 texCoord = GetSphereTexCoord(normal);
 
-	Ray = Scatter(material, gl_WorldRayDirectionNV, normal, gl_HitTNV, Ray.RandomSeed);
+	Ray = Scatter(material, gl_WorldRayDirectionNV, normal, texCoord, gl_HitTNV, Ray.RandomSeed);
 }

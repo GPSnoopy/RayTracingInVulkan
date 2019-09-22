@@ -13,6 +13,10 @@ set(src_files_assets
 	Assets/Scene.cpp
 	Assets/Scene.hpp
 	Assets/Sphere.hpp
+	Assets/Texture.cpp
+	Assets/Texture.hpp
+	Assets/TextureImage.cpp
+	Assets/TextureImage.hpp
 	Assets/UniformBuffer.cpp
 	Assets/UniformBuffer.hpp
 	Assets/Vertex.hpp
@@ -78,6 +82,8 @@ set(src_files_vulkan
 	Vulkan/PipelineLayout.hpp
 	Vulkan/RenderPass.cpp
 	Vulkan/RenderPass.hpp
+	Vulkan/Sampler.cpp
+	Vulkan/Sampler.hpp
 	Vulkan/Semaphore.cpp
 	Vulkan/Semaphore.hpp
 	Vulkan/ShaderModule.cpp

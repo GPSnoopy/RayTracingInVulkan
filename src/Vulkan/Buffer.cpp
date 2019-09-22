@@ -25,7 +25,7 @@ Buffer::~Buffer()
 	}
 }
 
-DeviceMemory Buffer::AllocateMemory(const VkMemoryPropertyFlags properties) const
+DeviceMemory Buffer::AllocateMemory(const VkMemoryPropertyFlags properties)
 {
 	const auto requirements = GetMemoryRequirements();
 	DeviceMemory memory(device_, requirements.size, requirements.memoryTypeBits, properties);

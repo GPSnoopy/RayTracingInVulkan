@@ -1,24 +1,29 @@
 #include "SceneList.hpp"
 #include "Assets/Material.hpp"
 #include "Assets/Model.hpp"
+#include "Assets/Texture.hpp"
 #include <functional>
 #include <random>
 
 using namespace glm;
 using Assets::Material;
 using Assets::Model;
+using Assets::Texture;
 
-const std::vector<std::pair<std::string, std::function<std::vector<Model>(SceneList::CameraInitialSate&)>>> SceneList::AllScenes =
+const std::vector<std::pair<std::string, std::function<SceneAssets (SceneList::CameraInitialSate&)>>> SceneList::AllScenes =
 {
 	{"Cube And Spheres", CubeAndSpheres},
 	{"Ray Tracing In One Weekend", RayTracingInOneWeekend},
+	{"Planets In One Weekend", PlanetsInOneWeekend},
 	{"Lucy In One Weekend", LucyInOneWeekend},
 	{"Cornell Box", CornellBox},
 	{"Cornell Box & Lucy", CornellBoxLucy},
 };
 
-std::vector<Model> SceneList::CubeAndSpheres(CameraInitialSate& camera)
+SceneAssets SceneList::CubeAndSpheres(CameraInitialSate& camera)
 {
+	// Basic test scene.
+	
 	camera.ModelView = translate(mat4(1), vec3(0, 0, -2));
 	camera.FieldOfView = 90;
 	camera.Aperture = 0.05f;
@@ -27,16 +32,22 @@ std::vector<Model> SceneList::CubeAndSpheres(CameraInitialSate& camera)
 	camera.HasSky = true;
 
 	std::vector<Model> models;
+	std::vector<Texture> textures;
 
 	models.push_back(Model::LoadModel("../assets/models/cube_multi.obj"));
 	models.push_back(Model::CreateSphere(vec3(1, 0, 0), 0.5, 3, Material::Metallic(vec3(0.7f, 0.5f, 0.8f), 0.2f), true));
 	models.push_back(Model::CreateSphere(vec3(-1, 0, 0), 0.5, 3, Material::Dielectric(1.5f), true));
+	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 0.5, 3, Material::Lambertian(vec3(1.0f), 0), true));
 
-	return models;
+	textures.push_back(Texture::LoadTexture("../assets/textures/land_ocean_ice_cloud_2048.png", Vulkan::SamplerConfig()));
+
+	return std::forward_as_tuple(std::move(models), std::move(textures));
 }
 
-std::vector<Model> SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
+SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 {
+	// Final scene from Ray Tracing In One Weekend book.
+	
 	camera.ModelView = lookAt(vec3(13, 2, 3), vec3(0, 0, 0), vec3(0, 1, 0));
 	camera.FieldOfView = 20;
 	camera.Aperture = 0.1f;
@@ -90,11 +101,79 @@ std::vector<Model> SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, subdiv, Material::Lambertian(vec3(0.4f, 0.2f, 0.1f)), isProc));
 	models.push_back(Model::CreateSphere(vec3(4, 1, 0), 1.0f, subdiv, Material::Metallic(vec3(0.7f, 0.6f, 0.5f), 0.0f), isProc));
 
-	return models;
+	return std::forward_as_tuple(std::move(models), std::vector<Texture>());
 }
 
-std::vector<Model> SceneList::LucyInOneWeekend(CameraInitialSate& camera)
+
+SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 {
+	// Same as RayTracingInOneWeekend but using textures.
+	
+	camera.ModelView = lookAt(vec3(13, 2, 3), vec3(0, 0, 0), vec3(0, 1, 0));
+	camera.FieldOfView = 20;
+	camera.Aperture = 0.1f;
+	camera.FocusDistance = 10.0f;
+	camera.GammaCorrection = true;
+	camera.HasSky = true;
+
+	const int subdiv = 3;
+	const bool isProc = true;
+
+	std::mt19937 engine(42);
+	auto random = std::bind(std::uniform_real_distribution<float>(), engine);
+
+	std::vector<Model> models;
+	std::vector<Texture> textures;
+
+	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, subdiv + 2, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
+
+	for (int a = -11; a < 11; ++a)
+	{
+		for (int b = -11; b < 11; ++b)
+		{
+			const float chooseMat = random();
+			const vec3 center(a + 0.9f * random(), 0.2f, b + 0.9f * random());
+
+			if (length(center - vec3(4, 0.2f, 0)) > 0.9)
+			{
+				if (chooseMat < 0.8f) // Diffuse
+				{
+					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Lambertian(vec3(
+						random() * random(),
+						random() * random(),
+						random() * random())),
+						isProc));
+				}
+				else if (chooseMat < 0.95f) // Metal
+				{
+					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Metallic(
+						vec3(0.5f * (1 + random()), 0.5f * (1 + random()), 0.5f * (1 + random())),
+						0.5f * random()),
+						isProc));
+				}
+				else // Glass
+				{
+					models.push_back(Model::CreateSphere(center, 0.2f, subdiv, Material::Dielectric(1.5f), isProc));
+				}
+			}
+		}
+	}
+
+	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 1.0f, subdiv, Material::Metallic(vec3(1.0f), 0.1f, 2), isProc));
+	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, subdiv, Material::Lambertian(vec3(1.0f), 0), isProc));
+	models.push_back(Model::CreateSphere(vec3(4, 1, 0), 1.0f, subdiv, Material::Metallic(vec3(1.0f), 0.0f, 1), isProc));
+
+	textures.push_back(Texture::LoadTexture("../assets/textures/2k_mars.jpg", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("../assets/textures/2k_moon.jpg", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("../assets/textures/land_ocean_ice_cloud_2048.png", Vulkan::SamplerConfig()));
+
+	return std::forward_as_tuple(std::move(models), std::move(textures));
+}
+
+SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
+{
+	// Same as RayTracingInOneWeekend but using the Lucy 3D model.
+	
 	camera.ModelView = lookAt(vec3(13, 2, 3), vec3(0, 1.0, 0), vec3(0, 1, 0));
 	camera.FieldOfView = 20;
 	camera.Aperture = 0.05f;
@@ -180,10 +259,10 @@ std::vector<Model> SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 	models.push_back(std::move(lucy1));
 	models.push_back(std::move(lucy2));
 
-	return models;
+	return std::forward_as_tuple(std::move(models), std::vector<Texture>());
 }
 
-std::vector<Assets::Model> SceneList::CornellBox(CameraInitialSate& camera)
+SceneAssets SceneList::CornellBox(CameraInitialSate& camera)
 {
 	camera.ModelView = lookAt(vec3(278, 278, 800), vec3(278, 278, 0), vec3(0, 1, 0));
 	camera.FieldOfView = 40;
@@ -206,10 +285,10 @@ std::vector<Assets::Model> SceneList::CornellBox(CameraInitialSate& camera)
 	models.push_back(box0);
 	models.push_back(box1);
 
-	return models;
+	return std::make_tuple(std::move(models), std::vector<Texture>());
 }
 
-std::vector<Assets::Model> SceneList::CornellBoxLucy(CameraInitialSate& camera)
+SceneAssets SceneList::CornellBoxLucy(CameraInitialSate& camera)
 {
 	camera.ModelView = lookAt(vec3(278, 278, 800), vec3(278, 278, 0), vec3(0, 1, 0));
 	camera.FieldOfView = 40;
@@ -234,5 +313,5 @@ std::vector<Assets::Model> SceneList::CornellBoxLucy(CameraInitialSate& camera)
 	models.push_back(sphere);
 	models.push_back(lucy0);
 
-	return models;
+	return std::forward_as_tuple(std::move(models), std::vector<Texture>());
 }

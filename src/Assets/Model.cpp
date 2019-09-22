@@ -14,8 +14,8 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 #include <chrono>
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 #include <unordered_map>
 #include <vector>
 
@@ -82,6 +82,7 @@ Model Model::LoadModel(const std::string& filename)
 		Material m{};
 
 		m.Diffuse = vec4(material.diffuse[0], material.diffuse[1], material.diffuse[2], 1.0);
+		m.DiffuseTextureId = -1;
 
 		materials.emplace_back(m);
 	}
@@ -91,6 +92,7 @@ Model Model::LoadModel(const std::string& filename)
 		Material m{};
 
 		m.Diffuse = vec4(0.7f, 0.7f, 0.7f, 1.0);
+		m.DiffuseTextureId = -1;
 
 		materials.emplace_back(m);
 	}
