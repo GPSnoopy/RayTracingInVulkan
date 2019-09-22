@@ -26,7 +26,15 @@ int main(int argc, const char* argv[]) noexcept
 	{
 		const Options options(argc, argv);
 		const UserSettings userSettings = CreateUserSettings(options);
-		const Vulkan::WindowConfig windowConfig{ "Vulkan Window", options.Width, options.Height, options.Fullscreen, !options.Fullscreen };
+		const Vulkan::WindowConfig windowConfig
+		{
+			"Vulkan Window",
+			options.Width,
+			options.Height,
+			options.Benchmark,
+			options.Fullscreen,
+			!options.Fullscreen
+		};
 
 		RayTracer application(userSettings, windowConfig, options.VSync);
 

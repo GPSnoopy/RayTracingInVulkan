@@ -76,6 +76,11 @@ Window::Window(const WindowConfig& config) :
 	glfwSetWindowIcon(window_, 1, &icon);
 	stbi_image_free(icon.pixels);
 
+	if (config.CursorDisabled)
+	{
+		glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
 	glfwSetWindowUserPointer(window_, this);
 	glfwSetKeyCallback(window_, GlfwKeyCallback);
 	glfwSetCursorPosCallback(window_, GlfwCursorPositionCallback);

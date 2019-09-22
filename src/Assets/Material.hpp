@@ -24,7 +24,7 @@ namespace Assets
 
 		static Material Isotropic(const glm::vec3& diffuse)
 		{
-			return Material{ glm::vec4(diffuse, 1), 0.0f, 0.0f, Enum::DiffuseLight };
+			return Material{ glm::vec4(diffuse, 1), 0.0f, 0.0f, Enum::Isotropic };
 		}
 
 		static Material DiffuseLight(const glm::vec3& diffuse)

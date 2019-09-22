@@ -10,6 +10,7 @@ namespace Vulkan
 		std::string Title;
 		uint32_t Width;
 		uint32_t Height;
+		bool CursorDisabled;
 		bool Fullscreen;
 		bool Resizable;
 	};
