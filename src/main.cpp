@@ -31,7 +31,7 @@ int main(int argc, const char* argv[]) noexcept
 			"Vulkan Window",
 			options.Width,
 			options.Height,
-			options.Benchmark,
+			options.Benchmark && options.Fullscreen,
 			options.Fullscreen,
 			!options.Fullscreen
 		};
