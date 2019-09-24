@@ -36,7 +36,7 @@ namespace std
 
 		static size_t Combine(size_t hash0, size_t hash1)
 		{
-			return hash0 ^ hash1 + 0x9e3779b9 + (hash0 << 6) + (hash0 >> 2);
+			return hash0 ^ (hash1 + 0x9e3779b9 + (hash0 << 6) + (hash0 >> 2));
 		}
 	};
 }

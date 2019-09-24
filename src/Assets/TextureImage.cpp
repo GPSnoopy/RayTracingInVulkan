@@ -5,6 +5,7 @@
 #include "Vulkan/ImageView.hpp"
 #include "Vulkan/Image.hpp"
 #include "Vulkan/Sampler.hpp"
+#include <cstring>
 
 namespace Assets {
 
