@@ -237,7 +237,7 @@ void UserInterface::DrawOverlay(const Statistics& statistics)
 
 	if (ImGui::Begin("Statistics", &Settings().ShowOverlay, flags))
 	{
-		ImGui::Text("Statistics");
+		ImGui::Text("Statistics (%dx%d):", statistics.FramebufferSize.width, statistics.FramebufferSize.height);
 		ImGui::Separator();
 		ImGui::Text("Frame rate: %.1f fps", statistics.FrameRate);
 		ImGui::Text("Primary ray rate: %.2f Gr/s", statistics.RayRate);

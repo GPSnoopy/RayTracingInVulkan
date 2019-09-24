@@ -16,6 +16,7 @@ struct UserSettings;
 
 struct Statistics final
 {
+	VkExtent2D FramebufferSize;
 	float FrameRate;
 	float RayRate;
 	uint32_t TotalSamples;

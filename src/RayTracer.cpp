@@ -160,6 +160,7 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 
 	// Render the UI
 	Statistics stats = {};
+	stats.FramebufferSize = Window().FramebufferSize();
 	stats.FrameRate = static_cast<float>(1 / deltaTime);
 
 	if (userSettings_.IsRayTraced)
