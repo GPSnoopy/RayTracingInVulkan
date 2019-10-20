@@ -27,19 +27,7 @@ RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfi
 	Application(windowConfig, vsync, EnableValidationLayers),
 	userSettings_(userSettings)
 {
-	// Check the framebuffer size when requesting a fullscreen window, as it's not guaranteed to match.
-	const auto fbSize = Window().FramebufferSize();
-	
-	if (windowConfig.Fullscreen && (fbSize.width != windowConfig.Width || fbSize.height != windowConfig.Height))
-	{
-		std::ostringstream out;
-		out << "framebuffer fullscreen size mismatch (requested: ";
-		out << windowConfig.Width << "x" << windowConfig.Height;
-		out << ", got: ";
-		out << fbSize.width << "x" << fbSize.height << ")";
-		
-		Throw(std::runtime_error(out.str()));
-	}
+	CheckFramebufferSize();
 }
 
 RayTracer::~RayTracer()
@@ -90,6 +78,8 @@ void RayTracer::CreateSwapChain()
 
 	userInterface_.reset(new UserInterface(CommandPool(), SwapChain(), DepthBuffer(), userSettings_));
 	resetAccumulation_ = true;
+
+	CheckFramebufferSize();
 }
 
 void RayTracer::DeleteSwapChain()
@@ -316,5 +306,23 @@ void RayTracer::CheckAndUpdateBenchmarkState(double prevTime)
 			std::cout << std::endl;
 			userSettings_.SceneIndex += 1;
 		}
+	}
+}
+
+void RayTracer::CheckFramebufferSize() const
+{
+	// Check the framebuffer size when requesting a fullscreen window, as it's not guaranteed to match.
+	const auto& cfg = Window().Config();
+	const auto fbSize = Window().FramebufferSize();
+	
+	if (userSettings_.Benchmark && cfg.Fullscreen && (fbSize.width != cfg.Width || fbSize.height != cfg.Height))
+	{
+		std::ostringstream out;
+		out << "framebuffer fullscreen size mismatch (requested: ";
+		out << cfg.Width << "x" << cfg.Height;
+		out << ", got: ";
+		out << fbSize.width << "x" << fbSize.height << ")";
+		
+		Throw(std::runtime_error(out.str()));
 	}
 }

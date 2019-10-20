@@ -32,6 +32,7 @@ private:
 
 	void LoadScene(uint32_t sceneIndex);
 	void CheckAndUpdateBenchmarkState(double prevTime);
+	void CheckFramebufferSize() const;
 
 	uint32_t sceneIndex_{};
 	UserSettings userSettings_{};
