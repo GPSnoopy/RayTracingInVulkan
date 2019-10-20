@@ -87,12 +87,17 @@ namespace
 		UserSettings userSettings{};
 
 		userSettings.Benchmark = options.Benchmark;
+		userSettings.BenchmarkNextScenes = options.BenchmarkNextScenes;
+		userSettings.BenchmarkMaxTime = options.BenchmarkMaxTime;
+		
 		userSettings.SceneIndex = options.SceneIndex;
+
 		userSettings.IsRayTraced = true;
 		userSettings.AccumulateRays = true;
 		userSettings.NumberOfSamples = options.Samples;
 		userSettings.NumberOfBounces = options.Bounces;
 		userSettings.MaxNumberOfSamples = options.MaxSamples;
+
 		userSettings.ShowSettings = !options.Benchmark;
 		userSettings.ShowOverlay = true;
 

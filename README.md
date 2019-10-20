@@ -20,12 +20,15 @@ I suspect performance could be improved further. I have created each object in t
 
 ## Benchmarking
 
-Command line arguments can be used to control various aspects of the application, including running it in benchmark mode. For mode information, use `--help`.
-
+Command line arguments can be used to control various aspects of the application. Use `--help` to see all modes and arguments. For example, to run the ray tracer in benchmark mode in 2560x1440 fullscreen for scene #1:
 ```
-> RayTracer.exe --benchmark --width 2560 --height 1200 --fullscreen --scene 1
+> RayTracer.exe --benchmark --width 2560 --height 1440 --fullscreen --scene 1
 ```
-Here are my results with the command above on two different computers using NVIDIA drivers 430.86 and Release 3 of the RayTracer.
+To benchmark all the scenes, starting from scene #1:
+```
+> RayTracer.exe --benchmark --width 2560 --height 1440 --fullscreen --scene 1 --next-scenes
+```
+Here are my results with the command above on two different computers using NVIDIA drivers 436.48 and Release 4 of the RayTracer.
 
 | Platform | Scene 1 | Scene 2 | Scene 3 | Scene 4 |
 | --- | ---: | ---: | ---: | ---: |

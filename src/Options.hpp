@@ -20,6 +20,10 @@ public:
 
 	// Application options.
 	bool Benchmark{};
+	// 
+	// Benchmark options.
+	bool BenchmarkNextScenes{};
+	uint32_t BenchmarkMaxTime{};
 
 	// Scene options.
 	uint32_t SceneIndex{};

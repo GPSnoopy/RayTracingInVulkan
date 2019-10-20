@@ -5,6 +5,10 @@ struct UserSettings final
 	// Application
 	bool Benchmark;
 
+	// Benchmark
+	bool BenchmarkNextScenes{};
+	uint32_t BenchmarkMaxTime{};
+	
 	// Scene
 	int SceneIndex;
 

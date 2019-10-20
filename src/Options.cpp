@@ -8,16 +8,22 @@ using namespace boost::program_options;
 
 Options::Options(const int argc, const char* argv[])
 {
-	options_description scene("Scene options");
-	scene.add_options()
-		("scene", value<uint32_t>(&SceneIndex)->default_value(1), "Set the scene to start with.")
+	options_description benchmark("Benchmark options");
+	benchmark.add_options()
+		("next-scenes", bool_switch(&BenchmarkNextScenes)->default_value(false), "Load the next scene once the sample or time limit is reached.")
+		("max-time", value<uint32_t>(&BenchmarkMaxTime)->default_value(60), "The benchmark time limit per scene (in seconds).")
 		;
 
 	options_description renderer("Renderer options");
 	renderer.add_options()
 		("samples", value<uint32_t>(&Samples)->default_value(8), "Set the number of ray samples per pixel.")
 		("bounces", value<uint32_t>(&Bounces)->default_value(16), "Set the maximum number of bounces per ray.")
-		("max_samples", value<uint32_t>(&MaxSamples)->default_value(64 * 1024), "Set the maximum number of accumulated ray samples per pixel.")
+		("max-samples", value<uint32_t>(&MaxSamples)->default_value(64 * 1024), "Set the maximum number of accumulated ray samples per pixel.")
+		;
+
+	options_description scene("Scene options");
+	scene.add_options()
+		("scene", value<uint32_t>(&SceneIndex)->default_value(1), "Set the scene to start with.")
 		;
 
 	options_description window("Window options");
@@ -34,8 +40,9 @@ Options::Options(const int argc, const char* argv[])
 		("benchmark", bool_switch(&Benchmark)->default_value(false), "Run the application in benchmark mode.")
 		;
 
-	desc.add(scene);
+	desc.add(benchmark);
 	desc.add(renderer);
+	desc.add(scene);
 	desc.add(window);
 
 	const positional_options_description positional;

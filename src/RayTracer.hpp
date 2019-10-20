@@ -31,6 +31,7 @@ protected:
 private:
 
 	void LoadScene(uint32_t sceneIndex);
+	void CheckAndUpdateBenchmarkState(double prevTime);
 
 	uint32_t sceneIndex_{};
 	UserSettings userSettings_{};
@@ -53,6 +54,7 @@ private:
 	bool resetAccumulation_{};
 
 	// Benchmark stats
-	double initialTime_{};
-	uint32_t totalFrames_{};
+	double sceneInitialTime_{};
+	double periodInitialTime_{};
+	uint32_t periodTotalFrames_{};
 };

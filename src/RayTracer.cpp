@@ -5,11 +5,13 @@
 #include "Assets/Scene.hpp"
 #include "Assets/Texture.hpp"
 #include "Assets/UniformBuffer.hpp"
+#include "Utilities/Exception.hpp"
 #include "Utilities/Glm.hpp"
 #include "Vulkan/Device.hpp"
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/Window.hpp"
 #include <iostream>
+#include <sstream>
 
 namespace
 {
@@ -25,6 +27,19 @@ RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfi
 	Application(windowConfig, vsync, EnableValidationLayers),
 	userSettings_(userSettings)
 {
+	// Check the framebuffer size when requesting a fullscreen window, as it's not guaranteed to match.
+	const auto fbSize = Window().FramebufferSize();
+	
+	if (windowConfig.Fullscreen && (fbSize.width != windowConfig.Width || fbSize.height != windowConfig.Height))
+	{
+		std::ostringstream out;
+		out << "framebuffer fullscreen size mismatch (requested: ";
+		out << windowConfig.Width << "x" << windowConfig.Height;
+		out << ", got: ";
+		out << fbSize.width << "x" << fbSize.height << ")";
+		
+		Throw(std::runtime_error(out.str()));
+	}
 }
 
 RayTracer::~RayTracer()
@@ -113,13 +128,6 @@ void RayTracer::DrawFrame()
 	numberOfSamples_ = glm::clamp(userSettings_.MaxNumberOfSamples - totalNumberOfSamples_, 0u, userSettings_.NumberOfSamples);
 	totalNumberOfSamples_ += numberOfSamples_;
 
-	// If in benchmark mode, bail out if we've reacher the sample limit.
-	if (userSettings_.Benchmark && numberOfSamples_ == 0)
-	{
-		Window().Close();
-		return;
-	}
-	
 	Application::DrawFrame();
 }
 
@@ -130,28 +138,8 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 	time_ = Window().Time();
 	const auto deltaTime = time_ - prevTime;
 
-	// Keep track of benchmark time.
-	if (userSettings_.Benchmark)
-	{
-		if (totalFrames_ == 0)
-		{
-			initialTime_ = time_;
-		}
-
-		const double period = 5;
-		const double prevTotalTime = prevTime - initialTime_;
-		const double totalTime = time_ - initialTime_;
-
-		if (static_cast<uint64_t>(prevTotalTime / period) != static_cast<uint64_t>(totalTime / period))
-		{
-			std::cout << "Benchmark: " << totalFrames_ / totalTime << " fps" << std::endl;
-			totalFrames_ = 0;
-		}
-		else
-		{
-			totalFrames_++;
-		}
-	}
+	// Check the current state of the benchmark, update it for the new frame.
+	CheckAndUpdateBenchmarkState(prevTime);
 
 	// Render the scene
 	userSettings_.IsRayTraced
@@ -277,5 +265,56 @@ void RayTracer::LoadScene(const uint32_t sceneIndex)
 	cameraX_ = 0;
 	cameraY_ = 0;
 
+	periodTotalFrames_ = 0;
 	resetAccumulation_ = true;
+}
+
+void RayTracer::CheckAndUpdateBenchmarkState(double prevTime)
+{
+	if (!userSettings_.Benchmark)
+	{
+		return;
+	}
+	
+	// Initialise scene benchmark timers
+	if (periodTotalFrames_ == 0)
+	{
+		std::cout << std::endl;
+		std::cout << "Benchmark: Start scene #" << sceneIndex_ << " '" << SceneList::AllScenes[sceneIndex_].first << "'" << std::endl;
+		sceneInitialTime_ = time_;
+		periodInitialTime_ = time_;
+	}
+
+	// Print out the frame rate at regular intervals.
+	{
+		const double period = 5;
+		const double prevTotalTime = prevTime - periodInitialTime_;
+		const double totalTime = time_ - periodInitialTime_;
+
+		if (periodTotalFrames_ != 0 && static_cast<uint64_t>(prevTotalTime / period) != static_cast<uint64_t>(totalTime / period))
+		{
+			std::cout << "Benchmark: " << periodTotalFrames_ / totalTime << " fps" << std::endl;
+			periodInitialTime_ = time_;
+			periodTotalFrames_ = 0;
+		}
+
+		periodTotalFrames_++;
+	}
+
+	// If in benchmark mode, bail out from the scene if we've reached the time or sample limit.
+	{
+		const bool timeLimitReached = periodTotalFrames_ != 0 && Window().Time() - sceneInitialTime_ > userSettings_.BenchmarkMaxTime;
+		const bool sampleLimitReached = numberOfSamples_ == 0;
+
+		if (timeLimitReached || sampleLimitReached)
+		{
+			if (!userSettings_.BenchmarkNextScenes || static_cast<size_t>(userSettings_.SceneIndex) == SceneList::AllScenes.size() - 1)
+			{
+				Window().Close();
+			}
+
+			std::cout << std::endl;
+			userSettings_.SceneIndex += 1;
+		}
+	}
 }
