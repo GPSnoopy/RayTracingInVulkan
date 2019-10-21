@@ -28,11 +28,12 @@ To benchmark all the scenes, starting from scene #1:
 ```
 > RayTracer.exe --benchmark --width 2560 --height 1440 --fullscreen --scene 1 --next-scenes
 ```
-Here are my results with the command above on two different computers using NVIDIA drivers 436.48 and Release 4 of the RayTracer.
+Here are my results with the command above on a few different computers using NVIDIA drivers 436.48 and Release 4 of the RayTracer.
 
 | Platform | Scene 1 | Scene 2 | Scene 3 | Scene 4 | Scene 5 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | GeForce RTX 2080 Ti | 36.1 fps | 35.7 fps | 19.9 fps | 54.9 fps | 15.1 fps |
+| GeForce RTX 2070 | 19.9 fps | 19.9 fps | 11.7 fps | 30.4 fps | 9.5 fps |
 | GeForce GTX 1080 Ti | 3.4 fps | 3.4 fps | 1.9 fps | 3.8 fps | 1.3 fps |
 
 ## Building
