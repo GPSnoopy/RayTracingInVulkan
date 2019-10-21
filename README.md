@@ -54,6 +54,17 @@ Most of the third party dependencies can be built using [Microsoft's vcpkg](http
 
 Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/), the build should work out-of-the box for Visual Studio. On Linux, you may have to manually install additional dependencies for `vcpkg_linux.sh` to succeed.
 
+## Random Thoughts
+
+- I suspect the RTX 20 series RT cores to implement ray-AABB collision detection using reduced float precision. Early in the development, when trying to get the sphere procedural rendering to work, reporting an intersection every time the `rint` shader is invoked allowed to visualise the AABB of each procedural instance. The rendering of the bounding volume had many artifacts around the boxes edges, typical of reduced precision on floating point numbers.
+
+- When I upgraded the drivers to 430.86, performance significantly improved (+50%). This was around the same time Quake II RTX was released by NVIDIA. Coincidence?
+
+- When looking at the benchmark results of an RTX 2070 and an RTX 2080 Ti, the performance differences mostly in line with the number of CUDA cores and RT cores rather than being influences by other metrics. Although I do not know at this point whether the CUDA cores or the RT cores are the main bottleneck.
+
+- The benchmark mode makes the Boost clock behaviour quite obvious. Performance degrades rapidly by a few % over 60-120 seconds. For example, in theory the RTX 2080 Ti should be getting exactly the same result for Scene 1 and Scene 2 (or very close). Yet because Scene 2 is run after, the GPU has had to reduce its Boost clock as the GPU gets close to its thermal limit.
+
+
 ## References
 
 * [Vulkan Tutorial](https://vulkan-tutorial.com/)
