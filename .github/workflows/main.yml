@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install Ubuntu dependencies
-      run: sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev
+      run: sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev g++-8
     - name: Install Vulkan SDK
       run: |
         wget -qO - http://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
