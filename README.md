@@ -1,5 +1,3 @@
-![](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Linux%20CI/badge.svg)
-
 # Ray Tracing In Vulkan
 
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
@@ -47,7 +45,7 @@ Most of the third party dependencies can be built using [Microsoft's vcpkg](http
 > vcpkg_windows.bat
 > build_windows.bat
 ```
-**Linux (GCC 8 Makefile)**
+**Linux (GCC 8 Makefile)** ![](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Linux%20CI/badge.svg)
 ```
 > sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev
 > ./vcpkg_linux.sh
