@@ -18,6 +18,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install vulkan-sdk
     - name: Compile vcpkg dependencies
-      run: ./vcpkg_linux
+      run: ./vcpkg_linux.sh
     - name: Compile raytracer
-      run: ./build_linux
+      run: ./build_linux.sh
