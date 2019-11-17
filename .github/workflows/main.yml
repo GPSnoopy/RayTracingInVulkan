@@ -1,0 +1,23 @@
+name: Linux CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Ubuntu dependencies
+      run: sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev
+    - name: Install Vulkan SDK
+      run: 
+        wget -qO - http://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
+        sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.1.126-bionic.list http://packages.lunarg.com/vulkan/1.1.126/lunarg-vulkan-1.1.126-bionic.list
+        sudo apt update
+        sudo apt install vulkan-sdk
+    - name: Compile vcpkg dependencies
+      run: ./vcpkg_linux
+    - name: Compile raytracer
+      run: ./build_linux
