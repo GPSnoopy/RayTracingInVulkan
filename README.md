@@ -1,3 +1,5 @@
+![](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Linux%20CI/badge.svg)
+
 # Ray Tracing In Vulkan
 
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
