@@ -11,9 +11,9 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install Vulkan SDK
       run: |
-        wget -qO - https://vulkan.lunarg.com/sdk/home#sdk/downloadConfirm/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe
-        VulkanSDK-1.1.126.0-Installer.exe /S
+        Invoke-WebRequest https://vulkan.lunarg.com/sdk/home#sdk/downloadConfirm/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe -OutFile VulkanSDK-1.1.126.0-Installer.exe
+        .\VulkanSDK-1.1.126.0-Installer.exe /S
     - name: Compile vcpkg dependencies
-      run: vcpkg_windows.bat
+      run: .\vcpkg_windows.bat
     - name: Compile raytracer
-      run: build_windows.bat
+      run: .\build_windows.bat
