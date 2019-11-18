@@ -11,9 +11,10 @@ jobs:
     - uses: actions/checkout@v1
     - name: Install Vulkan SDK
       run: |
-        Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe?u=" -OutFile VulkanSDK.exe
+        Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe?Human=true" -OutFile VulkanSDK.exe
         .\VulkanSDK.exe /S
         ls C:\
+        ls D:\
         ls C:\VulkanSDK\
         ls C:\VulkanSDK\1.1.126.0\
     - name: Compile vcpkg dependencies
