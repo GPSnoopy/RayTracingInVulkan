@@ -62,7 +62,11 @@ ELSE()
     message(STATUS ${Vulkan_LIBRARY})
 ENDIF()
 
-find_program(Vulkan_GLSLANG_VALIDATOR NAMES glslangValidator)
+find_program(Vulkan_GLSLANG_VALIDATOR 
+	NAMES glslangValidator 
+	HINTS ENV VULKAN_SDK 
+	PATH_SUFFIXES bin)
+	
 if (NOT Vulkan_GLSLANG_VALIDATOR)
     message(FATAL_ERROR "glslangValidator not found!")
 endif()
