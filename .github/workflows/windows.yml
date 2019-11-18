@@ -16,7 +16,11 @@ jobs:
     - name: Install Vulkan SDK
       run: .\VulkanSDK.exe /S
     - name: Check Vulkan SDK
-      run: ls C:\
+      run: |
+        ls C:\
+        ls C:\VulkanSDK
+        ls C:\VulkanSDK\1.1.126.0
+        Get-ChildItem Env:
     - name: Compile vcpkg dependencies
       run: .\vcpkg_windows.bat
     - name: Compile raytracer
