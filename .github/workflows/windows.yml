@@ -23,6 +23,7 @@ jobs:
         dir C:\VulkanSDK
         dir C:\VulkanSDK\1.1.126.0
         set
+      shell: cmd
     - name: Compile vcpkg dependencies
       run: vcpkg_windows.bat
       shell: cmd
