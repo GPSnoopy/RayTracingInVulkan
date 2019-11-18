@@ -27,6 +27,12 @@ jobs:
     - name: Compile vcpkg dependencies
       run: vcpkg_windows.bat
       shell: cmd
+    # This is where GitHub actions on Windows get really nonsensical.
+    # MSBuild is not on the path by default, despite this running on a Windows / Visual Studio 2019 docker image.
+    # We currently use 3rd party action to avoid hard coding the path to MSBuild.
+    # Comedy bonus: GitHub is now owned by Microsoft.
+    - name: Setup MSBuild
+      uses: warrenbuckley/Setup-MSBuild@v1
     - name: Compile raytracer
       run: build_windows.bat
       shell: cmd
