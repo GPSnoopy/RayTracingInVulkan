@@ -15,13 +15,17 @@ jobs:
       run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe?Human=true" -OutFile VulkanSDK.exe -v
     - name: Install Vulkan SDK
       run: .\VulkanSDK.exe /S
+      shell: cmd
     - name: Check Vulkan SDK
       run: |
-        ls C:\
-        ls C:\VulkanSDK
-        ls C:\VulkanSDK\1.1.126.0
-        Get-ChildItem Env:
+        dir
+        dir C:\
+        dir C:\VulkanSDK
+        dir C:\VulkanSDK\1.1.126.0
+        set
     - name: Compile vcpkg dependencies
-      run: .\vcpkg_windows.bat
+      run: vcpkg_windows.bat
+      shell: cmd
     - name: Compile raytracer
-      run: .\build_windows.bat
+      run: build_windows.bat
+      shell: cmd
