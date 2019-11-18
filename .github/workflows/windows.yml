@@ -6,23 +6,18 @@ jobs:
   build:
 
     runs-on: windows-latest
+    env:
+      VULKAN_SDK: C:\VulkanSDK\1.1.126.0
 
     steps:
     - uses: actions/checkout@v1
+    - name: Download Vulkan SDK
+      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe?Human=true" -OutFile VulkanSDK.exe
     - name: Install Vulkan SDK
-      run: |
-        Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe?Human=true" -OutFile VulkanSDK.exe
-        .\VulkanSDK.exe /S
-        ls C:\
-        ls D:\
-        ls C:\VulkanSDK\
-        ls C:\VulkanSDK\1.1.126.0\
+      run: .\VulkanSDK.exe /S
+    - name: Check Vulkan SDK
+      run: ls C:\
     - name: Compile vcpkg dependencies
       run: .\vcpkg_windows.bat
     - name: Compile raytracer
-      run: |
-        Get-ChildItem Env:
-        .\build_windows.bat
-      env:
-        VK_SDK_PATH: C:\VulkanSDK\1.1.126.0
-        VULKAN_SDK: C:\VulkanSDK\1.1.126.0
+      run: .\build_windows.bat
