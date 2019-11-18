@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Download Vulkan SDK
-      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe?Human=true" -OutFile VulkanSDK.exe
+      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.1.126.0/windows/VulkanSDK-1.1.126.0-Installer.exe?Human=true" -OutFile VulkanSDK.exe -v
     - name: Install Vulkan SDK
       run: .\VulkanSDK.exe /S
     - name: Check Vulkan SDK
