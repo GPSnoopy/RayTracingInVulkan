@@ -2,11 +2,11 @@
 
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
 
-My implementation of [Peter Shirley's Ray Tracing in One Weekend](https://github.com/RayTracing/raytracing.github.io) books using Vulkan and NVIDIA's RTX extension (VK_NV_ray_tracing). This allows most scenes to be rendered at interactive speed on appropriate hardware.
+Tanguy Fautre's implementation of [Peter Shirley's Ray Tracing in One Weekend](https://github.com/RayTracing/raytracing.github.io) books using Vulkan and NVIDIA's RTX extension (VK_NV_ray_tracing). This allows most scenes to be rendered at interactive speed on appropriate hardware.
 
-The real-time ray tracer can also load full geometry from OBJ files as well as render the procedural spheres from the book. An accumulation buffer is used to increase the sample count when the camera is not moving while keeping the frame rate interactive. I have added a UI built using [Dear ImGui](https://github.com/ocornut/imgui) to allow changing the renderer parameters on the fly. Unlike projects such as [Q2VKPT](http://brechpunkt.de/q2vkpt/), there is no denoising filter. So the image will get noisy when moving the camera.
+The real-time path tracer can also load full geometry from OBJ files as well as render the procedural spheres from the book. An accumulation buffer is used to increase the sample count when the camera is not moving while keeping the frame rate interactive. They have added a UI built using [Dear ImGui](https://github.com/ocornut/imgui) to allow changing the renderer parameters on the fly. Unlike projects such as [Q2VKPT](http://brechpunkt.de/q2vkpt/), there is no denoising filter. So the image will get noisy when moving the camera.
 
-This personal project follows my own attempts at CPU ray tracing following Peter Shirley's books (see [here](https://github.com/GPSnoopy/RayTracingInOneWeekend) and [here](https://github.com/GPSnoopy/RayTracingTheNextWeek) if you are interested).
+This personal project follows their own attempts at CPU ray tracing following Peter Shirley's books (see [here](https://github.com/GPSnoopy/RayTracingInOneWeekend) and [here](https://github.com/GPSnoopy/RayTracingTheNextWeek) if interested).
 
 ## Gallery
 
@@ -14,9 +14,9 @@ This personal project follows my own attempts at CPU ray tracing following Peter
 
 ## Performance
 
-Using a GeForce RTX 2080 Ti, the rendering speed is obscenely faster than using the CPU renderer. Obviously both implementations are still quite naive in some places, but I'm really impressed by the performance. The cover scene of the first book reaches ~140fps at 1280x720 using 8 rays per pixel and up to 16 bounces.
+Using a GeForce RTX 2080 Ti, the rendering speed is obscenely faster than using the CPU renderer. Obviously both implementations are still quite naive in some places, but they're impressed by the performance. The cover scene of the first book reaches ~140fps at 1280x720 using 8 rays per pixel and up to 16 bounces.
 
-I suspect performance could be improved further. I have created each object in the scene as a separate instance in the top level acceleration structure, which is probably not the best for data locality. The same goes for displaying multiple [Lucy statues](http://graphics.stanford.edu/data/3Dscanrep/), where I have naively duplicated the geometry rather than instancing it multiple times.
+They suspect performance could be improved further. They have created each object in the scene as a separate instance in the top level acceleration structure, which is probably not the best for data locality. The same goes for displaying multiple [Lucy statues](http://graphics.stanford.edu/data/3Dscanrep/), where they have naively duplicated the geometry rather than instancing it multiple times.
 
 ## Benchmarking
 
@@ -28,7 +28,7 @@ To benchmark all the scenes, starting from scene #1:
 ```
 > RayTracer.exe --benchmark --width 2560 --height 1440 --fullscreen --scene 1 --next-scenes
 ```
-Here are my results with the command above on a few different computers using NVIDIA drivers 436.48 and Release 4 of the RayTracer.
+Here are the results with the command above on a few different computers using NVIDIA drivers 436.48 and Release 4 of the RayTracer.
 
 | Platform | Scene 1 | Scene 2 | Scene 3 | Scene 4 | Scene 5 |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -56,11 +56,11 @@ Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/), the bu
 
 ## Random Thoughts
 
-- I suspect the RTX 20 series RT cores to implement ray-AABB collision detection using reduced float precision. Early in the development, when trying to get the sphere procedural rendering to work, reporting an intersection every time the `rint` shader is invoked allowed to visualise the AABB of each procedural instance. The rendering of the bounding volume had many artifacts around the boxes edges, typical of reduced precision.
+- They suspect the RTX 20 series RT cores to implement ray-AABB collision detection using reduced float precision. Early in the development, when trying to get the sphere procedural rendering to work, reporting an intersection every time the `rint` shader is invoked allowed to visualise the AABB of each procedural instance. The rendering of the bounding volume had many artifacts around the boxes edges, typical of reduced precision.
 
-- When I upgraded the drivers to 430.86, performance significantly improved (+50%). This was around the same time Quake II RTX was released by NVIDIA. Coincidence?
+- When they upgraded the drivers to 430.86, performance significantly improved (+50%). This was around the same time Quake II RTX was released by NVIDIA. Coincidence?
 
-- When looking at the benchmark results of an RTX 2070 and an RTX 2080 Ti, the performance differences mostly in line with the number of CUDA cores and RT cores rather than being influences by other metrics. Although I do not know at this point whether the CUDA cores or the RT cores are the main bottleneck.
+- When looking at the benchmark results of an RTX 2070 and an RTX 2080 Ti, the performance differences mostly in line with the number of CUDA cores and RT cores rather than being influences by other metrics. Although they do not know at this point whether the CUDA cores or the RT cores are the main bottleneck.
 
 - The benchmark mode makes the Boost clock behaviour quite obvious. Performance degrades rapidly by a few % over 60-120 seconds. For example, in theory the RTX 2080 Ti should be getting exactly the same result for Scene 1 and Scene 2 (or very close). Yet because Scene 2 is run after, the GPU has had to reduce its Boost clock as the GPU gets close to its thermal limit.
 
