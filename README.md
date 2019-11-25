@@ -46,7 +46,8 @@ Most of the third party dependencies can be built using [Microsoft's vcpkg](http
 > build_windows.bat
 ```
 vcpkg_windows.bat fails on H drive (why, I don't know) => need to run on C drive and copy over.
-build_windows.bat fails first time as it gives the error ```Unable to open check cache file for write. .../RayTracingInVulkan/build/windows/CMakeFiles/CMakeTmp/CMakeFiles/cmake.check_cache```
+build_windows.bat fails first time as it gives the error 
+```Unable to open check cache file for write. .../RayTracingInVulkan/build/windows/CMakeFiles/CMakeTmp/CMakeFiles/cmake.check_cache```
 Creating a file with that name in that location (can copy the one from ```.../RayTracingInVulkan/build/windows/CMakeFiles/```) fixes this and it will build.
 
 **Linux (GCC 8 Makefile)** [![Linux CI Status](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Linux%20CI/badge.svg)](https://github.com/GPSnoopy/RayTracingInVulkan/actions?query=workflow%3A%22Linux+CI%22)
