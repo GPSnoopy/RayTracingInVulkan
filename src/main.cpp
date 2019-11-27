@@ -11,6 +11,12 @@
 #include <cstdlib>
 #include <iostream>
 
+#ifdef DEBUG
+#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+
 namespace
 {
 	UserSettings CreateUserSettings(const Options& options);
@@ -43,8 +49,10 @@ int main(int argc, const char* argv[]) noexcept
 		PrintVulkanDevices(application);
 		SetVulkanDevice(application);
 
+		DEBUG_MSG("-----------------\nStarted");
 		application.Run();
 
+		DEBUG_MSG("Finished");
 		return EXIT_SUCCESS;
 	}
 

@@ -3,6 +3,12 @@
 #include "Utilities/StbImage.hpp"
 #include <iostream>
 
+#ifdef DEBUG
+#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+
 namespace Vulkan {
 
 namespace
@@ -148,15 +154,15 @@ bool Window::IsMinimized() const
 void Window::Run() const
 {
 	glfwSetTime(0.0);
-
+	DEBUG_MSG("Run window \n--------------------------");
 	while (!glfwWindowShouldClose(window_))
 	{
-		glfwPollEvents();
-
+		glfwPollEvents(); //render
 		if (DrawFrame)
 		{
 			DrawFrame();
 		}
+		DEBUG_MSG("---------------");
 	}
 }
 

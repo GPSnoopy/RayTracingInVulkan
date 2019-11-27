@@ -18,6 +18,12 @@
 #include <iostream>
 #include <numeric>
 
+#ifdef DEBUG
+#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+
 namespace Vulkan::RayTracing {
 
 namespace
@@ -126,6 +132,7 @@ void Application::DeleteSwapChain()
 
 void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 {
+	DEBUG_MSG("VK RT App Rendering");
 	const auto extent = SwapChain().Extent();
 
 	VkDescriptorSet descriptorSets[] = { rayTracingPipeline_->DescriptorSet(imageIndex) };

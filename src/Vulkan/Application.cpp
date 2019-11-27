@@ -20,6 +20,13 @@
 #include "Assets/UniformBuffer.hpp"
 #include "Utilities/Exception.hpp"
 #include <array>
+#include <iostream>
+
+#ifdef DEBUG
+#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
 
 namespace Vulkan {
 
@@ -76,6 +83,7 @@ void Application::SetPhysicalDevice(VkPhysicalDevice physicalDevice)
 
 void Application::Run()
 {
+	DEBUG_MSG("Run VK App");
 	if (!device_)
 	{
 		Throw(std::logic_error("physical device has not been set"));
@@ -139,6 +147,7 @@ void Application::DeleteSwapChain()
 
 void Application::DrawFrame()
 {
+	DEBUG_MSG("VK App Draw Frame");
 	const auto noTimeout = std::numeric_limits<uint64_t>::max();
 
 	auto& inFlightFence = inFlightFences_[currentFrame_];
@@ -162,7 +171,7 @@ void Application::DrawFrame()
 	}
 
 	const auto commandBuffer = commandBuffers_->Begin(imageIndex);
-	Render(commandBuffer, imageIndex);
+	Render(commandBuffer, imageIndex); //RayTracer::Render
 	commandBuffers_->End(imageIndex);
 
 	UpdateUniformBuffer(imageIndex);
@@ -216,6 +225,7 @@ void Application::DrawFrame()
 
 void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 {
+	DEBUG_MSG("VK Rendering");
 	std::array<VkClearValue, 2> clearValues = {};
 	clearValues[0].color = { {0.0f, 0.0f, 0.0f, 1.0f} };
 	clearValues[1].depthStencil = { 1.0f, 0 };

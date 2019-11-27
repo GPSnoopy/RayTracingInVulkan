@@ -13,6 +13,12 @@
 #include <iostream>
 #include <sstream>
 
+#ifdef DEBUG
+#define DEBUG_MSG(str) do { std::cout << str << std::endl; } while( false )
+#else
+#define DEBUG_MSG(str) do { } while ( false )
+#endif
+
 namespace
 {
 	const bool EnableValidationLayers =
@@ -91,6 +97,7 @@ void RayTracer::DeleteSwapChain()
 
 void RayTracer::DrawFrame()
 {
+	DEBUG_MSG("RT Draw frame");
 	// Check if the scene has been changed by the user.
 	if (sceneIndex_ != static_cast<uint32_t>(userSettings_.SceneIndex))
 	{
@@ -123,6 +130,7 @@ void RayTracer::DrawFrame()
 
 void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 {
+	DEBUG_MSG("RT Rendering");
 	// Record delta time between calls to Render.
 	const auto prevTime = time_;
 	time_ = Window().Time();
