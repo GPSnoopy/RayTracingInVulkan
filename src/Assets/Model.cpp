@@ -290,6 +290,15 @@ Model Model::CreateSphere(const vec3& center, float radius, const Material& mate
 		isProcedural ? new Sphere(center, radius) : nullptr);
 }
 
+void Model::ClearMaterials()
+{
+	int size = materials_.size();
+	materials_.clear();
+	for (size_t i = 0; i < size; i++) {
+		materials_.push_back(Material());
+	}
+}
+
 void Model::SetMaterial(const Material& material)
 {
 	if (materials_.size() != 1)
@@ -298,6 +307,16 @@ void Model::SetMaterial(const Material& material)
 	}
 
 	materials_[0] = material;
+}
+
+void Model::SetMaterials(std::vector<Material> materials)
+{
+	if (materials.size() != materials_.size())
+	{
+		Throw(std::runtime_error("cannot alter number of materials"));
+	}
+
+	materials_ = materials;
 }
 
 void Model::Transform(const mat4& transform)

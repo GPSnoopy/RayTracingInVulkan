@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utilities/Glm.hpp"
+#include <string>
 
 namespace Assets
 {

@@ -17,7 +17,7 @@ class SceneList final
 {
 public:
 
-	struct CameraInitialSate
+	struct CameraInitialState
 	{
 		glm::mat4 ModelView;
 		float FieldOfView;
@@ -27,12 +27,13 @@ public:
 		bool HasSky;
 	};
 
-	static SceneAssets CubeAndSpheres(CameraInitialSate& camera);
-	static SceneAssets RayTracingInOneWeekend(CameraInitialSate& camera);
-	static SceneAssets PlanetsInOneWeekend(CameraInitialSate& camera);
-	static SceneAssets LucyInOneWeekend(CameraInitialSate& camera);
-	static SceneAssets CornellBox(CameraInitialSate& camera);
-	static SceneAssets CornellBoxLucy(CameraInitialSate& camera);
+	static SceneAssets CubeAndSpheres(CameraInitialState& camera);
+	static SceneAssets RayTracingInOneWeekend(CameraInitialState& camera);
+	static SceneAssets PlanetsInOneWeekend(CameraInitialState& camera);
+	static SceneAssets LucyInOneWeekend(CameraInitialState& camera);
+	static SceneAssets CornellBox(CameraInitialState& camera);
+	static SceneAssets CornellBoxLucy(CameraInitialState& camera);
+	static SceneAssets Alex(CameraInitialState& camera);
 
-	static const std::vector<std::pair<std::string, std::function<SceneAssets (CameraInitialSate&)>>> AllScenes;
+	static const std::vector<std::pair<std::string, std::function<SceneAssets (CameraInitialState&)>>> AllScenes;
 };

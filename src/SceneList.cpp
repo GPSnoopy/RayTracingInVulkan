@@ -10,7 +10,7 @@ using Assets::Material;
 using Assets::Model;
 using Assets::Texture;
 
-const std::vector<std::pair<std::string, std::function<SceneAssets (SceneList::CameraInitialSate&)>>> SceneList::AllScenes =
+const std::vector<std::pair<std::string, std::function<SceneAssets (SceneList::CameraInitialState&)>>> SceneList::AllScenes =
 {
 	{"Cube And Spheres", CubeAndSpheres},
 	{"Ray Tracing In One Weekend", RayTracingInOneWeekend},
@@ -18,9 +18,10 @@ const std::vector<std::pair<std::string, std::function<SceneAssets (SceneList::C
 	{"Lucy In One Weekend", LucyInOneWeekend},
 	{"Cornell Box", CornellBox},
 	{"Cornell Box & Lucy", CornellBoxLucy},
+	{"Alex", Alex},
 };
 
-SceneAssets SceneList::CubeAndSpheres(CameraInitialSate& camera)
+SceneAssets SceneList::CubeAndSpheres(CameraInitialState& camera)
 {
 	// Basic test scene.
 	
@@ -44,7 +45,7 @@ SceneAssets SceneList::CubeAndSpheres(CameraInitialSate& camera)
 	return std::forward_as_tuple(std::move(models), std::move(textures));
 }
 
-SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
+SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialState& camera)
 {
 	// Final scene from Ray Tracing In One Weekend book.
 	
@@ -104,7 +105,7 @@ SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 }
 
 
-SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
+SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialState& camera)
 {
 	// Same as RayTracingInOneWeekend but using textures.
 	
@@ -168,7 +169,7 @@ SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 	return std::forward_as_tuple(std::move(models), std::move(textures));
 }
 
-SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
+SceneAssets SceneList::LucyInOneWeekend(CameraInitialState& camera)
 {
 	// Same as RayTracingInOneWeekend but using the Lucy 3D model.
 	
@@ -259,7 +260,7 @@ SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 	return std::forward_as_tuple(std::move(models), std::vector<Texture>());
 }
 
-SceneAssets SceneList::CornellBox(CameraInitialSate& camera)
+SceneAssets SceneList::CornellBox(CameraInitialState& camera)
 {
 	camera.ModelView = lookAt(vec3(278, 278, 800), vec3(278, 278, 0), vec3(0, 1, 0));
 	camera.FieldOfView = 40;
@@ -285,7 +286,7 @@ SceneAssets SceneList::CornellBox(CameraInitialSate& camera)
 	return std::make_tuple(std::move(models), std::vector<Texture>());
 }
 
-SceneAssets SceneList::CornellBoxLucy(CameraInitialSate& camera)
+SceneAssets SceneList::CornellBoxLucy(CameraInitialState& camera)
 {
 	camera.ModelView = lookAt(vec3(278, 278, 800), vec3(278, 278, 0), vec3(0, 1, 0));
 	camera.FieldOfView = 40;
@@ -311,4 +312,45 @@ SceneAssets SceneList::CornellBoxLucy(CameraInitialSate& camera)
 	models.push_back(lucy0);
 
 	return std::forward_as_tuple(std::move(models), std::vector<Texture>());
+}
+
+SceneAssets SceneList::Alex(CameraInitialState& camera)
+{
+	camera.ModelView = translate(mat4(1), vec3(0, 0, -2));
+	camera.FieldOfView = 90;
+	camera.Aperture = 0.05f;
+	camera.FocusDistance = 2.0f;
+	camera.GammaCorrection = false;
+	camera.HasSky = true;
+
+	std::vector<Model> models;
+	std::vector<Texture> textures;
+
+	auto alex = Model::LoadModel("D:/holnesruth/Subject_Alex/Alex2.obj");
+
+	const auto i = mat4(1);
+	const float scaleFactor = 0.01f;
+
+	alex.Transform(
+		scale(
+			translate(i, vec3(0, -0.08f, 0)),
+			vec3(scaleFactor))); 
+
+	alex.ClearMaterials();
+
+	std::vector<Material> m;
+	m.push_back(Material::DiffuseLight(vec3(0.0f)));
+	m.push_back(Material::Lambertian(vec3(1.0f), 0));
+	m.push_back(Material::Lambertian(vec3(1.0f), 1));
+	m.push_back(Material::Lambertian(vec3(1.0f), 2));
+
+	alex.SetMaterials(m);
+
+	textures.push_back(Texture::LoadTexture("D:/holnesruth/Subject_Alex/Alex21.jpg", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("D:/holnesruth/Subject_Alex/Alex22.jpg", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("D:/holnesruth/Subject_Alex/Alex23.jpg", Vulkan::SamplerConfig()));
+
+	models.push_back(std::move(alex));
+
+	return std::forward_as_tuple(std::move(models), std::move(textures));
 }
