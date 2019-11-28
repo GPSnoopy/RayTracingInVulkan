@@ -1,5 +1,7 @@
 # Towards Real-Time Simulation of Human Skin Appearance
 
+Implemented by Ruth Holness
+
 # GPSnoopy's Ray Tracing In Vulkan
 
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
