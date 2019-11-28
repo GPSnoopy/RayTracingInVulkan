@@ -1,4 +1,6 @@
-# Ray Tracing In Vulkan
+# Towards Real-Time Simulation of Human Skin Appearance
+
+# GPSnoopy's Ray Tracing In Vulkan
 
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
 
