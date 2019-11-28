@@ -292,7 +292,7 @@ Model Model::CreateSphere(const vec3& center, float radius, const Material& mate
 
 void Model::ClearMaterials()
 {
-	int size = materials_.size();
+	size_t size = materials_.size();
 	materials_.clear();
 	for (size_t i = 0; i < size; i++) {
 		materials_.push_back(Material());

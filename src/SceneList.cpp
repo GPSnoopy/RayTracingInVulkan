@@ -318,7 +318,7 @@ SceneAssets SceneList::Alex(CameraInitialState& camera)
 {
 	camera.ModelView = translate(mat4(1), vec3(0, 0, -2));
 	camera.FieldOfView = 90;
-	camera.Aperture = 0.05f;
+	camera.Aperture = 0.0f;
 	camera.FocusDistance = 2.0f;
 	camera.GammaCorrection = false;
 	camera.HasSky = true;
@@ -326,7 +326,7 @@ SceneAssets SceneList::Alex(CameraInitialState& camera)
 	std::vector<Model> models;
 	std::vector<Texture> textures;
 
-	auto alex = Model::LoadModel("D:/holnesruth/Subject_Alex/Alex2.obj");
+	auto alex = Model::LoadModel("../assets/models/Alex.obj");
 
 	const auto i = mat4(1);
 	const float scaleFactor = 0.01f;
@@ -334,7 +334,7 @@ SceneAssets SceneList::Alex(CameraInitialState& camera)
 	alex.Transform(
 		scale(
 			translate(i, vec3(0, -0.08f, 0)),
-			vec3(scaleFactor))); 
+			vec3(scaleFactor)));
 
 	alex.ClearMaterials();
 
@@ -346,11 +346,11 @@ SceneAssets SceneList::Alex(CameraInitialState& camera)
 
 	alex.SetMaterials(m);
 
-	textures.push_back(Texture::LoadTexture("D:/holnesruth/Subject_Alex/Alex21.jpg", Vulkan::SamplerConfig()));
-	textures.push_back(Texture::LoadTexture("D:/holnesruth/Subject_Alex/Alex22.jpg", Vulkan::SamplerConfig()));
-	textures.push_back(Texture::LoadTexture("D:/holnesruth/Subject_Alex/Alex23.jpg", Vulkan::SamplerConfig()));
-
 	models.push_back(std::move(alex));
+
+	textures.push_back(Texture::LoadTexture("../assets/textures/Alex1.jpg", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("../assets/textures/Alex2.jpg", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("../assets/textures/Alex3.jpg", Vulkan::SamplerConfig()));
 
 	return std::forward_as_tuple(std::move(models), std::move(textures));
 }
