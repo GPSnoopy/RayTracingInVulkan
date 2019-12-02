@@ -29,6 +29,9 @@ struct UserSettings final
 	bool ShowSettings;
 	bool ShowOverlay;
 
+	// Scene
+	bool RenderTextures;
+
 	bool RequiresAccumulationReset(const UserSettings& prev) const
 	{
 		return
@@ -38,5 +41,10 @@ struct UserSettings final
 			FieldOfView != prev.FieldOfView ||
 			Aperture != prev.Aperture ||
 			FocusDistance != prev.FocusDistance;
+	}
+
+	bool RequiresReload(const UserSettings& prev) const
+	{
+		return RenderTextures != prev.RenderTextures;
 	}
 };

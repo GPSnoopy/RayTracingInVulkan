@@ -109,6 +109,8 @@ namespace
 		userSettings.ShowSettings = !options.Benchmark;
 		userSettings.ShowOverlay = true;
 
+		userSettings.RenderTextures = true;
+
 		return userSettings;
 	}
 

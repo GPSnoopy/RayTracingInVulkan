@@ -46,7 +46,7 @@ Assets::UniformBufferObject RayTracer::GetUniformBufferObject(const VkExtent2D e
 	const auto cameraRotX = static_cast<float>(cameraY_ / 300.0);
 	const auto cameraRotY = static_cast<float>(cameraX_ / 300.0);
 
-	const auto& init = cameraInitialSate_;
+	const auto& init = cameraInitialState_;
 	const auto view = init.ModelView;
 	const auto model =
 		glm::rotate(glm::mat4(1.0f), cameraRotY * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
@@ -108,6 +108,16 @@ void RayTracer::DrawFrame()
 		CreateAccelerationStructures();
 		CreateSwapChain();
 		return;
+	}
+
+	if (userSettings_.RequiresReload(previousSettings_)) {
+		std::cout << "reload" << std::endl;
+		Device().WaitIdle();
+		DeleteSwapChain();
+		DeleteAccelerationStructures();
+		LoadScene(userSettings_.SceneIndex);
+		CreateAccelerationStructures();
+		CreateSwapChain();
 	}
 
 	// Check if the accumulation buffer needs to be reset.
@@ -197,6 +207,9 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 			case GLFW_KEY_W:
 				isWireFrame_ = !isWireFrame_;
 				break;
+			case GLFW_KEY_T:
+				userSettings_.RenderTextures = !userSettings_.RenderTextures;
+				break;
 			default:
 				break;
 			}
@@ -244,7 +257,7 @@ void RayTracer::OnMouseButton(const int button, const int action, const int mods
 
 void RayTracer::LoadScene(const uint32_t sceneIndex)
 {
-	auto [models, textures] = SceneList::AllScenes[sceneIndex].second(cameraInitialSate_);
+	auto [models, textures] = SceneList::AllScenes[sceneIndex].second(cameraInitialState_);
 
 	// If there are no texture, add a dummy one. It makes the pipeline setup a lot easier.
 	if (textures.empty())
@@ -252,13 +265,21 @@ void RayTracer::LoadScene(const uint32_t sceneIndex)
 		textures.push_back(Assets::Texture::LoadTexture("../assets/textures/white.png", Vulkan::SamplerConfig()));
 	}
 	
+	if (!userSettings_.RenderTextures) {
+		size_t size = textures.size();
+		textures.clear();
+		for (size_t i = 0; i < size; i++) {
+			textures.push_back(Assets::Texture::LoadTexture("../assets/textures/grey.png", Vulkan::SamplerConfig()));
+		}
+	}
+
 	scene_.reset(new Assets::Scene(CommandPool(), std::move(models), std::move(textures), true));
 	sceneIndex_ = sceneIndex;
 
-	userSettings_.FieldOfView = cameraInitialSate_.FieldOfView;
-	userSettings_.Aperture = cameraInitialSate_.Aperture;
-	userSettings_.FocusDistance = cameraInitialSate_.FocusDistance;
-	userSettings_.GammaCorrection = cameraInitialSate_.GammaCorrection;
+	userSettings_.FieldOfView = cameraInitialState_.FieldOfView;
+	userSettings_.Aperture = cameraInitialState_.Aperture;
+	userSettings_.FocusDistance = cameraInitialState_.FocusDistance;
+	userSettings_.GammaCorrection = cameraInitialState_.GammaCorrection;
 
 	cameraX_ = 0;
 	cameraY_ = 0;

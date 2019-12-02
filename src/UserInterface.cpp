@@ -209,6 +209,11 @@ void UserInterface::DrawSettings()
 		ImGui::SliderFloat("Focus", &Settings().FocusDistance, 0.1f, 20.0f, "%.1f");
 		ImGui::Checkbox("Apply gamma correction", &Settings().GammaCorrection);
 		ImGui::NewLine();
+
+		ImGui::Text("Rendering");
+		ImGui::Separator();
+		ImGui::Checkbox("Textures", &Settings().RenderTextures);
+		ImGui::NewLine();
 	}
 	ImGui::End();
 }

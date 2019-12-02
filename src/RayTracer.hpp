@@ -37,7 +37,7 @@ private:
 	uint32_t sceneIndex_{};
 	UserSettings userSettings_{};
 	UserSettings previousSettings_{};
-	SceneList::CameraInitialState cameraInitialSate_{};
+	SceneList::CameraInitialState cameraInitialState_{};
 
 	std::unique_ptr<const Assets::Scene> scene_;
 	std::unique_ptr<class UserInterface> userInterface_;
