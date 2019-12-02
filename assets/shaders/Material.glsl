@@ -4,6 +4,7 @@ const uint MaterialMetallic = 1;
 const uint MaterialDielectric = 2;
 const uint MaterialIsotropic = 3;
 const uint MaterialDiffuseLight = 4;
+const uint MaterialSpecular = 5;
 
 struct Material
 {

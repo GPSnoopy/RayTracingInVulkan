@@ -10,36 +10,42 @@ namespace Assets
 	{
 		static Material Lambertian(const glm::vec3& diffuse, const int32_t textureId = -1)
 		{
-			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Enum::Lambertian };
+			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Type::Lambertian };
 		}
 
 		static Material Metallic(const glm::vec3& diffuse, const float fuzziness, const int32_t textureId = -1)
 		{
-			return Material{ glm::vec4(diffuse, 1), textureId, fuzziness, 0.0f, Enum::Metallic };
+			return Material{ glm::vec4(diffuse, 1), textureId, fuzziness, 0.0f, Type::Metallic };
 		}
 
 		static Material Dielectric(const float refractionIndex, const int32_t textureId = -1)
 		{
-			return Material{ glm::vec4(0.7f, 0.7f, 1.0f, 1), textureId,  0.0f, refractionIndex, Enum::Dielectric };
+			return Material{ glm::vec4(0.7f, 0.7f, 1.0f, 1), textureId,  0.0f, refractionIndex, Type::Dielectric };
 		}
 
 		static Material Isotropic(const glm::vec3& diffuse, const int32_t textureId = -1)
 		{
-			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Enum::Isotropic };
+			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Type::Isotropic };
 		}
 
 		static Material DiffuseLight(const glm::vec3& diffuse, const int32_t textureId = -1)
 		{
-			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Enum::DiffuseLight };
+			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Type::DiffuseLight };
 		}
 
-		enum class Enum : uint32_t
+		static Material Specular(const glm::vec3& diffuse, const int32_t textureId = -1)
+		{
+			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Type::Specular };
+		}
+
+		enum class Type : uint32_t
 		{
 			Lambertian = 0,
 			Metallic = 1,
 			Dielectric = 2,
 			Isotropic = 3,
-			DiffuseLight = 4
+			DiffuseLight = 4,
+			Specular = 5
 		};
 
 		// Note: vec3 and vec4 gets aligned on 16 bytes in Vulkan shaders. 
@@ -55,7 +61,7 @@ namespace Assets
 		float RefractionIndex;
 
 		// Which material are we dealing with
-		Enum MaterialModel;
+		Type MaterialModel;
 	};
 
 }

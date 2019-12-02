@@ -1,5 +1,6 @@
 #include "Random.glsl"
 #include "RayPayload.glsl"
+#include "CookTorrance.glsl"
 
 // Polynomial approximation by Christophe Schlick
 float Schlick(const float cosine, const float refractionIndex)
@@ -51,6 +52,17 @@ RayPayload ScatterDieletric(const Material m, const vec3 direction, const vec3 n
 		: RayPayload(vec4(texColor.rgb, t), vec4(refracted, 1), seed);
 }
 
+// Specular
+RayPayload ScatterSpecular(const Material m, const vec3 direction, const vec3 normal, const vec2 texCoord, const float t, inout uint seed)
+{
+	const bool isScattered = dot(direction, normal) < 0;
+	const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[m.DiffuseTextureId], texCoord) : vec4(1);
+	const vec4 colorAndDistance = vec4(m.Diffuse.rgb * texColor.rgb, t);
+	const vec4 scatter = vec4(normal + RandomInUnitSphere(seed), isScattered ? 1 : 0);
+
+	return RayPayload(colorAndDistance, scatter, seed);
+}
+
 // Diffuse Light
 RayPayload ScatterDiffuseLight(const Material m, const float t, inout uint seed)
 {
@@ -72,6 +84,8 @@ RayPayload Scatter(const Material m, const vec3 direction, const vec3 normal, co
 		return ScatterMetallic(m, normDirection, normal, texCoord, t, seed);
 	case MaterialDielectric:
 		return ScatterDieletric(m, normDirection, normal, texCoord, t, seed);
+	case MaterialSpecular:
+		return ScatterSpecular(m, normDirection, normal, texCoord, t, seed);
 	case MaterialDiffuseLight:
 		return ScatterDiffuseLight(m, t, seed);
 	}
