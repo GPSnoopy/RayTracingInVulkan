@@ -33,9 +33,9 @@ namespace Assets
 			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Type::DiffuseLight };
 		}
 
-		static Material Specular(const glm::vec3& diffuse, const int32_t textureId = -1)
+		static Material Specular(const glm::vec3& diffuse, const float roughness, const int32_t textureId = -1)
 		{
-			return Material{ glm::vec4(diffuse, 1), textureId, 0.0f, 0.0f, Type::Specular };
+			return Material{ glm::vec4(diffuse, 1), textureId, roughness, 0.0f, Type::Specular };
 		}
 
 		enum class Type : uint32_t
