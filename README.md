@@ -1,6 +1,6 @@
 # Towards Real-Time Simulation of Human Skin Appearance
 
-Implemented by Ruth Holness
+Implemented by Ruth Holness using GPSnoopy's code as a framework.
 
 ## Gallery
 
