@@ -9,12 +9,6 @@ Implemented by Ruth Holness using GPSnoopy's code as a framework.
 <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/OneWeekend.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Planets.jpg" width="49%"></img> 
 <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBox.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBoxLucy.jpg" width="49%"></img>
 
-## Performance
-
-Using a GeForce RTX 2080 Ti, the rendering speed is obscenely faster than using the CPU renderer. Obviously both implementations are still quite naive in some places, but they're impressed by the performance. The cover scene of the first book reaches ~140fps at 1280x720 using 8 rays per pixel and up to 16 bounces.
-
-They suspect performance could be improved further. They have created each object in the scene as a separate instance in the top level acceleration structure, which is probably not the best for data locality. The same goes for displaying multiple [Lucy statues](http://graphics.stanford.edu/data/3Dscanrep/), where they have naively duplicated the geometry rather than instancing it multiple times.
-
 ## Benchmarking
 
 Command line arguments can be used to control various aspects of the application. Use `--help` to see all modes and arguments. For example, to run the ray tracer in benchmark mode in 2560x1440 fullscreen for scene #1:
