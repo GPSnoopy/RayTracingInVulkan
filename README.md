@@ -2,18 +2,9 @@
 
 Implemented by Ruth Holness
 
-# GPSnoopy's Ray Tracing In Vulkan
-
-<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
-
-Tanguy Fautre's implementation of [Peter Shirley's Ray Tracing in One Weekend](https://github.com/RayTracing/raytracing.github.io) books using Vulkan and NVIDIA's RTX extension (VK_NV_ray_tracing). This allows most scenes to be rendered at interactive speed on appropriate hardware.
-
-The real-time path tracer can also load full geometry from OBJ files as well as render the procedural spheres from the book. An accumulation buffer is used to increase the sample count when the camera is not moving while keeping the frame rate interactive. They have added a UI built using [Dear ImGui](https://github.com/ocornut/imgui) to allow changing the renderer parameters on the fly. Unlike projects such as [Q2VKPT](http://brechpunkt.de/q2vkpt/), there is no denoising filter. So the image will get noisy when moving the camera.
-
-This personal project follows their own attempts at CPU ray tracing following Peter Shirley's books (see [here](https://github.com/GPSnoopy/RayTracingInOneWeekend) and [here](https://github.com/GPSnoopy/RayTracingTheNextWeek) if interested).
-
 ## Gallery
 
+<img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
 <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/OneWeekend.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Planets.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBox.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBoxLucy.jpg" width="49%"></img>
 
 ## Performance
@@ -62,26 +53,3 @@ Creating a file with that name in that location (can copy the one from ```.../Ra
 ```
 
 Assuming you have installed the [Vulkan SDK](https://vulkan.lunarg.com/), the build should work out-of-the box for Visual Studio. On Linux, you may have to manually install additional dependencies for `vcpkg_linux.sh` to succeed.
-
-## Random Thoughts
-
-- They suspect the RTX 20 series RT cores to implement ray-AABB collision detection using reduced float precision. Early in the development, when trying to get the sphere procedural rendering to work, reporting an intersection every time the `rint` shader is invoked allowed to visualise the AABB of each procedural instance. The rendering of the bounding volume had many artifacts around the boxes edges, typical of reduced precision.
-
-- When they upgraded the drivers to 430.86, performance significantly improved (+50%). This was around the same time Quake II RTX was released by NVIDIA. Coincidence?
-
-- When looking at the benchmark results of an RTX 2070 and an RTX 2080 Ti, the performance differences mostly in line with the number of CUDA cores and RT cores rather than being influences by other metrics. Although they do not know at this point whether the CUDA cores or the RT cores are the main bottleneck.
-
-- The benchmark mode makes the Boost clock behaviour quite obvious. Performance degrades rapidly by a few % over 60-120 seconds. For example, in theory the RTX 2080 Ti should be getting exactly the same result for Scene 1 and Scene 2 (or very close). Yet because Scene 2 is run after, the GPU has had to reduce its Boost clock as the GPU gets close to its thermal limit.
-
-
-## References
-
-* [Vulkan Tutorial](https://vulkan-tutorial.com/)
-* [Introduction to Real-Time Ray Tracing with Vulkan](https://devblogs.nvidia.com/vulkan-raytracing/)
-* [NVIDIA Vulkan Ray Tracing Tutorial](https://developer.nvidia.com/rtx/raytracing/vkray)
-* [NVIDIA Vulkan Ray Tracing Helpers: Introduction](https://developer.nvidia.com/rtx/raytracing/vkray_helpers)
-* [Fast and Fun: My First Real-Time Ray Tracing Demo](https://devblogs.nvidia.com/my-first-ray-tracing-demo/)
-* [Getting Started with RTX Ray Tracing](https://github.com/NVIDIAGameWorks/GettingStartedWithRTXRayTracing)
-* [D3D12 Raytracing Samples](https://github.com/Microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12Raytracing)
-* [George Ouzounoudis's vk_exp](https://github.com/georgeouzou/vk_exp)
-* [NVIDIA Vulkan Forums](https://devtalk.nvidia.com/default/board/166/vulkan/)
