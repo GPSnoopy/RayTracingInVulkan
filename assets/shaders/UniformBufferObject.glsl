@@ -1,4 +1,3 @@
-
 struct UniformBufferObject
 {
 	mat4 ModelView;
@@ -11,6 +10,8 @@ struct UniformBufferObject
 	uint NumberOfSamples;
 	uint NumberOfBounces;
 	uint RandomSeed;
+	uint TessStrength;
+	float TessLevel;
 	bool GammaCorrection;
 	bool HasSky;
 };

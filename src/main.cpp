@@ -172,6 +172,9 @@ namespace
 			{
 				return false;
 			}
+			if (!deviceFeatures.tessellationShader) {
+				return false;
+			}
 
 			// We want a device with a graphics queue.
 			const auto queueFamilies = Vulkan::GetEnumerateVector(device, vkGetPhysicalDeviceQueueFamilyProperties);

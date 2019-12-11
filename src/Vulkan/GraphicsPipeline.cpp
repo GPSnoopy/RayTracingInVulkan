@@ -36,7 +36,7 @@ GraphicsPipeline::GraphicsPipeline(
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
 	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_PATCH_LIST;
 	inputAssembly.primitiveRestartEnable = VK_FALSE;
 
 	VkViewport viewport = {};
@@ -116,9 +116,9 @@ GraphicsPipeline::GraphicsPipeline(
 	// Create descriptor pool/sets.
 	std::vector<DescriptorBinding> descriptorBindings =
 	{
-		{0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT},
-		{1, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT},
-		{2, static_cast<uint32_t>(scene.TextureSamplers().size()), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT}
+		{0, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT | VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT},
+		{1, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT | VK_SHADER_STAGE_FRAGMENT_BIT},
+		{2, static_cast<uint32_t>(scene.TextureSamplers().size()), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT | VK_SHADER_STAGE_FRAGMENT_BIT}
 	};
 
 	descriptorSetManager_.reset(new DescriptorSetManager(device, descriptorBindings, uniformBuffers.size()));
@@ -165,17 +165,25 @@ GraphicsPipeline::GraphicsPipeline(
 	// Load shaders.
 	const ShaderModule vertShader(device, "../assets/shaders/Graphics.vert.spv");
 	const ShaderModule fragShader(device, "../assets/shaders/Graphics.frag.spv");
+	const ShaderModule tessellationControlShader(device, "../assets/shaders/Tessellation.tesc.spv");
+	const ShaderModule tessellationEvalShader(device, "../assets/shaders/Tessellation.tese.spv");
 
 	VkPipelineShaderStageCreateInfo shaderStages[] =
 	{
 		vertShader.CreateShaderStage(VK_SHADER_STAGE_VERTEX_BIT),
-		fragShader.CreateShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT)
+		fragShader.CreateShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT),
+		tessellationControlShader.CreateShaderStage(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT),
+		tessellationEvalShader.CreateShaderStage(VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT)
 	};
+
+	VkPipelineTessellationStateCreateInfo tessellationState{};
+	tessellationState.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+	tessellationState.patchControlPoints = 3;
 
 	// Create graphic pipeline
 	VkGraphicsPipelineCreateInfo pipelineInfo = {};
 	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-	pipelineInfo.stageCount = 2;
+	pipelineInfo.stageCount = 4;
 	pipelineInfo.pStages = shaderStages;
 	pipelineInfo.pVertexInputState = &vertexInputInfo;
 	pipelineInfo.pInputAssemblyState = &inputAssembly;
@@ -184,6 +192,7 @@ GraphicsPipeline::GraphicsPipeline(
 	pipelineInfo.pMultisampleState = &multisampling;
 	pipelineInfo.pDepthStencilState = &depthStencil;
 	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.pTessellationState = &tessellationState;
 	pipelineInfo.pDynamicState = nullptr; // Optional
 	pipelineInfo.basePipelineHandle = nullptr; // Optional
 	pipelineInfo.basePipelineIndex = -1; // Optional

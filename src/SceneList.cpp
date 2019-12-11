@@ -352,6 +352,9 @@ SceneAssets SceneList::Alex(CameraInitialState& camera)
 	textures.push_back(Texture::LoadTexture("../assets/textures/Alex1.jpg", Vulkan::SamplerConfig()));
 	textures.push_back(Texture::LoadTexture("../assets/textures/Alex2.jpg", Vulkan::SamplerConfig()));
 	textures.push_back(Texture::LoadTexture("../assets/textures/Alex3.jpg", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("../assets/maps/DisplacementMap1.png", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("../assets/maps/DisplacementMap2.png", Vulkan::SamplerConfig()));
+	textures.push_back(Texture::LoadTexture("../assets/maps/DisplacementMap3.png", Vulkan::SamplerConfig()));
 
 	return std::forward_as_tuple(std::move(models), std::move(textures));
 }

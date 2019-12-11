@@ -111,7 +111,7 @@ void RayTracer::DrawFrame()
 	}
 
 	if (userSettings_.RequiresReload(previousSettings_)) {
-		std::cout << "reload" << std::endl;
+		DEBUG_MSG("Reload Scene");
 		Device().WaitIdle();
 		DeleteSwapChain();
 		DeleteAccelerationStructures();
@@ -267,9 +267,24 @@ void RayTracer::LoadScene(const uint32_t sceneIndex)
 	
 	if (!userSettings_.RenderTextures) {
 		size_t size = textures.size();
-		textures.clear();
-		for (size_t i = 0; i < size; i++) {
-			textures.push_back(Assets::Texture::LoadTexture("../assets/textures/grey.png", Vulkan::SamplerConfig()));
+
+		if (size % 2 != 0)
+		{
+			textures.clear();
+			for (size_t i = 0; i < size; i++) {
+				textures.push_back(Assets::Texture::LoadTexture("../assets/textures/grey.png", Vulkan::SamplerConfig()));
+			}
+		} 
+		else 
+		{
+			textures.clear();
+			size_t size2 = size / 2;
+			for (size_t i = 0; i < size2; i++) {
+				textures.push_back(Assets::Texture::LoadTexture("../assets/textures/grey.png", Vulkan::SamplerConfig()));
+			}
+			textures.push_back(Assets::Texture::LoadTexture("../assets/maps/DisplacementMap1.png", Vulkan::SamplerConfig()));
+			textures.push_back(Assets::Texture::LoadTexture("../assets/maps/DisplacementMap2.png", Vulkan::SamplerConfig()));
+			textures.push_back(Assets::Texture::LoadTexture("../assets/maps/DisplacementMap3.png", Vulkan::SamplerConfig()));
 		}
 	}
 

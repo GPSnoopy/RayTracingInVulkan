@@ -99,6 +99,7 @@ Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface) :
 	VkPhysicalDeviceFeatures deviceFeatures = {};
 	deviceFeatures.fillModeNonSolid = true;
 	deviceFeatures.samplerAnisotropy = true;
+	deviceFeatures.tessellationShader = true;
 
 	VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures = {};
 	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
