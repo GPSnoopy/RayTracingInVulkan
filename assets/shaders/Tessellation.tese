@@ -20,8 +20,7 @@ layout (location = 0) out vec3 outColor;
 layout (location = 1) out vec3 outNormal;
 layout (location = 2) out vec2 outUV;
 layout (location = 3) out int outMaterialIndex;
-layout (location = 4) out vec3 outEyesPos;
-layout (location = 5) out vec3 outLightVec;
+layout (location = 4) out vec3 outLight;
 
 int computeMat(vec3 tc) {
     float maximum = max(tc.x, tc.y);
@@ -42,12 +41,16 @@ void main()
 				
 	Material m = Materials[outMaterialIndex];
 	uint texId = (Materials.length() / 2) + m.DiffuseTextureId;
+
 	float tessStrength = 0.01;
-	gl_Position.xyz += normalize(outNormal) * (max(textureLod(TextureSamplers[texId], outUV.st, 0.0).r, 0.0) * tessStrength);
+
+	float d = max(textureLod(TextureSamplers[texId], outUV.st, 0.0).r, 0.0);
+	d = clamp(d, -0.5, 0.5);
+
+	gl_Position.xyz += normalize(outNormal) * (d * tessStrength);
 		
-	outEyesPos = (gl_Position).xyz;
 	vec3 light = vec3(5, 10, 30);
-	outLightVec = normalize(normalize(light) - outEyesPos);
+	outLight = normalize(normalize(light) - gl_Position.xyz);
 
 	gl_Position = ubo.Projection * ubo.ModelView * gl_Position;
 }

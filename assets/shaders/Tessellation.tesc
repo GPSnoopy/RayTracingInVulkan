@@ -19,7 +19,7 @@ in gl_PerVertex
  
 void main()
 {
-	int tessLevel = 3;
+	int tessLevel = 10;
 	if (gl_InvocationID == 0)
 	{
 		gl_TessLevelInner[0] = tessLevel;

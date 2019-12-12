@@ -4,14 +4,14 @@ vec3 CookTorrance(vec3 diffuse, vec3 normal, vec3 lightDir, vec3 viewDir, float 
 	float F0 = 0.8;
 	float k = 0.2;
 
-	float NdotL = max(0, dot(normal, lightDir));
+	float NdotL = max(0.0, dot(normal, lightDir));
 	float Rs = 0.0;
-	if (NdotL > 0) 
+	if (NdotL > 0.0) 
 	{
 		vec3 H = normalize(lightDir + viewDir);
-		float NdotH = max(0, dot(normal, H));
-		float NdotV = max(0, dot(normal, viewDir));
-		float VdotH = max(0, dot(lightDir, H));
+		float NdotH = max(0.0, dot(normal, H));
+		float NdotV = max(0.0, dot(normal, viewDir));
+		float VdotH = max(0.0, dot(viewDir, H));
 
 		// Fresnel reflectance
 		float F = pow(1.0 - VdotH, 5.0);
