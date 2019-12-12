@@ -1,10 +1,4 @@
 #version 450
-#extension GL_ARB_separate_shader_objects : enable
-#extension GL_EXT_nonuniform_qualifier : require
-#extension GL_GOOGLE_include_directive : require
-#include "UniformBufferObject.glsl"
-
-layout(binding = 0) readonly uniform UniformBufferObjectStruct { UniformBufferObject ubo; };
 
 layout (vertices = 3) out;
  
@@ -25,12 +19,13 @@ in gl_PerVertex
  
 void main()
 {
+	int tessLevel = 3;
 	if (gl_InvocationID == 0)
 	{
-		gl_TessLevelInner[0] = ubo.TessLevel;
-		gl_TessLevelOuter[0] = ubo.TessLevel;
-		gl_TessLevelOuter[1] = ubo.TessLevel;
-		gl_TessLevelOuter[2] = ubo.TessLevel;		
+		gl_TessLevelInner[0] = tessLevel;
+		gl_TessLevelOuter[0] = tessLevel;
+		gl_TessLevelOuter[1] = tessLevel;
+		gl_TessLevelOuter[2] = tessLevel;		
 	}
 
 	gl_out[gl_InvocationID].gl_Position =  gl_in[gl_InvocationID].gl_Position;
