@@ -341,9 +341,9 @@ SceneAssets SceneList::Alex(CameraInitialState& camera)
 	std::vector<Material> m;
 
 	m.push_back(Material::DiffuseLight(vec3(0.0f)));
-	m.push_back(Material::Specular(vec3(1.0f), 0.2f, 0));
-	m.push_back(Material::Specular(vec3(1.0f), 0.2f, 1));
-	m.push_back(Material::Specular(vec3(1.0f), 0.2f, 2));
+	m.push_back(Material::Specular(vec3(1.0f), 0.5f, 0));
+	m.push_back(Material::Specular(vec3(1.0f), 0.5f, 1));
+	m.push_back(Material::Specular(vec3(1.0f), 0.5f, 2));
 
 	alex.SetMaterials(m);
 

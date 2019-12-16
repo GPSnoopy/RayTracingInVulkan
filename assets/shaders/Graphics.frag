@@ -25,7 +25,7 @@ void main()
 	
 	vec3 diffuse = textureId >= 0 ? texture(TextureSamplers[textureId], inUV).rgb : inColor;
 
-	vec3 ct = CookTorrance(diffuse, normal, inLight, view, 0.2);
+	vec3 ct = CookTorrance(diffuse, normal, inLight, view, 0.5);
 
     OutColor = vec4(ct, 1);
 }
