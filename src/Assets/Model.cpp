@@ -50,32 +50,25 @@ Model Model::LoadModel(const std::string& filename)
 	const auto timer = std::chrono::high_resolution_clock::now();
 	const std::string materialPath = std::filesystem::path(filename).parent_path().string();
 	
-	tinyobj::attrib_t objAttrib;
-	std::vector<tinyobj::shape_t> objShapes;
-	std::vector<tinyobj::material_t> objMaterials;
-	std::string warn;
-	std::string err;
-
-	if (!tinyobj::LoadObj(
-		&objAttrib, &objShapes, &objMaterials, &warn, &err,
-		filename.c_str(),
-		materialPath.c_str()))
+	tinyobj::ObjReader objReader;
+	
+	if (!objReader.ParseFromFile(filename))
 	{
-		Throw(std::runtime_error("failed to load model '" + filename + "':\n" + err));
+		Throw(std::runtime_error("failed to load model '" + filename + "':\n" + objReader.Error()));
 	}
 
-	if (!warn.empty())
+	if (!objReader.Warning().empty())
 	{
-		Utilities::Console::Write(Utilities::Severity::Warning, [&warn]()
+		Utilities::Console::Write(Utilities::Severity::Warning, [&objReader]()
 		{
-			std::cout << "\nWARNING: " << warn << std::flush;
+			std::cout << "\nWARNING: " << objReader.Warning() << std::flush;
 		});
 	}
 
 	// Materials
 	std::vector<Material> materials;
 
-	for (const auto& material : objMaterials)
+	for (const auto& material : objReader.GetMaterials())
 	{
 		Material m{};
 
@@ -96,12 +89,14 @@ Model Model::LoadModel(const std::string& filename)
 	}
 
 	// Geometry
+	const auto& objAttrib = objReader.GetAttrib();
+
 	std::vector<Vertex> vertices;
 	std::vector<uint32_t> indices;
 	std::unordered_map<Vertex, uint32_t> uniqueVertices(objAttrib.vertices.size());
 	size_t faceId = 0;
 
-	for (const auto& shape : objShapes)
+	for (const auto& shape : objReader.GetShapes())
 	{
 		const auto& mesh = shape.mesh;
 
