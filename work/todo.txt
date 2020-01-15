@@ -1,0 +1,3 @@
+Paper (By Monday)
+Displacement maps for model (make high res model)
+Colour sliders for melanin etc
