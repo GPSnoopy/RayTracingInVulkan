@@ -16,7 +16,7 @@ jobs:
     - name: Install Vulkan SDK
       run: |
         wget -qO - http://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
-        sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.1.126-bionic.list http://packages.lunarg.com/vulkan/1.1.126/lunarg-vulkan-1.1.126-bionic.list
+        sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-1.2.131-bionic.list http://packages.lunarg.com/vulkan/1.1.126/lunarg-vulkan-1.2.131-bionic.list
         sudo apt-get update
         sudo apt-get install vulkan-sdk
     - name: Compile vcpkg dependencies
