@@ -7,22 +7,14 @@ jobs:
 
     runs-on: windows-latest
     env:
-      VULKAN_SDK: C:\VulkanSDK\1.2.131.1
+      VULKAN_SDK: C:\VulkanSDK\1.2.131.2
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Download Vulkan SDK
-      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.2.131.1/windows/VulkanSDK-1.2.131.1-Installer.exe?Human=true" -OutFile VulkanSDK.exe -v
+      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.2.131.2/windows/VulkanSDK-1.2.131.2-Installer.exe?Human=true" -OutFile VulkanSDK.exe -v
     - name: Install Vulkan SDK
       run: .\VulkanSDK.exe /S
-      shell: cmd
-    - name: Check Vulkan SDK
-      run: |
-        dir
-        dir C:\
-        dir C:\VulkanSDK
-        dir C:\VulkanSDK\1.2.131.1
-        set
       shell: cmd
     - name: Compile vcpkg dependencies
       run: vcpkg_windows.bat
