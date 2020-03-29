@@ -111,12 +111,15 @@ Model Model::LoadModel(const std::string& filename)
 				objAttrib.vertices[3 * index.vertex_index + 2],
 			};
 
-			vertex.Normal =
+			if (!objAttrib.normals.empty())
 			{
-				objAttrib.normals[3 * index.normal_index + 0],
-				objAttrib.normals[3 * index.normal_index + 1],
-				objAttrib.normals[3 * index.normal_index + 2]
-			};
+				vertex.Normal =
+				{
+					objAttrib.normals[3 * index.normal_index + 0],
+					objAttrib.normals[3 * index.normal_index + 1],
+					objAttrib.normals[3 * index.normal_index + 2]
+				};
+			}
 
 			if (!objAttrib.texcoords.empty())
 			{
@@ -136,6 +139,30 @@ Model Model::LoadModel(const std::string& filename)
 			}
 
 			indices.push_back(uniqueVertices[vertex]);
+		}
+	}
+
+	// If the model did not specify normals, then create smooth normals that conserve the same number of vertices.
+	// Using flat normals would mean creating more vertices than we currently have, so for simplicity and better visuals we don't do it.
+	// See https://stackoverflow.com/questions/12139840/obj-file-averaging-normals.
+	if (objAttrib.normals.empty())
+	{
+		std::vector<vec3> normals(vertices.size());
+		
+		for (size_t i = 0; i < indices.size(); i += 3)
+		{
+			const auto normal = normalize(cross(
+				vec3(vertices[indices[i + 1]].Position) - vec3(vertices[indices[i]].Position),
+				vec3(vertices[indices[i + 2]].Position) - vec3(vertices[indices[i]].Position)));
+
+			vertices[indices[i + 0]].Normal += normal;
+			vertices[indices[i + 1]].Normal += normal;
+			vertices[indices[i + 2]].Normal += normal;			
+		}
+
+		for (auto& vertex : vertices)
+		{
+			vertex.Normal = normalize(vertex.Normal);
 		}
 	}
 
