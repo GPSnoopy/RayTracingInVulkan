@@ -220,6 +220,7 @@ RayTracingPipeline::RayTracingPipeline(
 	pipelineInfo.layout = pipelineLayout_->Handle();
 	pipelineInfo.basePipelineHandle = nullptr;
 	pipelineInfo.basePipelineIndex = 0;
+	pipelineInfo.libraries.sType = VK_STRUCTURE_TYPE_PIPELINE_LIBRARY_CREATE_INFO_KHR;
 
 	Check(deviceProcedures.vkCreateRayTracingPipelinesKHR(device.Handle(), nullptr, 1, &pipelineInfo, nullptr, &pipeline_), 
 		"create ray tracing pipeline");
