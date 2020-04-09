@@ -28,8 +28,8 @@ namespace
 			maxArgs = std::max(maxArgs, entry.InlineData.size());
 		}
 
-		// A SBT entry is made of a program ID and a set of 4-byte parameters (offsets or push constants)
-		// and must be aligned to ShaderGroupBaseAlignment.
+		// A SBT entry is made of a program ID and a set of 4-byte parameters (see shaderRecordEXT).
+		// Its size is ShaderGroupHandleSize (plus parameters) and must be aligned to ShaderGroupBaseAlignment.
 		return RoundUp(rayTracingProperties.ShaderGroupHandleSize() + maxArgs, rayTracingProperties.ShaderGroupBaseAlignment());
 	}
 
