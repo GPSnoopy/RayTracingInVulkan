@@ -45,6 +45,10 @@ set(src_files_vulkan
 	Vulkan/CommandBuffers.hpp
 	Vulkan/CommandPool.cpp
 	Vulkan/CommandPool.hpp
+	Vulkan/DebugUtils.cpp
+	Vulkan/DebugUtils.hpp
+	Vulkan/DebugUtilsMessenger.cpp
+	Vulkan/DebugUtilsMessenger.hpp
 	Vulkan/DepthBuffer.cpp
 	Vulkan/DepthBuffer.hpp
 	Vulkan/DescriptorBinding.hpp
@@ -60,8 +64,6 @@ set(src_files_vulkan
 	Vulkan/Device.hpp
 	Vulkan/DeviceMemory.cpp
 	Vulkan/DeviceMemory.hpp
-	Vulkan/DebugUtilsMessenger.cpp
-	Vulkan/DebugUtilsMessenger.hpp
 	Vulkan/Enumerate.hpp
 	Vulkan/Fence.cpp
 	Vulkan/Fence.hpp

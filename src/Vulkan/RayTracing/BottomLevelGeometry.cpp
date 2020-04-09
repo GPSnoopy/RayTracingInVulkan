@@ -72,7 +72,7 @@ void BottomLevelGeometry::AddGeometryAabb(
 	geometry.geometry.aabbs.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_AABBS_DATA_KHR;
 	geometry.geometry.aabbs.pNext = nullptr;
 	geometry.geometry.aabbs.data.deviceAddress = scene.AabbBuffer().GetDeviceAddress();
-	geometry.geometry.aabbs.stride = sizeof(VkAabbPositionsKHR) * 2;
+	geometry.geometry.aabbs.stride = sizeof(VkAabbPositionsKHR);
 	geometry.flags = isOpaque ? VK_GEOMETRY_OPAQUE_BIT_KHR : 0;
 
 	VkAccelerationStructureBuildOffsetInfoKHR buildOffsetInfo = {};

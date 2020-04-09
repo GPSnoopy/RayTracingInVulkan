@@ -35,7 +35,8 @@ namespace
 
 Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface, const std::vector<const char*>& requiredExtensions) :
 	physicalDevice_(physicalDevice),
-	surface_(surface)
+	surface_(surface),
+	debugUtils_(surface.Instance().Handle())
 {
 	CheckRequiredExtensions(physicalDevice, requiredExtensions);
 
@@ -122,6 +123,8 @@ Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface, co
 
 	Check(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_),
 		"create logical device");
+
+	debugUtils_.SetDevice(device_);
 
 	vkGetDeviceQueue(device_, graphicsFamilyIndex_, 0, &graphicsQueue_);
 	vkGetDeviceQueue(device_, computeFamilyIndex_, 0, &computeQueue_);

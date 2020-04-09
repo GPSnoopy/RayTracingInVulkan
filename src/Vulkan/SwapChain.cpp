@@ -72,6 +72,14 @@ SwapChain::SwapChain(const class Device& device, const bool vsync) :
 	{
 		imageViews_.push_back(std::make_unique<ImageView>(device, image, format_, VK_IMAGE_ASPECT_COLOR_BIT));
 	}
+
+	const auto& debugUtils = device.DebugUtils();
+
+	for (size_t i = 0; i != images_.size(); ++i)
+	{
+		debugUtils.SetObjectName(images_[i], ("Swapchain Image #" + std::to_string(i)).c_str());
+		debugUtils.SetObjectName(imageViews_[i]->Handle(), ("Swapchain ImageView #" + std::to_string(i)).c_str());
+	}
 }
 
 SwapChain::~SwapChain()

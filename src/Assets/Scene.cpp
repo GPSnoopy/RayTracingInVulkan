@@ -4,6 +4,7 @@
 #include "Texture.hpp"
 #include "TextureImage.hpp"
 #include "Vulkan/Buffer.hpp"
+#include "Vulkan/Device.hpp"
 #include "Vulkan/CommandPool.hpp"
 #include "Vulkan/ImageView.hpp"
 #include "Vulkan/Sampler.hpp"
@@ -40,18 +41,23 @@ namespace
 	template <class T>
 	void CreateDeviceBuffer(
 		Vulkan::CommandPool& commandPool,
+		const char* const name,
 		const VkBufferUsageFlags usage, 
 		const std::vector<T>& content,
 		std::unique_ptr<Vulkan::Buffer>& buffer,
 		std::unique_ptr<Vulkan::DeviceMemory>& memory)
 	{
 		const auto& device = commandPool.Device();
+		const auto& debugUtils = device.DebugUtils();
 		const auto contentSize = sizeof(content[0]) * content.size();
 		const VkMemoryAllocateFlags allocateFlags = usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT ? VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT : 0;
 
 		buffer.reset(new Vulkan::Buffer(device, contentSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage));
 		memory.reset(new Vulkan::DeviceMemory(buffer->AllocateMemory(allocateFlags, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)));
 
+		debugUtils.SetObjectName(buffer->Handle(), (name + std::string(" Buffer")).c_str());
+		debugUtils.SetObjectName(memory->Handle(), (name + std::string(" Memory")).c_str());
+		
 		CopyFromStagingBuffer(commandPool, *buffer, content);
 	}
 
@@ -106,13 +112,13 @@ Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std:
 
 	const auto flag = usedForRayTracing ? VK_BUFFER_USAGE_STORAGE_BUFFER_BIT  | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT : 0;
 
-	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | flag, vertices, vertexBuffer_, vertexBufferMemory_);
-	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag, indices, indexBuffer_, indexBufferMemory_);
-	CreateDeviceBuffer(commandPool, flag, materials, materialBuffer_, materialBufferMemory_);
-	CreateDeviceBuffer(commandPool, flag, offsets, offsetBuffer_, offsetBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Vertices", VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | flag, vertices, vertexBuffer_, vertexBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Indices", VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag, indices, indexBuffer_, indexBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Materials", flag, materials, materialBuffer_, materialBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Offsets", flag, offsets, offsetBuffer_, offsetBufferMemory_);
 
-	CreateDeviceBuffer(commandPool, flag, aabbs, aabbBuffer_, aabbBufferMemory_);
-	CreateDeviceBuffer(commandPool, flag, procedurals, proceduralBuffer_, proceduralBufferMemory_);
+	CreateDeviceBuffer(commandPool, "AABBs", flag, aabbs, aabbBuffer_, aabbBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Procedurals", flag, procedurals, proceduralBuffer_, proceduralBufferMemory_);
 
 	// Upload all textures
 	textureImages_.reserve(textures_.size());
