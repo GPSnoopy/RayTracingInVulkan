@@ -153,20 +153,20 @@ void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageInde
 	VkStridedBufferRegionKHR raygenShaderBindingTable = {};
 	raygenShaderBindingTable.buffer = shaderBindingTable_->Buffer().Handle();
 	raygenShaderBindingTable.offset = shaderBindingTable_->RayGenOffset();
-	raygenShaderBindingTable.stride = 32; // TODO
-	raygenShaderBindingTable.size = 32; // TODO
+	raygenShaderBindingTable.stride = shaderBindingTable_->RayGenEntrySize();
+	raygenShaderBindingTable.size = shaderBindingTable_->RayGenSize();
 
 	VkStridedBufferRegionKHR missShaderBindingTable = {};
 	missShaderBindingTable.buffer = shaderBindingTable_->Buffer().Handle();
 	missShaderBindingTable.offset = shaderBindingTable_->MissOffset();
-	missShaderBindingTable.stride = 32; // TODO
-	missShaderBindingTable.size = 32; //TODO
+	missShaderBindingTable.stride = shaderBindingTable_->MissEntrySize();
+	missShaderBindingTable.size = shaderBindingTable_->MissSize();
 
 	VkStridedBufferRegionKHR hitShaderBindingTable = {};
 	hitShaderBindingTable.buffer = shaderBindingTable_->Buffer().Handle();
 	hitShaderBindingTable.offset = shaderBindingTable_->HitGroupOffset();
-	hitShaderBindingTable.stride = 32; // TODO
-	hitShaderBindingTable.size = 64; // TODO
+	hitShaderBindingTable.stride = shaderBindingTable_->HitGroupEntrySize();
+	hitShaderBindingTable.size = shaderBindingTable_->HitGroupSize();
 
 	VkStridedBufferRegionKHR callableShaderBindingTable = {};
 

@@ -29,8 +29,8 @@ namespace
 		}
 
 		// A SBT entry is made of a program ID and a set of 4-byte parameters (offsets or push constants)
-		// and must be 16-bytes-aligned.
-		return RoundUp(rayTracingProperties.ShaderGroupHandleSize() + maxArgs, 16);
+		// and must be aligned to ShaderGroupBaseAlignment.
+		return RoundUp(rayTracingProperties.ShaderGroupHandleSize() + maxArgs, rayTracingProperties.ShaderGroupBaseAlignment());
 	}
 
 	size_t CopyShaderData(
@@ -65,12 +65,18 @@ ShaderBindingTable::ShaderBindingTable(
 	const std::vector<Entry>& rayGenPrograms,
 	const std::vector<Entry>& missPrograms, 
 	const std::vector<Entry>& hitGroups) :
+	
 	rayGenEntrySize_(GetEntrySize(rayTracingProperties, rayGenPrograms)),
 	missEntrySize_(GetEntrySize(rayTracingProperties, missPrograms)),
 	hitGroupEntrySize_(GetEntrySize(rayTracingProperties, hitGroups)),
+	
 	rayGenOffset_(0),
 	missOffset_(rayGenPrograms.size() * rayGenEntrySize_),
-	hitGroupOffset_(missOffset_ + missPrograms.size() * missEntrySize_)
+	hitGroupOffset_(missOffset_ + missPrograms.size() * missEntrySize_),
+
+	rayGenSize_(rayGenPrograms.size() * rayGenEntrySize_),
+	missSize_(missPrograms.size() * missEntrySize_),
+	hitGroupSize_(hitGroups.size() * hitGroupEntrySize_)
 {
 	// Compute the size of the table.
 	const size_t sbtSize =

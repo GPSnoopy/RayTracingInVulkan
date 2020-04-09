@@ -23,7 +23,7 @@ namespace Vulkan
 			uint32_t MaxRecursionDepth() const { return props_.maxRecursionDepth; }
 			uint32_t MaxShaderGroupStride() const { return props_.maxShaderGroupStride; }
 			uint32_t ShaderGroupBaseAlignment() const { return props_.shaderGroupBaseAlignment; }
-			uint32_t ShaderGroupHandleCaptureReplaySize() { return props_.shaderGroupHandleCaptureReplaySize; }
+			uint32_t ShaderGroupHandleCaptureReplaySize() const { return props_.shaderGroupHandleCaptureReplaySize; }
 			uint32_t ShaderGroupHandleSize() const { return props_.shaderGroupHandleSize; }
 
 		private:

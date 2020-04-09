@@ -45,6 +45,10 @@ namespace Vulkan::RayTracing
 		size_t MissOffset() const { return missOffset_; }
 		size_t HitGroupOffset() const { return hitGroupOffset_; }
 
+		size_t RayGenSize() const { return rayGenSize_; }
+		size_t MissSize() const { return missSize_; }
+		size_t HitGroupSize() const { return hitGroupSize_; }
+
 		size_t RayGenEntrySize() const { return rayGenEntrySize_; }
 		size_t MissEntrySize() const { return missEntrySize_; }
 		size_t HitGroupEntrySize() const { return hitGroupEntrySize_; }
@@ -58,6 +62,10 @@ namespace Vulkan::RayTracing
 		const size_t rayGenOffset_;
 		const size_t missOffset_;
 		const size_t hitGroupOffset_;
+
+		const size_t rayGenSize_;
+		const size_t missSize_;
+		const size_t hitGroupSize_;
 
 		std::unique_ptr<class Buffer> buffer_;
 		std::unique_ptr<DeviceMemory> bufferMemory_;
