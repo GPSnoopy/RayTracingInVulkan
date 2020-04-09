@@ -8,31 +8,30 @@
 
 namespace Vulkan {
 
-	namespace
+namespace
+{
+	std::vector<VkQueueFamilyProperties>::const_iterator FindQueue(
+		const std::vector<VkQueueFamilyProperties>& queueFamilies,
+		const std::string& name,
+		const VkQueueFlags requiredBits,
+		const VkQueueFlags excludedBits)
 	{
-		std::vector<VkQueueFamilyProperties>::const_iterator FindQueue(
-			const std::vector<VkQueueFamilyProperties>& queueFamilies,
-			const std::string& name,
-			const VkQueueFlags requiredBits,
-			const VkQueueFlags excludedBits)
+		const auto family = std::find_if(queueFamilies.begin(), queueFamilies.end(), [requiredBits, excludedBits](const VkQueueFamilyProperties& queueFamily)
 		{
-			const auto family = std::find_if(queueFamilies.begin(), queueFamilies.end(), [requiredBits, excludedBits](const VkQueueFamilyProperties& queueFamily)
-			{
-				return 
-					queueFamily.queueCount > 0 && 
-					queueFamily.queueFlags & requiredBits &&
-					!(queueFamily.queueFlags & excludedBits);
-			});
+			return 
+				queueFamily.queueCount > 0 && 
+				queueFamily.queueFlags & requiredBits &&
+				!(queueFamily.queueFlags & excludedBits);
+		});
 
-			if (family == queueFamilies.end())
-			{
-				Throw(std::runtime_error("found no matching " + name + " queue"));
-			}
-
-			return family;
+		if (family == queueFamilies.end())
+		{
+			Throw(std::runtime_error("found no matching " + name + " queue"));
 		}
 
+		return family;
 	}
+}
 
 Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface, const std::vector<const char*>& requiredExtensions) :
 	physicalDevice_(physicalDevice),
@@ -90,22 +89,29 @@ Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface, co
 		queueCreateInfos.push_back(queueCreateInfo);
 	}
 
+	// Opt-in into mandatory device features.
 	VkPhysicalDeviceFeatures deviceFeatures = {};
 	deviceFeatures.fillModeNonSolid = true;
 	deviceFeatures.samplerAnisotropy = true;
 
-	VkPhysicalDeviceDescriptorIndexingFeatures indexingFeatures = {};
-	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-	indexingFeatures.runtimeDescriptorArray = true;
-
 	VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures = {};
 	bufferDeviceAddressFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
-	bufferDeviceAddressFeatures.pNext = &indexingFeatures;
+	bufferDeviceAddressFeatures.pNext = nullptr;
 	bufferDeviceAddressFeatures.bufferDeviceAddress = true;
+
+	VkPhysicalDeviceDescriptorIndexingFeatures indexingFeatures = {};
+	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+	indexingFeatures.pNext = &bufferDeviceAddressFeatures;
+	indexingFeatures.runtimeDescriptorArray = true;
+
+	VkPhysicalDeviceRayTracingFeaturesKHR rayTracingFeatures = {};
+	rayTracingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_FEATURES_KHR;
+	rayTracingFeatures.pNext = &indexingFeatures;
+	rayTracingFeatures.rayTracing = true;
 
 	VkDeviceCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	createInfo.pNext = &bufferDeviceAddressFeatures;
+	createInfo.pNext = &rayTracingFeatures;
 	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
 	createInfo.pEnabledFeatures = &deviceFeatures;

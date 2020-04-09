@@ -1,7 +1,7 @@
 #version 460
 #extension GL_EXT_nonuniform_qualifier : require
 #extension GL_GOOGLE_include_directive : require
-#extension GL_NV_ray_tracing : require
+#extension GL_EXT_ray_tracing : require
 #include "Material.glsl"
 
 layout(binding = 4) readonly buffer VertexArray { float Vertices[]; };
@@ -13,8 +13,8 @@ layout(binding = 8) uniform sampler2D[] TextureSamplers;
 #include "Scatter.glsl"
 #include "Vertex.glsl"
 
-hitAttributeNV vec2 HitAttributes;
-rayPayloadInNV RayPayload Ray;
+hitAttributeEXT vec2 HitAttributes;
+rayPayloadInEXT RayPayload Ray;
 
 vec2 Mix(vec2 a, vec2 b, vec2 c, vec3 barycentrics)
 {
@@ -29,7 +29,7 @@ vec3 Mix(vec3 a, vec3 b, vec3 c, vec3 barycentrics)
 void main()
 {
 	// Get the material.
-	const uvec2 offsets = Offsets[gl_InstanceCustomIndexNV];
+	const uvec2 offsets = Offsets[gl_InstanceCustomIndexEXT];
 	const uint indexOffset = offsets.x;
 	const uint vertexOffset = offsets.y;
 	const Vertex v0 = UnpackVertex(vertexOffset + Indices[indexOffset + gl_PrimitiveID * 3 + 0]);
@@ -42,5 +42,5 @@ void main()
 	const vec3 normal = normalize(Mix(v0.Normal, v1.Normal, v2.Normal, barycentrics));
 	const vec2 texCoord = Mix(v0.TexCoord, v1.TexCoord, v2.TexCoord, barycentrics);
 
-	Ray = Scatter(material, gl_WorldRayDirectionNV, normal, texCoord, gl_HitTNV, Ray.RandomSeed);
+	Ray = Scatter(material, gl_WorldRayDirectionEXT, normal, texCoord, gl_HitTEXT, Ray.RandomSeed);
 }
