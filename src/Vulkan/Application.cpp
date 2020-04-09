@@ -31,7 +31,7 @@ Application::Application(const WindowConfig& windowConfig, const bool vsync, con
 		: std::vector<const char*>();
 
 	window_.reset(new class Window(windowConfig));
-	instance_.reset(new Instance(*window_, validationLayers));
+	instance_.reset(new Instance(*window_, validationLayers, VK_API_VERSION_1_2));
 	debugUtilsMessenger_.reset(enableValidationLayers ? new DebugUtilsMessenger(*instance_, VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) : nullptr);
 	surface_.reset(new Surface(*instance_));
 }
@@ -53,6 +53,11 @@ const std::vector<VkExtensionProperties>& Application::Extensions() const
 	return instance_->Extensions();
 }
 
+const std::vector<VkLayerProperties>& Application::Layers() const
+{
+	return instance_->Layers();
+}
+
 const std::vector<VkPhysicalDevice>& Application::PhysicalDevices() const
 {
 	return instance_->PhysicalDevices();
@@ -65,7 +70,18 @@ void Application::SetPhysicalDevice(VkPhysicalDevice physicalDevice)
 		Throw(std::logic_error("physical device has already been set"));
 	}
 
-	device_.reset(new class Device(physicalDevice, *surface_));
+	const std::vector<const char*> requiredExtensions =
+	{
+		// VK_KHR_ray_tracing
+		VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+		VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME,
+		VK_KHR_RAY_TRACING_EXTENSION_NAME,
+
+		// VK_KHR_swapchain
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME
+	};
+
+	device_.reset(new class Device(physicalDevice, *surface_, requiredExtensions));
 	commandPool_.reset(new class CommandPool(*device_, device_->GraphicsFamilyIndex(), true));
 
 	OnDeviceSet();

@@ -23,6 +23,7 @@ namespace Vulkan
 		virtual ~Application();
 
 		const std::vector<VkExtensionProperties>& Extensions() const;
+		const std::vector<VkLayerProperties>& Layers() const;
 		const std::vector<VkPhysicalDevice>& PhysicalDevices() const;
 
 		void SetPhysicalDevice(VkPhysicalDevice physicalDevice);

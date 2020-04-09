@@ -7,14 +7,21 @@ namespace Vulkan {
 DeviceMemory::DeviceMemory(
 	const class Device& device, 
 	const size_t size, 
-	const uint32_t memoryTypeBits, 
-	const VkMemoryPropertyFlags properties) :
+	const uint32_t memoryTypeBits,
+	const VkMemoryAllocateFlags allocateFLags,
+	const VkMemoryPropertyFlags propertyFlags) :
 	device_(device)
 {
+	VkMemoryAllocateFlagsInfo flagsInfo = {};
+	flagsInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO;
+	flagsInfo.pNext = nullptr;
+	flagsInfo.flags = allocateFLags;
+	
 	VkMemoryAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.pNext = &flagsInfo;
 	allocInfo.allocationSize = size;
-	allocInfo.memoryTypeIndex = FindMemoryType(memoryTypeBits, properties);
+	allocInfo.memoryTypeIndex = FindMemoryType(memoryTypeBits, propertyFlags);
 
 	Check(vkAllocateMemory(device.Handle(), &allocInfo, nullptr, &memory_),
 		"allocate memory");
@@ -50,14 +57,14 @@ void DeviceMemory::Unmap()
 	vkUnmapMemory(device_.Handle(), memory_);
 }
 
-uint32_t DeviceMemory::FindMemoryType(const uint32_t typeFilter, const VkMemoryPropertyFlags properties) const
+uint32_t DeviceMemory::FindMemoryType(const uint32_t typeFilter, const VkMemoryPropertyFlags propertyFlags) const
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
 	vkGetPhysicalDeviceMemoryProperties(device_.PhysicalDevice(), &memProperties);
 
 	for (uint32_t i = 0; i != memProperties.memoryTypeCount; ++i)
 	{
-		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+		if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & propertyFlags) == propertyFlags)
 		{
 			return i;
 		}

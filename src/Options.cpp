@@ -23,7 +23,7 @@ Options::Options(const int argc, const char* argv[])
 
 	options_description scene("Scene options");
 	scene.add_options()
-		("scene", value<uint32_t>(&SceneIndex)->default_value(1), "Set the scene to start with.")
+		("scene", value<uint32_t>(&SceneIndex)->default_value(0), "Set the scene to start with.")
 		;
 
 	options_description window("Window options");

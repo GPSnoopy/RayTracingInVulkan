@@ -16,6 +16,7 @@ namespace
 	UserSettings CreateUserSettings(const Options& options);
 	void PrintVulkanSdkInformation();
 	void PrintVulkanInstanceInformation(const Vulkan::Application& application, bool benchmark);
+	void PrintVulkanLayersInformation(const Vulkan::Application& application, bool benchmark);
 	void PrintVulkanDevices(const Vulkan::Application& application);
 	void SetVulkanDevice(Vulkan::Application& application);
 }
@@ -40,7 +41,9 @@ int main(int argc, const char* argv[]) noexcept
 
 		PrintVulkanSdkInformation();
 		PrintVulkanInstanceInformation(application, options.Benchmark);
+		PrintVulkanLayersInformation(application, options.Benchmark);
 		PrintVulkanDevices(application);
+
 		SetVulkanDevice(application);
 
 		application.Run();
@@ -107,6 +110,7 @@ namespace
 	void PrintVulkanSdkInformation()
 	{
 		std::cout << "Vulkan SDK Header Version: " << VK_HEADER_VERSION << std::endl;
+		std::cout << std::endl;
 	}
 	
 	void PrintVulkanInstanceInformation(const Vulkan::Application& application, const bool benchmark)
@@ -122,6 +126,28 @@ namespace
 		{
 			std::cout << "- " << extension.extensionName << " (" << Vulkan::Version(extension.specVersion) << ")" << std::endl;
 		}
+
+		std::cout << std::endl;
+	}
+
+	void PrintVulkanLayersInformation(const Vulkan::Application& application, const bool benchmark)
+	{
+		if (benchmark)
+		{
+			return;
+		}
+
+		std::cout << "Vulkan Instance Layers: " << std::endl;
+
+		for (const auto& layer : application.Layers())
+		{
+			std::cout
+				<< "- " << layer.layerName
+				<< " (" << Vulkan::Version(layer.specVersion) << ")"
+				<< " : " << layer.description << std::endl;
+		}
+
+		std::cout << std::endl;
 	}
 	
 	void PrintVulkanDevices(const Vulkan::Application& application)
@@ -130,11 +156,19 @@ namespace
 
 		for (const auto& device : application.PhysicalDevices())
 		{
-			VkPhysicalDeviceProperties prop;
-			vkGetPhysicalDeviceProperties(device, &prop);
+			VkPhysicalDeviceDriverProperties driverProp{};
+			driverProp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
+			
+			VkPhysicalDeviceProperties2 deviceProp{};
+			deviceProp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+			deviceProp.pNext = &driverProp;
+			
+			vkGetPhysicalDeviceProperties2(device, &deviceProp);
 
 			VkPhysicalDeviceFeatures features;
 			vkGetPhysicalDeviceFeatures(device, &features);
+
+			const auto& prop = deviceProp.properties;
 
 			const Vulkan::Version vulkanVersion(prop.apiVersion);
 			const Vulkan::Version driverVersion(prop.driverVersion, prop.vendorID);
@@ -144,9 +178,11 @@ namespace
 			std::cout << "' (";
 			std::cout << Vulkan::Strings::DeviceType(prop.deviceType) << ": ";
 			std::cout << "vulkan " << vulkanVersion << ", ";
-			std::cout << "driver " << driverVersion;
+			std::cout << "driver " << driverProp.driverName << " " << driverProp.driverInfo << " - " << driverVersion;
 			std::cout << ")" << std::endl;
 		}
+
+		std::cout << std::endl;
 	}
 
 	void SetVulkanDevice(Vulkan::Application& application)

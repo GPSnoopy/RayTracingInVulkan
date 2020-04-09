@@ -65,7 +65,7 @@ Image::~Image()
 DeviceMemory Image::AllocateMemory(const VkMemoryPropertyFlags properties) const
 {
 	const auto requirements = GetMemoryRequirements();
-	DeviceMemory memory(device_, requirements.size, requirements.memoryTypeBits, properties);
+	DeviceMemory memory(device_, requirements.size, requirements.memoryTypeBits, 0, properties);
 
 	Check(vkBindImageMemory(device_.Handle(), image_, memory.Handle(), 0),
 		"bind image memory");

@@ -13,7 +13,7 @@ namespace Vulkan
 
 		VULKAN_NON_COPIABLE(Device)
 
-		Device(VkPhysicalDevice physicalDevice, const Surface& surface);
+		Device(VkPhysicalDevice physicalDevice, const Surface& surface, const std::vector<const char*>& requiredExtensions);
 		~Device();
 
 		VkPhysicalDevice PhysicalDevice() const { return physicalDevice_; }
@@ -32,9 +32,7 @@ namespace Vulkan
 
 	private:
 
-		void CheckRequiredExtensions(VkPhysicalDevice physicalDevice) const;
-
-		static const std::vector<const char*> RequiredExtensions;
+		void CheckRequiredExtensions(VkPhysicalDevice physicalDevice, const std::vector<const char*>& requiredExtensions) const;
 
 		const VkPhysicalDevice physicalDevice_;
 		const class Surface& surface_;

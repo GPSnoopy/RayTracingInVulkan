@@ -108,6 +108,8 @@ set(src_files_vulkan_raytracing
 	Vulkan/RayTracing/Application.hpp
 	Vulkan/RayTracing/BottomLevelAccelerationStructure.cpp
 	Vulkan/RayTracing/BottomLevelAccelerationStructure.hpp
+	Vulkan/RayTracing/BottomLevelGeometry.cpp
+	Vulkan/RayTracing/BottomLevelGeometry.hpp
 	Vulkan/RayTracing/DeviceProcedures.cpp
 	Vulkan/RayTracing/DeviceProcedures.hpp
 	Vulkan/RayTracing/RayTracingPipeline.cpp

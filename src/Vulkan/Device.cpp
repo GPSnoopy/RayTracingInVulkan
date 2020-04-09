@@ -34,17 +34,11 @@ namespace Vulkan {
 
 	}
 
-const std::vector<const char*> Device::RequiredExtensions =
-{
-	VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-	VK_NV_RAY_TRACING_EXTENSION_NAME
-};
-
-Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface) :
+Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface, const std::vector<const char*>& requiredExtensions) :
 	physicalDevice_(physicalDevice),
 	surface_(surface)
 {
-	CheckRequiredExtensions(physicalDevice);
+	CheckRequiredExtensions(physicalDevice, requiredExtensions);
 
 	const auto queueFamilies = GetEnumerateVector(physicalDevice, vkGetPhysicalDeviceQueueFamilyProperties);
 
@@ -100,20 +94,25 @@ Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface) :
 	deviceFeatures.fillModeNonSolid = true;
 	deviceFeatures.samplerAnisotropy = true;
 
-	VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures = {};
-	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+	VkPhysicalDeviceDescriptorIndexingFeatures indexingFeatures = {};
+	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
 	indexingFeatures.runtimeDescriptorArray = true;
+
+	VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures = {};
+	bufferDeviceAddressFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+	bufferDeviceAddressFeatures.pNext = &indexingFeatures;
+	bufferDeviceAddressFeatures.bufferDeviceAddress = true;
 
 	VkDeviceCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	createInfo.pNext = &indexingFeatures;
+	createInfo.pNext = &bufferDeviceAddressFeatures;
 	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
 	createInfo.pEnabledFeatures = &deviceFeatures;
 	createInfo.enabledLayerCount = static_cast<uint32_t>(surface_.Instance().ValidationLayers().size());
 	createInfo.ppEnabledLayerNames = surface_.Instance().ValidationLayers().data();
-	createInfo.enabledExtensionCount = static_cast<uint32_t>(RequiredExtensions.size());
-	createInfo.ppEnabledExtensionNames = RequiredExtensions.data();
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(requiredExtensions.size());
+	createInfo.ppEnabledExtensionNames = requiredExtensions.data();
 
 	Check(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_),
 		"create logical device");
@@ -139,22 +138,22 @@ void Device::WaitIdle() const
 		"wait for device idle");
 }
 
-void Device::CheckRequiredExtensions(VkPhysicalDevice physicalDevice) const
+void Device::CheckRequiredExtensions(VkPhysicalDevice physicalDevice, const std::vector<const char*>& requiredExtensions) const
 {
 	const auto availableExtensions = GetEnumerateVector(physicalDevice, static_cast<const char*>(nullptr), vkEnumerateDeviceExtensionProperties);
-	std::set<std::string> requiredExtensions(RequiredExtensions.begin(), RequiredExtensions.end());
+	std::set<std::string> required(requiredExtensions.begin(), requiredExtensions.end());
 
 	for (const auto& extension : availableExtensions) 
 	{
-		requiredExtensions.erase(extension.extensionName);
+		required.erase(extension.extensionName);
 	}
 
-	if (!requiredExtensions.empty())
+	if (!required.empty())
 	{
 		bool first = true;
 		std::string extensions;
 
-		for (const auto& extension : requiredExtensions)
+		for (const auto& extension : required)
 		{
 			if (!first)
 			{

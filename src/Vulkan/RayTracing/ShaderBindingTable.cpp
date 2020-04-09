@@ -46,7 +46,7 @@ namespace
 
 		for (const auto& entry : entries)
 		{
-			// Copy the shader identifier that was previously obtained with vkGetRayTracingShaderGroupHandlesNV.
+			// Copy the shader identifier that was previously obtained with vkGetRayTracingShaderGroupHandlesKHR.
 			std::memcpy(pDst, shaderHandleStorage + entry.GroupIndex * handleSize, handleSize);
 			std::memcpy(pDst + handleSize, entry.InlineData.data(), entry.InlineData.size());
 
@@ -89,7 +89,7 @@ ShaderBindingTable::ShaderBindingTable(
 	const size_t groupCount = rayGenPrograms.size() + missPrograms.size() + hitGroups.size();
 	std::vector<uint8_t> shaderHandleStorage(groupCount * handleSize);
 
-	Check(deviceProcedures.vkGetRayTracingShaderGroupHandlesNV(
+	Check(deviceProcedures.vkGetRayTracingShaderGroupHandlesKHR(
 		device.Handle(), 
 		rayTracingPipeline.Handle(), 
 		0, static_cast<uint32_t>(groupCount),

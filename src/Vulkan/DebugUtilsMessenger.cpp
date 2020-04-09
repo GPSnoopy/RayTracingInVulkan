@@ -8,51 +8,57 @@ namespace Vulkan {
 
 	namespace
 	{
+
 		const char* ObjectTypeToString(const VkObjectType objectType)
 		{
 			switch (objectType)
 			{
-			case VK_OBJECT_TYPE_UNKNOWN:                        return "unknown";
-			case VK_OBJECT_TYPE_INSTANCE:                       return "instance";
-			case VK_OBJECT_TYPE_PHYSICAL_DEVICE:                return "physical device";
-			case VK_OBJECT_TYPE_DEVICE:                         return "device";
-			case VK_OBJECT_TYPE_QUEUE:                          return "queue";
-			case VK_OBJECT_TYPE_SEMAPHORE:                      return "semaphore";
-			case VK_OBJECT_TYPE_COMMAND_BUFFER:                 return "cmd buffer";
-			case VK_OBJECT_TYPE_FENCE:                          return "fence";
-			case VK_OBJECT_TYPE_DEVICE_MEMORY:                  return "memory";
-			case VK_OBJECT_TYPE_BUFFER:                         return "buffer";
-			case VK_OBJECT_TYPE_IMAGE:                          return "image";
-			case VK_OBJECT_TYPE_EVENT:                          return "event";
-			case VK_OBJECT_TYPE_QUERY_POOL:                     return "query pool";
-			case VK_OBJECT_TYPE_BUFFER_VIEW:                    return "buffer view";
-			case VK_OBJECT_TYPE_IMAGE_VIEW:                     return "image view";
-			case VK_OBJECT_TYPE_SHADER_MODULE:                  return "shader module";
-			case VK_OBJECT_TYPE_PIPELINE_CACHE:                 return "pipeline cache";
-			case VK_OBJECT_TYPE_PIPELINE_LAYOUT:                return "pipeline layout";
-			case VK_OBJECT_TYPE_RENDER_PASS:                    return "render pass";
-			case VK_OBJECT_TYPE_PIPELINE:                       return "pipeline";
-			case VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT:          return "descriptor set layout";
-			case VK_OBJECT_TYPE_SAMPLER:                        return "sampler";
-			case VK_OBJECT_TYPE_DESCRIPTOR_POOL:                return "descriptor pool";
-			case VK_OBJECT_TYPE_DESCRIPTOR_SET:                 return "descriptor set";
-			case VK_OBJECT_TYPE_FRAMEBUFFER:                    return "framebuffer";
-			case VK_OBJECT_TYPE_COMMAND_POOL:                   return "command pool";
-			case VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION:       return "sampler ycbcr conversion";
-			case VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE:     return "descriptor update template";
-			case VK_OBJECT_TYPE_SURFACE_KHR:                    return "surface KHR";
-			case VK_OBJECT_TYPE_SWAPCHAIN_KHR:                  return "swapchain KHR";
-			case VK_OBJECT_TYPE_DISPLAY_KHR:                    return "display KHR";
-			case VK_OBJECT_TYPE_DISPLAY_MODE_KHR:               return "display mode KHR";
-			case VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT:      return "debug report callback";
-			case VK_OBJECT_TYPE_OBJECT_TABLE_NVX:               return "object tabke NVX";
-			case VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX:   return "indirect cmd layout NVX";
-			case VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT:      return "debug utils messenger";
-			case VK_OBJECT_TYPE_VALIDATION_CACHE_EXT:           return "validation cache";
-			case VK_OBJECT_TYPE_ACCELERATION_STRUCTURE_NV:      return "acceleration structure NV";
+#define STR(e) case VK_OBJECT_TYPE_ ## e: return # e
+			STR(UNKNOWN);
+			STR(INSTANCE);
+			STR(PHYSICAL_DEVICE);
+			STR(DEVICE);
+			STR(QUEUE);
+			STR(SEMAPHORE);
+			STR(COMMAND_BUFFER);
+			STR(FENCE);
+			STR(DEVICE_MEMORY);
+			STR(BUFFER);
+			STR(IMAGE);
+			STR(EVENT);
+			STR(QUERY_POOL);
+			STR(BUFFER_VIEW);
+			STR(IMAGE_VIEW);
+			STR(SHADER_MODULE);
+			STR(PIPELINE_CACHE);
+			STR(PIPELINE_LAYOUT);
+			STR(RENDER_PASS);
+			STR(PIPELINE);
+			STR(DESCRIPTOR_SET_LAYOUT);
+			STR(SAMPLER);
+			STR(DESCRIPTOR_POOL);
+			STR(DESCRIPTOR_SET);
+			STR(FRAMEBUFFER);
+			STR(COMMAND_POOL);
+			STR(SAMPLER_YCBCR_CONVERSION);
+			STR(DESCRIPTOR_UPDATE_TEMPLATE);
+			STR(SURFACE_KHR);
+			STR(SWAPCHAIN_KHR);
+			STR(DISPLAY_KHR);
+			STR(DISPLAY_MODE_KHR);
+			STR(DEBUG_REPORT_CALLBACK_EXT);
+			STR(DEBUG_UTILS_MESSENGER_EXT);
+			STR(ACCELERATION_STRUCTURE_KHR);
+			STR(VALIDATION_CACHE_EXT);
+			STR(PERFORMANCE_CONFIGURATION_INTEL);
+			STR(DEFERRED_OPERATION_KHR);
+			STR(INDIRECT_COMMANDS_LAYOUT_NV);
+#undef STR
 			default: return "unknown";
 			}
 		}
+
+		
 
 		VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 			const VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
