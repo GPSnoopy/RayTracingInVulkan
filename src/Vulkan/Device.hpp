@@ -20,7 +20,7 @@ namespace Vulkan
 		VkPhysicalDevice PhysicalDevice() const { return physicalDevice_; }
 		const class Surface& Surface() const { return surface_; }
 
-		const DebugUtils& DebugUtils() const { return debugUtils_; }
+		const class DebugUtils& DebugUtils() const { return debugUtils_; }
 
 		uint32_t GraphicsFamilyIndex() const { return graphicsFamilyIndex_; }
 		uint32_t ComputeFamilyIndex() const { return computeFamilyIndex_; }
@@ -43,7 +43,7 @@ namespace Vulkan
 
 		VULKAN_HANDLE(VkDevice, device_)
 
-		Vulkan::DebugUtils debugUtils_;
+		class DebugUtils debugUtils_;
 
 		uint32_t graphicsFamilyIndex_ {};
 		uint32_t computeFamilyIndex_{};
