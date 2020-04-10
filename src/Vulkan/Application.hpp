@@ -45,6 +45,12 @@ namespace Vulkan
 		virtual const Assets::Scene& GetScene() const = 0;
 		virtual Assets::UniformBufferObject GetUniformBufferObject(VkExtent2D extent) const = 0;
 
+		virtual void SetPhysicalDevice(
+			VkPhysicalDevice physicalDevice, 
+			std::vector<const char*>& requiredExtensions, 
+			VkPhysicalDeviceFeatures& deviceFeatures,
+			void* nextDeviceFeatures);
+		
 		virtual void OnDeviceSet();
 		virtual void CreateSwapChain();
 		virtual void DeleteSwapChain();

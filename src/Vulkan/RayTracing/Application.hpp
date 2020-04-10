@@ -25,6 +25,11 @@ namespace Vulkan::RayTracing
 		Application(const WindowConfig& windowConfig, bool vsync, bool enableValidationLayers);
 		~Application();
 
+		void SetPhysicalDevice(VkPhysicalDevice physicalDevice,
+			std::vector<const char*>& requiredExtensions,
+			VkPhysicalDeviceFeatures& deviceFeatures,
+			void* nextDeviceFeatures) override;
+		
 		void OnDeviceSet() override;
 		void CreateAccelerationStructures();
 		void DeleteAccelerationStructures();

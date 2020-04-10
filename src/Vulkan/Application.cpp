@@ -70,20 +70,15 @@ void Application::SetPhysicalDevice(VkPhysicalDevice physicalDevice)
 		Throw(std::logic_error("physical device has already been set"));
 	}
 
-	const std::vector<const char*> requiredExtensions =
+	std::vector<const char*> requiredExtensions = 
 	{
-		// VK_KHR_ray_tracing
-		VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
-		VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME,
-		VK_KHR_RAY_TRACING_EXTENSION_NAME,
-
 		// VK_KHR_swapchain
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME
 	};
 
-	device_.reset(new class Device(physicalDevice, *surface_, requiredExtensions));
-	commandPool_.reset(new class CommandPool(*device_, device_->GraphicsFamilyIndex(), true));
-
+	VkPhysicalDeviceFeatures deviceFeatures = {};
+	
+	SetPhysicalDevice(physicalDevice, requiredExtensions, deviceFeatures, nullptr);
 	OnDeviceSet();
 
 	// Create swap chain and command buffers.
@@ -105,6 +100,16 @@ void Application::Run()
 	window_->OnMouseButton = [this](int button, int action, int mods) { OnMouseButton(button, action, mods); };
 	window_->Run();
 	device_->WaitIdle();
+}
+
+void Application::SetPhysicalDevice(
+	VkPhysicalDevice physicalDevice, 
+	std::vector<const char*>& requiredExtensions, 
+	VkPhysicalDeviceFeatures& deviceFeatures,
+	void* nextDeviceFeatures)
+{
+	device_.reset(new class Device(physicalDevice, *surface_, requiredExtensions, deviceFeatures, nextDeviceFeatures));
+	commandPool_.reset(new class CommandPool(*device_, device_->GraphicsFamilyIndex(), true));
 }
 
 void Application::OnDeviceSet()

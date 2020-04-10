@@ -18,6 +18,12 @@ protected:
 	const Assets::Scene& GetScene() const override { return *scene_; }
 	Assets::UniformBufferObject GetUniformBufferObject(VkExtent2D extent) const override;
 
+	void SetPhysicalDevice(
+		VkPhysicalDevice physicalDevice, 
+		std::vector<const char*>& requiredExtensions, 
+		VkPhysicalDeviceFeatures& deviceFeatures, 
+		void* nextDeviceFeatures) override;
+
 	void OnDeviceSet() override;
 	void CreateSwapChain() override;
 	void DeleteSwapChain() override;

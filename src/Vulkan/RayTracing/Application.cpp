@@ -51,8 +51,44 @@ Application::~Application()
 	properties_.reset();
 }
 
+void Application::SetPhysicalDevice(
+	VkPhysicalDevice physicalDevice,
+	std::vector<const char*>& requiredExtensions,
+	VkPhysicalDeviceFeatures& deviceFeatures,
+	void* nextDeviceFeatures)
+{
+	// Required extensions.
+	requiredExtensions.insert(requiredExtensions.end(),
+	{
+		// VK_KHR_ray_tracing
+		VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
+		VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME,
+		VK_KHR_RAY_TRACING_EXTENSION_NAME,
+	});
+
+	// Required device features.
+	VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures = {};
+	bufferDeviceAddressFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
+	bufferDeviceAddressFeatures.pNext = nextDeviceFeatures;
+	bufferDeviceAddressFeatures.bufferDeviceAddress = true;
+
+	VkPhysicalDeviceDescriptorIndexingFeatures indexingFeatures = {};
+	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+	indexingFeatures.pNext = &bufferDeviceAddressFeatures;
+	indexingFeatures.runtimeDescriptorArray = true;
+
+	VkPhysicalDeviceRayTracingFeaturesKHR rayTracingFeatures = {};
+	rayTracingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_FEATURES_KHR;
+	rayTracingFeatures.pNext = &indexingFeatures;
+	rayTracingFeatures.rayTracing = true;
+
+	Vulkan::Application::SetPhysicalDevice(physicalDevice, requiredExtensions, deviceFeatures, &rayTracingFeatures);
+}
+
 void Application::OnDeviceSet()
 {
+	Vulkan::Application::OnDeviceSet();
+
 	properties_.reset(new RayTracingProperties(Device()));
 	deviceProcedures_.reset(new DeviceProcedures(Device()));
 }

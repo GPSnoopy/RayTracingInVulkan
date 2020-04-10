@@ -33,7 +33,12 @@ namespace
 	}
 }
 
-Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface, const std::vector<const char*>& requiredExtensions) :
+Device::Device(
+	VkPhysicalDevice physicalDevice, 
+	const class Surface& surface, 
+	const std::vector<const char*>& requiredExtensions,
+	const VkPhysicalDeviceFeatures& deviceFeatures,
+	const void* nextDeviceFeatures) :
 	physicalDevice_(physicalDevice),
 	surface_(surface),
 	debugUtils_(surface.Instance().Handle())
@@ -90,29 +95,10 @@ Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface, co
 		queueCreateInfos.push_back(queueCreateInfo);
 	}
 
-	// Opt-in into mandatory device features.
-	VkPhysicalDeviceFeatures deviceFeatures = {};
-	deviceFeatures.fillModeNonSolid = true;
-	deviceFeatures.samplerAnisotropy = true;
-
-	VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures = {};
-	bufferDeviceAddressFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES;
-	bufferDeviceAddressFeatures.pNext = nullptr;
-	bufferDeviceAddressFeatures.bufferDeviceAddress = true;
-
-	VkPhysicalDeviceDescriptorIndexingFeatures indexingFeatures = {};
-	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
-	indexingFeatures.pNext = &bufferDeviceAddressFeatures;
-	indexingFeatures.runtimeDescriptorArray = true;
-
-	VkPhysicalDeviceRayTracingFeaturesKHR rayTracingFeatures = {};
-	rayTracingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_FEATURES_KHR;
-	rayTracingFeatures.pNext = &indexingFeatures;
-	rayTracingFeatures.rayTracing = true;
-
+	// Create device
 	VkDeviceCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	createInfo.pNext = &rayTracingFeatures;
+	createInfo.pNext = nextDeviceFeatures;
 	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
 	createInfo.pEnabledFeatures = &deviceFeatures;

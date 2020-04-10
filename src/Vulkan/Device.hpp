@@ -14,7 +14,13 @@ namespace Vulkan
 
 		VULKAN_NON_COPIABLE(Device)
 
-		Device(VkPhysicalDevice physicalDevice, const Surface& surface, const std::vector<const char*>& requiredExtensions);
+		Device(
+			VkPhysicalDevice physicalDevice, 
+			const Surface& surface, 
+			const std::vector<const char*>& requiredExtensionsconst,
+			const VkPhysicalDeviceFeatures& deviceFeatures,
+			const void* nextDeviceFeatures);
+		
 		~Device();
 
 		VkPhysicalDevice PhysicalDevice() const { return physicalDevice_; }
