@@ -185,7 +185,6 @@ void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageInde
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, rayTracingPipeline_->PipelineLayout().Handle(), 0, 1, descriptorSets, 0, nullptr);
 
 	// Describe the shader binding table.
-	//const auto progSize = shaderBindingTable_->
 	VkStridedBufferRegionKHR raygenShaderBindingTable = {};
 	raygenShaderBindingTable.buffer = shaderBindingTable_->Buffer().Handle();
 	raygenShaderBindingTable.offset = shaderBindingTable_->RayGenOffset();

@@ -41,7 +41,8 @@ namespace Vulkan::RayTracing
 
 	protected:
 
-		AccelerationStructure(const class DeviceProcedures& deviceProcedures, 
+		AccelerationStructure(
+			const class DeviceProcedures& deviceProcedures, 
 			VkAccelerationStructureTypeKHR accelerationStructureType,
 			const std::vector<VkAccelerationStructureCreateGeometryTypeInfoKHR>& geometries,
 			bool allowUpdate);
