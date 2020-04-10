@@ -67,15 +67,20 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 
 ## References
 
+### Initial Implementation
+
 * [Vulkan Tutorial](https://vulkan-tutorial.com/)
 * [Introduction to Real-Time Ray Tracing with Vulkan](https://devblogs.nvidia.com/vulkan-raytracing)
 * [NVIDIA Vulkan Ray Tracing Tutorial](https://developer.nvidia.com/rtx/raytracing/vkray)
 * [NVIDIA Vulkan Ray Tracing Helpers: Introduction](https://developer.nvidia.com/rtx/raytracing/vkray_helpers)
-* [NVIDIA Vulkan Ray Tracing Tutorial (VK_KHR_ray_tracing)](https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR)
-* [NVIDIA Converting VK_NV_ray_tracing to VK_KHR_ray_tracing](https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR/NV_to_KHR.md.htm)
 * [Fast and Fun: My First Real-Time Ray Tracing Demo](https://devblogs.nvidia.com/my-first-ray-tracing-demo/)
 * [Getting Started with RTX Ray Tracing](https://github.com/NVIDIAGameWorks/GettingStartedWithRTXRayTracing)
 * [D3D12 Raytracing Samples](https://github.com/Microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12Raytracing)
 * [George Ouzounoudis's vk_exp](https://github.com/georgeouzou/vk_exp)
 * [NVIDIA Vulkan Forums](https://devtalk.nvidia.com/default/board/166/vulkan)
 
+### VK_KHR_ray_tracing Port
+
+* [Khronos Vulkan Registry](https://www.khronos.org/registry/vulkan/)
+* [NVIDIA Vulkan Ray Tracing Tutorial (VK_KHR_ray_tracing)](https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR)
+* [NVIDIA Converting VK_NV_ray_tracing to VK_KHR_ray_tracing](https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR/NV_to_KHR.md.htm)
