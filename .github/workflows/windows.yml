@@ -8,7 +8,6 @@ jobs:
     runs-on: windows-latest
     env:
       SDK_VERSION: 1.2.135.0
-      VULKAN_SDK: C:\VulkanSDK\${{ env.SDK_VERSION }}
 
     steps:
     - uses: actions/checkout@v2
@@ -28,5 +27,7 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.0.0
     - name: Compile raytracer
-      run: build_windows.bat
+      run: |
+        set VULKAN_SDK=C:\VulkanSDK\%SDK_VERSION%
+        build_windows.bat
       shell: cmd
