@@ -8,7 +8,7 @@ jobs:
     runs-on: windows-latest
     env:
       SDK_VERSION: 1.2.135.0
-      VULKAN_SDK: C:\VulkanSDK\${{ SDK_VERSION }}
+      VULKAN_SDK: C:\VulkanSDK\${{ env.SDK_VERSION }}
 
     steps:
     - uses: actions/checkout@v2
