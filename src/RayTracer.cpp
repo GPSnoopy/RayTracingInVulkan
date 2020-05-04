@@ -41,7 +41,7 @@ Assets::UniformBufferObject RayTracer::GetUniformBufferObject(const VkExtent2D e
 	const auto cameraRotY = static_cast<float>(cameraX_ / 300.0);
 
 	const auto& init = cameraInitialSate_;
-	const auto view = init.ModelView;
+	const auto view = camera_.ModelView();//init.ModelView;
 	const auto model =
 		glm::rotate(glm::mat4(1.0f), cameraRotY * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
 		glm::rotate(glm::mat4(1.0f), cameraRotX * glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -128,6 +128,9 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 	time_ = Window().Time();
 	const auto deltaTime = time_ - prevTime;
 
+	// Update the camera position / angle.
+	UpdateCamera(deltaTime);
+
 	// Check the current state of the benchmark, update it for the new frame.
 	CheckAndUpdateBenchmarkState(prevTime);
 
@@ -166,33 +169,31 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 	{		
 		switch (key)
 		{
-		case GLFW_KEY_ESCAPE:
-			Window().Close();
-			break;
-		default:
-			break;
+		case GLFW_KEY_ESCAPE: Window().Close(); break;
 		}
 
+		// Settings (toggle switches)
 		if (!userSettings_.Benchmark)
 		{
 			switch (key)
 			{
-			case GLFW_KEY_F1:
-				userSettings_.ShowSettings = !userSettings_.ShowSettings;
-				break;
-			case GLFW_KEY_F2:
-				userSettings_.ShowOverlay = !userSettings_.ShowOverlay;
-				break;
-			case GLFW_KEY_R:
-				userSettings_.IsRayTraced = !userSettings_.IsRayTraced;
-				break;
-			case GLFW_KEY_W:
-				isWireFrame_ = !isWireFrame_;
-				break;
-			default:
-				break;
+			case GLFW_KEY_F1: userSettings_.ShowSettings = !userSettings_.ShowSettings; break;
+			case GLFW_KEY_F2: userSettings_.ShowOverlay = !userSettings_.ShowOverlay; break;
+			case GLFW_KEY_R: userSettings_.IsRayTraced = !userSettings_.IsRayTraced; break;
+			case GLFW_KEY_P: isWireFrame_ = !isWireFrame_; break;
 			}
 		}
+	}
+
+	// Camera motions
+	switch (key)
+	{
+	case GLFW_KEY_S: cameraMovingBackward_ = action != GLFW_RELEASE; break;
+	case GLFW_KEY_W: cameraMovingForward_ = action != GLFW_RELEASE; break;
+	case GLFW_KEY_A: cameraMovingLeft_ = action != GLFW_RELEASE; break;
+	case GLFW_KEY_D: cameraMovingRight_ = action != GLFW_RELEASE; break;
+	case GLFW_KEY_LEFT_CONTROL: cameraMovingDown_= action != GLFW_RELEASE; break;
+	case GLFW_KEY_LEFT_SHIFT: cameraMovingUp_ = action != GLFW_RELEASE; break;
 	}
 }
 
@@ -210,8 +211,11 @@ void RayTracer::OnCursorPosition(const double xpos, const double ypos)
 		const auto deltaX = static_cast<float>(xpos - mouseX_);
 		const auto deltaY = static_cast<float>(ypos - mouseY_);
 
-		cameraX_ += deltaX;
-		cameraY_ += deltaY;
+		//cameraX_ += deltaX;
+		//cameraY_ += deltaY;
+
+		cameraRotX_ = deltaY;
+		cameraRotY_ = deltaX;
 
 		resetAccumulation_ = true;
 	}
@@ -252,11 +256,41 @@ void RayTracer::LoadScene(const uint32_t sceneIndex)
 	userSettings_.FocusDistance = cameraInitialSate_.FocusDistance;
 	userSettings_.GammaCorrection = cameraInitialSate_.GammaCorrection;
 
+	camera_.Reset(cameraInitialSate_.ModelView);
 	cameraX_ = 0;
 	cameraY_ = 0;
 
 	periodTotalFrames_ = 0;
 	resetAccumulation_ = true;
+}
+
+void RayTracer::UpdateCamera(double deltaTime)
+{
+	const double speed = 10; // TODO speed from scene description!
+	const auto d = static_cast<float>(speed * deltaTime);
+	
+	if (cameraMovingLeft_) camera_.MoveRight(-d);
+	if (cameraMovingRight_) camera_.MoveRight(d);
+	if (cameraMovingBackward_) camera_.MoveForward(-d);
+	if (cameraMovingForward_) camera_.MoveForward(d);
+	if (cameraMovingDown_) camera_.MoveUp(-d);
+	if (cameraMovingUp_) camera_.MoveUp(d);
+
+	const float rotationDiv = 300;
+	camera_.Rotate(cameraRotY_ / rotationDiv, cameraRotX_ / rotationDiv);
+
+	resetAccumulation_ = 
+		cameraMovingLeft_ ||
+		cameraMovingRight_ ||
+		cameraMovingBackward_ ||
+		cameraMovingForward_ ||
+		cameraMovingDown_ ||
+		cameraMovingUp_ ||
+		cameraRotY_ != 0 ||
+		cameraRotX_ != 0;
+
+	cameraRotY_ = 0;
+	cameraRotX_ = 0;
 }
 
 void RayTracer::CheckAndUpdateBenchmarkState(double prevTime)

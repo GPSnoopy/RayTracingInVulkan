@@ -122,6 +122,8 @@ set(src_files_vulkan_raytracing
 
 set(src_files
 	main.cpp
+	Camera.cpp
+	Camera.hpp
 	Options.cpp
 	Options.hpp
 	RayTracer.cpp
@@ -163,6 +165,6 @@ if (UNIX)
 endif()
 
 set_target_properties(${exe_name} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-target_link_libraries(${exe_name} PRIVATE ${Boost_LIBRARIES} glfw imgui::imgui ${Vulkan_LIBRARIES} ${extra_libs})
+target_link_libraries(${exe_name} PRIVATE ${Boost_LIBRARIES} glfw glm imgui::imgui tinyobjloader::tinyobjloader ${Vulkan_LIBRARIES} ${extra_libs})
 add_dependencies(${exe_name} Assets)
 
