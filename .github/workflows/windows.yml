@@ -7,12 +7,12 @@ jobs:
 
     runs-on: windows-latest
     env:
-      VULKAN_SDK: C:\VulkanSDK\1.2.131.2
+      SDK_VERSION: 1.2.135.0
 
     steps:
     - uses: actions/checkout@v2
     - name: Download Vulkan SDK
-      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/1.2.131.2/windows/VulkanSDK-1.2.131.2-Installer.exe?Human=true" -OutFile VulkanSDK.exe -v
+      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/${env:SDK_VERSION}/windows/VulkanSDK-${env:SDK_VERSION}-Installer.exe?Human=true" -OutFile VulkanSDK.exe -v
     - name: Install Vulkan SDK
       run: .\VulkanSDK.exe /S
       shell: cmd
@@ -27,5 +27,7 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.0.0
     - name: Compile raytracer
-      run: build_windows.bat
+      run: |
+        set VULKAN_SDK=C:\VulkanSDK\%SDK_VERSION%
+        build_windows.bat
       shell: cmd
