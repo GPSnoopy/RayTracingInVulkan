@@ -32,6 +32,7 @@ namespace Vulkan
 
 		Application(const WindowConfig& windowConfig, bool vsync, bool enableValidationLayers);
 
+		class Window& Window() { return *window_; }
 		const class Window& Window() const { return *window_; }
 		const class Device& Device() const { return *device_; }
 		class CommandPool& CommandPool() { return *commandPool_; }
@@ -53,7 +54,9 @@ namespace Vulkan
 		virtual void OnKey(int key, int scancode, int action, int mods) { }
 		virtual void OnCursorPosition(double xpos, double ypos) { }
 		virtual void OnMouseButton(int button, int action, int mods) { }
+		virtual void OnScroll(double xoffset, double yoffset) { }
 
+		bool HasSwapChain() const { return swapChain_.operator bool(); }
 		bool isWireFrame_{};
 
 	private:

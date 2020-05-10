@@ -28,6 +28,7 @@ SceneAssets SceneList::CubeAndSpheres(CameraInitialSate& camera)
 	camera.FieldOfView = 90;
 	camera.Aperture = 0.05f;
 	camera.FocusDistance = 2.0f;
+	camera.ControlSpeed = 2.0f;
 	camera.GammaCorrection = false;
 	camera.HasSky = true;
 
@@ -52,6 +53,7 @@ SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 	camera.FieldOfView = 20;
 	camera.Aperture = 0.1f;
 	camera.FocusDistance = 10.0f;
+	camera.ControlSpeed = 5.0f;
 	camera.GammaCorrection = true;
 	camera.HasSky = true;
 
@@ -112,6 +114,7 @@ SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 	camera.FieldOfView = 20;
 	camera.Aperture = 0.1f;
 	camera.FocusDistance = 10.0f;
+	camera.ControlSpeed = 5.0f;
 	camera.GammaCorrection = true;
 	camera.HasSky = true;
 
@@ -176,6 +179,7 @@ SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 	camera.FieldOfView = 20;
 	camera.Aperture = 0.05f;
 	camera.FocusDistance = 10.0f;
+	camera.ControlSpeed = 5.0f;
 	camera.GammaCorrection = true;
 	camera.HasSky = true;
 
@@ -265,6 +269,7 @@ SceneAssets SceneList::CornellBox(CameraInitialSate& camera)
 	camera.FieldOfView = 40;
 	camera.Aperture = 0.0f;
 	camera.FocusDistance = 10.0f;
+	camera.ControlSpeed = 500.0f;
 	camera.GammaCorrection = true;
 	camera.HasSky = false;
 
@@ -291,6 +296,7 @@ SceneAssets SceneList::CornellBoxLucy(CameraInitialSate& camera)
 	camera.FieldOfView = 40;
 	camera.Aperture = 0.0f;
 	camera.FocusDistance = 10.0f;
+	camera.ControlSpeed = 500.0f;
 	camera.GammaCorrection = true;
 	camera.HasSky = false;
 

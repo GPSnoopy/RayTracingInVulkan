@@ -177,11 +177,25 @@ void UserInterface::DrawSettings()
 			scenes.push_back(scene.first.c_str());
 		}
 
+		const auto& window = descriptorPool_->Device().Surface().Instance().Window();
+
 		ImGui::Text("Help");
 		ImGui::Separator();
 		ImGui::BulletText("Press F1 to toggle Settings.");
 		ImGui::BulletText("Press F2 to toggle Statistics.");
 		ImGui::BulletText("Press R to toggle ray tracing.");
+		ImGui::NewLine();
+
+		ImGui::Text("Controls");
+		ImGui::Separator();
+		ImGui::BulletText(
+			"Press %c%c%c%c/SHIFT/CTRL to move camera.", 
+			std::toupper(window.GetKeyName(GLFW_KEY_W, 0)[0]),
+			std::toupper(window.GetKeyName(GLFW_KEY_A, 0)[0]),
+			std::toupper(window.GetKeyName(GLFW_KEY_S, 0)[0]),
+			std::toupper(window.GetKeyName(GLFW_KEY_D, 0)[0]));
+		ImGui::BulletText("Click left mouse to rotate camera.");
+		ImGui::BulletText("Click right mouse to rotate scene.");
 		ImGui::NewLine();
 
 		ImGui::Text("Scene");
@@ -204,7 +218,7 @@ void UserInterface::DrawSettings()
 
 		ImGui::Text("Camera");
 		ImGui::Separator();
-		ImGui::SliderFloat("FoV", &Settings().FieldOfView, 10.0f, 90.0f, "%.0f");
+		ImGui::SliderFloat("FoV", &Settings().FieldOfView, UserSettings::FieldOfViewMinValue, UserSettings::FieldOfViewMaxValue, "%.0f");
 		ImGui::SliderFloat("Aperture", &Settings().Aperture, 0.0f, 1.0f, "%.2f");
 		ImGui::SliderFloat("Focus", &Settings().FocusDistance, 0.1f, 20.0f, "%.1f");
 		ImGui::Checkbox("Apply gamma correction", &Settings().GammaCorrection);

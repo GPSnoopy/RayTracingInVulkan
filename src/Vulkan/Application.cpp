@@ -84,9 +84,10 @@ void Application::Run()
 	currentFrame_ = 0;
 
 	window_->DrawFrame = [this]() { DrawFrame(); };
-	window_->OnKey = [this](int key, int scancode, int action, int mods) { OnKey(key, scancode, action, mods); };
-	window_->OnCursorPosition = [this](double xpos, double ypos) { OnCursorPosition(xpos, ypos); };
-	window_->OnMouseButton = [this](int button, int action, int mods) { OnMouseButton(button, action, mods); };
+	window_->OnKey = [this](const int key, const int scancode, const int action, const int mods) { OnKey(key, scancode, action, mods); };
+	window_->OnCursorPosition = [this](const double xpos, const double ypos) { OnCursorPosition(xpos, ypos); };
+	window_->OnMouseButton = [this](const int button, const int action, const int mods) { OnMouseButton(button, action, mods); };
+	window_->OnScroll = [this](const double xoffset, const double yoffset) { OnScroll(xoffset, yoffset); };
 	window_->Run();
 	device_->WaitIdle();
 }

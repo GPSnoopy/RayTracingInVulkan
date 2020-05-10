@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ModelViewController.hpp"
 #include "SceneList.hpp"
 #include "UserSettings.hpp"
 #include "Vulkan/RayTracing/Application.hpp"
@@ -27,6 +28,7 @@ protected:
 	void OnKey(int key, int scancode, int action, int mods) override;
 	void OnCursorPosition(double xpos, double ypos) override;
 	void OnMouseButton(int button, int action, int mods) override;
+	void OnScroll(double xoffset, double yoffset) override;
 
 private:
 
@@ -38,16 +40,11 @@ private:
 	UserSettings userSettings_{};
 	UserSettings previousSettings_{};
 	SceneList::CameraInitialSate cameraInitialSate_{};
+	ModelViewController modelViewController_{};
 
 	std::unique_ptr<const Assets::Scene> scene_;
 	std::unique_ptr<class UserInterface> userInterface_;
 
-	double mouseX_{};
-	double mouseY_{};
-	bool mouseLeftPressed_{};
-
-	float cameraX_{};
-	float cameraY_{};
 	double time_{};
 
 	uint32_t totalNumberOfSamples_{};
