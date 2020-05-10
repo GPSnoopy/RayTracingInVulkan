@@ -1,6 +1,7 @@
 
 #include "Vulkan/Enumerate.hpp"
 #include "Vulkan/Strings.hpp"
+#include "Vulkan/SwapChain.hpp"
 #include "Vulkan/Version.hpp"
 #include "Utilities/Console.hpp"
 #include "Utilities/Exception.hpp"
@@ -18,6 +19,7 @@ namespace
 	void PrintVulkanInstanceInformation(const Vulkan::Application& application, bool benchmark);
 	void PrintVulkanLayersInformation(const Vulkan::Application& application, bool benchmark);
 	void PrintVulkanDevices(const Vulkan::Application& application);
+	void PrintVulkanSwapChainInformation(const Vulkan::Application& application, bool benchmark);
 	void SetVulkanDevice(Vulkan::Application& application);
 }
 
@@ -37,7 +39,7 @@ int main(int argc, const char* argv[]) noexcept
 			!options.Fullscreen
 		};
 
-		RayTracer application(userSettings, windowConfig, options.VSync);
+		RayTracer application(userSettings, windowConfig, static_cast<VkPresentModeKHR>(options.PresentMode));
 
 		PrintVulkanSdkInformation();
 		PrintVulkanInstanceInformation(application, options.Benchmark);
@@ -45,6 +47,7 @@ int main(int argc, const char* argv[]) noexcept
 		PrintVulkanDevices(application);
 
 		SetVulkanDevice(application);
+		PrintVulkanSwapChainInformation(application, options.Benchmark);
 
 		application.Run();
 
@@ -185,6 +188,15 @@ namespace
 		}
 
 		std::cout << std::endl;
+	}
+
+	void PrintVulkanSwapChainInformation(const Vulkan::Application& application, const bool benchmark)
+	{
+		const auto& swapChain = application.SwapChain();
+
+		std::cout << "Swap Chain: " << std::endl;
+		std::cout << "- image count: " << swapChain.Images().size() << std::endl;
+		std::cout << "- present mode: " << swapChain.PresentMode() << std::endl;
 	}
 
 	void SetVulkanDevice(Vulkan::Application& application)

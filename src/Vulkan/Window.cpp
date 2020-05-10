@@ -14,7 +14,7 @@ namespace
 
 	void GlfwKeyCallback(GLFWwindow* window, const int key, const int scancode, const int action, const int mods)
 	{
-		const auto this_ = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+		auto* const this_ = static_cast<Window*>(glfwGetWindowUserPointer(window));
 		if (this_->OnKey)
 		{
 			this_->OnKey(key, scancode, action, mods);
@@ -23,7 +23,7 @@ namespace
 
 	void GlfwCursorPositionCallback(GLFWwindow* window, const double xpos, const double ypos)
 	{
-		const auto this_ = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+		auto* const this_ = static_cast<Window*>(glfwGetWindowUserPointer(window));
 		if (this_->OnCursorPosition)
 		{
 			this_->OnCursorPosition(xpos, ypos);
@@ -32,10 +32,19 @@ namespace
 
 	void GlfwMouseButtonCallback(GLFWwindow* window, const int button, const int action, const int mods)
 	{
-		const auto this_ = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+		auto* const this_ = static_cast<Window*>(glfwGetWindowUserPointer(window));
 		if (this_->OnMouseButton)
 		{
 			this_->OnMouseButton(button, action, mods);
+		}
+	}
+
+	void GlfwScrollCallback(GLFWwindow* window, const double xoffset, const double yoffset)
+	{
+		auto* const this_ = static_cast<Window*>(glfwGetWindowUserPointer(window));
+		if (this_->OnScroll)
+		{
+			this_->OnScroll(xoffset, yoffset);
 		}
 	}
 }
@@ -58,7 +67,7 @@ Window::Window(const WindowConfig& config) :
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, config.Resizable ? GLFW_TRUE : GLFW_FALSE);
 
-	const auto monitor = config.Fullscreen ? glfwGetPrimaryMonitor() : nullptr;
+	auto* const monitor = config.Fullscreen ? glfwGetPrimaryMonitor() : nullptr;
 
 	window_ = glfwCreateWindow(config.Width, config.Height, config.Title.c_str(), monitor, nullptr);
 	if (window_ == nullptr)
@@ -85,6 +94,7 @@ Window::Window(const WindowConfig& config) :
 	glfwSetKeyCallback(window_, GlfwKeyCallback);
 	glfwSetCursorPosCallback(window_, GlfwCursorPositionCallback);
 	glfwSetMouseButtonCallback(window_, GlfwMouseButtonCallback);
+	glfwSetScrollCallback(window_, GlfwScrollCallback);
 }
 
 Window::~Window()
@@ -99,13 +109,6 @@ Window::~Window()
 	glfwSetErrorCallback(nullptr);
 }
 
-std::vector<const char*> Window::GetRequiredInstanceExtensions() const
-{
-	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-	return std::vector<const char*>(glfwExtensions, glfwExtensions + glfwExtensionCount);
-}
-
 float Window::ContentScale() const
 {
 	float xscale;
@@ -113,11 +116,6 @@ float Window::ContentScale() const
 	glfwGetWindowContentScale(window_, &xscale, &yscale);
 
 	return xscale;
-}
-
-double Window::Time() const
-{
-	return glfwGetTime();
 }
 
 VkExtent2D Window::FramebufferSize() const
@@ -134,7 +132,24 @@ VkExtent2D Window::WindowSize() const
 	return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
 }
 
-void Window::Close() const
+const char* Window::GetKeyName(const int key, const int scancode) const
+{
+	return glfwGetKeyName(key, scancode);
+}
+
+std::vector<const char*> Window::GetRequiredInstanceExtensions() const
+{
+	uint32_t glfwExtensionCount = 0;
+	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+	return std::vector<const char*>(glfwExtensions, glfwExtensions + glfwExtensionCount);
+}
+
+double Window::GetTime() const
+{
+	return glfwGetTime();
+}
+
+void Window::Close()
 {
 	glfwSetWindowShouldClose(window_, 1);
 }
@@ -145,7 +160,7 @@ bool Window::IsMinimized() const
 	return size.height == 0 && size.width == 0;
 }
 
-void Window::Run() const
+void Window::Run()
 {
 	glfwSetTime(0.0);
 

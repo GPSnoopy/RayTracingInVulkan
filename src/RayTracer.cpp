@@ -23,8 +23,8 @@ namespace
 #endif
 }
 
-RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, const bool vsync) :
-	Application(windowConfig, vsync, EnableValidationLayers),
+RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, const VkPresentModeKHR presentMode) :
+	Application(windowConfig, presentMode, EnableValidationLayers),
 	userSettings_(userSettings)
 {
 	CheckFramebufferSize();
@@ -37,17 +37,10 @@ RayTracer::~RayTracer()
 
 Assets::UniformBufferObject RayTracer::GetUniformBufferObject(const VkExtent2D extent) const
 {
-	const auto cameraRotX = static_cast<float>(cameraY_ / 300.0);
-	const auto cameraRotY = static_cast<float>(cameraX_ / 300.0);
-
 	const auto& init = cameraInitialSate_;
-	const auto view = init.ModelView;
-	const auto model =
-		glm::rotate(glm::mat4(1.0f), cameraRotY * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
-		glm::rotate(glm::mat4(1.0f), cameraRotX * glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	Assets::UniformBufferObject ubo = {};
-	ubo.ModelView = view*model;
+	ubo.ModelView = modelViewController_.ModelView();
 	ubo.Projection = glm::perspective(glm::radians(userSettings_.FieldOfView), extent.width / static_cast<float>(extent.height), 0.1f, 10000.0f);
 	ubo.Projection[1][1] *= -1; // Inverting Y for Vulkan, https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/
 	ubo.ModelViewInverse = glm::inverse(ubo.ModelView);
@@ -138,8 +131,11 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 {
 	// Record delta time between calls to Render.
 	const auto prevTime = time_;
-	time_ = Window().Time();
-	const auto deltaTime = time_ - prevTime;
+	time_ = Window().GetTime();
+	const auto timeDelta = time_ - prevTime;
+
+	// Update the camera position / angle.
+	resetAccumulation_ = modelViewController_.UpdateCamera(cameraInitialSate_.ControlSpeed, timeDelta);
 
 	// Check the current state of the benchmark, update it for the new frame.
 	CheckAndUpdateBenchmarkState(prevTime);
@@ -152,7 +148,7 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 	// Render the UI
 	Statistics stats = {};
 	stats.FramebufferSize = Window().FramebufferSize();
-	stats.FrameRate = static_cast<float>(1 / deltaTime);
+	stats.FrameRate = static_cast<float>(1 / timeDelta);
 
 	if (userSettings_.IsRayTraced)
 	{
@@ -160,7 +156,7 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 
 		stats.RayRate = static_cast<float>(
 			double(extent.width*extent.height)*numberOfSamples_
-			/ (deltaTime * 1000000000));
+			/ (timeDelta * 1000000000));
 
 		stats.TotalSamples = totalNumberOfSamples_;
 	}
@@ -179,72 +175,71 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 	{		
 		switch (key)
 		{
-		case GLFW_KEY_ESCAPE:
-			Window().Close();
-			break;
-		default:
-			break;
+		case GLFW_KEY_ESCAPE: Window().Close(); break;
+		default: break;
 		}
 
+		// Settings (toggle switches)
 		if (!userSettings_.Benchmark)
 		{
 			switch (key)
 			{
-			case GLFW_KEY_F1:
-				userSettings_.ShowSettings = !userSettings_.ShowSettings;
-				break;
-			case GLFW_KEY_F2:
-				userSettings_.ShowOverlay = !userSettings_.ShowOverlay;
-				break;
-			case GLFW_KEY_R:
-				userSettings_.IsRayTraced = !userSettings_.IsRayTraced;
-				break;
-			case GLFW_KEY_W:
-				isWireFrame_ = !isWireFrame_;
-				break;
-			default:
-				break;
+			case GLFW_KEY_F1: userSettings_.ShowSettings = !userSettings_.ShowSettings; break;
+			case GLFW_KEY_F2: userSettings_.ShowOverlay = !userSettings_.ShowOverlay; break;
+			case GLFW_KEY_R: userSettings_.IsRayTraced = !userSettings_.IsRayTraced; break;
+			case GLFW_KEY_P: isWireFrame_ = !isWireFrame_; break;
+			default: break;
 			}
 		}
 	}
+
+	// Camera motions
+	resetAccumulation_ |= modelViewController_.OnKey(key, scancode, action, mods);
 }
 
 void RayTracer::OnCursorPosition(const double xpos, const double ypos)
 {
-	if (userSettings_.Benchmark ||
+	if (!HasSwapChain() ||
+		userSettings_.Benchmark ||
 		userInterface_->WantsToCaptureKeyboard() || 
 		userInterface_->WantsToCaptureMouse())
 	{
 		return;
 	}
 
-	if (mouseLeftPressed_)
-	{
-		const auto deltaX = static_cast<float>(xpos - mouseX_);
-		const auto deltaY = static_cast<float>(ypos - mouseY_);
-
-		cameraX_ += deltaX;
-		cameraY_ += deltaY;
-
-		resetAccumulation_ = true;
-	}
-
-	mouseX_ = xpos;
-	mouseY_ = ypos;
+	// Camera motions
+	resetAccumulation_ |= modelViewController_.OnCursorPosition(xpos, ypos);
 }
 
 void RayTracer::OnMouseButton(const int button, const int action, const int mods)
 {
-	if (userSettings_.Benchmark || 
+	if (!HasSwapChain() || 
+		userSettings_.Benchmark ||
 		userInterface_->WantsToCaptureMouse())
 	{
 		return;
 	}
 
-	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	// Camera motions
+	resetAccumulation_ |= modelViewController_.OnMouseButton(button, action, mods);
+}
+
+void RayTracer::OnScroll(const double xoffset, const double yoffset)
+{
+	if (!HasSwapChain() ||
+		userSettings_.Benchmark ||
+		userInterface_->WantsToCaptureMouse())
 	{
-		mouseLeftPressed_ = action == GLFW_PRESS;
+		return;
 	}
+
+	const auto prevFov = userSettings_.FieldOfView;
+	userSettings_.FieldOfView = std::clamp(
+		static_cast<float>(prevFov - yoffset),
+		UserSettings::FieldOfViewMinValue,
+		UserSettings::FieldOfViewMaxValue);
+
+	resetAccumulation_ = prevFov != userSettings_.FieldOfView;
 }
 
 void RayTracer::LoadScene(const uint32_t sceneIndex)
@@ -265,8 +260,7 @@ void RayTracer::LoadScene(const uint32_t sceneIndex)
 	userSettings_.FocusDistance = cameraInitialSate_.FocusDistance;
 	userSettings_.GammaCorrection = cameraInitialSate_.GammaCorrection;
 
-	cameraX_ = 0;
-	cameraY_ = 0;
+	modelViewController_.Reset(cameraInitialSate_.ModelView);
 
 	periodTotalFrames_ = 0;
 	resetAccumulation_ = true;
@@ -306,7 +300,7 @@ void RayTracer::CheckAndUpdateBenchmarkState(double prevTime)
 
 	// If in benchmark mode, bail out from the scene if we've reached the time or sample limit.
 	{
-		const bool timeLimitReached = periodTotalFrames_ != 0 && Window().Time() - sceneInitialTime_ > userSettings_.BenchmarkMaxTime;
+		const bool timeLimitReached = periodTotalFrames_ != 0 && Window().GetTime() - sceneInitialTime_ > userSettings_.BenchmarkMaxTime;
 		const bool sampleLimitReached = numberOfSamples_ == 0;
 
 		if (timeLimitReached || sampleLimitReached)

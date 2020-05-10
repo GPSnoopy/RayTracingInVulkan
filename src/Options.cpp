@@ -31,7 +31,7 @@ Options::Options(const int argc, const char* argv[])
 		("width", value<uint32_t>(&Width)->default_value(1280), "Set framebuffer width.")
 		("height", value<uint32_t>(&Height)->default_value(720), "Set framebuffer height.")
 		("fullscreen", bool_switch(&Fullscreen)->default_value(false), "Toggle fullscreen vs windowed (default: windowed).")
-		("vsync", bool_switch(&VSync)->default_value(false), "Toggle vsync (default: vsync off).")
+		("present-mode", value<uint32_t>(&PresentMode)->default_value(2), "Present Mode (default: 2). 0 = Immediate, 1 = MailBox, 2 = FIFO, 3 = FIFORelaxed.")
 		;
 
 	options_description desc("Application options");
@@ -59,6 +59,11 @@ Options::Options(const int argc, const char* argv[])
 	if (SceneIndex >= SceneList::AllScenes.size())
 	{
 		Throw(std::out_of_range("scene index is too large"));
+	}
+
+	if (PresentMode > 3)
+	{
+		Throw(std::out_of_range("invalid present mode"));
 	}
 }
 
