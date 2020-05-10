@@ -18,21 +18,21 @@ Options::Options(const int argc, const char* argv[])
 
 	options_description renderer("Renderer options", lineLength);
 	renderer.add_options()
-		("samples", value<uint32_t>(&Samples)->default_value(8), "Set the number of ray samples per pixel.")
-		("bounces", value<uint32_t>(&Bounces)->default_value(16), "Set the maximum number of bounces per ray.")
-		("max-samples", value<uint32_t>(&MaxSamples)->default_value(64 * 1024), "Set the maximum number of accumulated ray samples per pixel.")
+		("samples", value<uint32_t>(&Samples)->default_value(8), "The number of ray samples per pixel.")
+		("bounces", value<uint32_t>(&Bounces)->default_value(16), "The maximum number of bounces per ray.")
+		("max-samples", value<uint32_t>(&MaxSamples)->default_value(64 * 1024), "The maximum number of accumulated ray samples per pixel.")
 		;
 
 	options_description scene("Scene options", lineLength);
 	scene.add_options()
-		("scene", value<uint32_t>(&SceneIndex)->default_value(1), "Set the scene to start with.")
+		("scene", value<uint32_t>(&SceneIndex)->default_value(1), "The scene to start with.")
 		;
 
 	options_description window("Window options", lineLength);
 	window.add_options()
-		("width", value<uint32_t>(&Width)->default_value(1280), "Set framebuffer width.")
-		("height", value<uint32_t>(&Height)->default_value(720), "Set framebuffer height.")
-		("present-mode", value<uint32_t>(&PresentMode)->default_value(2), "Set present mode (0 = Immediate, 1 = MailBox, 2 = FIFO, 3 = FIFORelaxed).")
+		("width", value<uint32_t>(&Width)->default_value(1280), "The framebuffer width.")
+		("height", value<uint32_t>(&Height)->default_value(720), "The framebuffer height.")
+		("present-mode", value<uint32_t>(&PresentMode)->default_value(2), "The present mode (0 = Immediate, 1 = MailBox, 2 = FIFO, 3 = FIFORelaxed).")
 		("fullscreen", bool_switch(&Fullscreen)->default_value(false), "Toggle fullscreen vs windowed (default: windowed).")
 		;
 
