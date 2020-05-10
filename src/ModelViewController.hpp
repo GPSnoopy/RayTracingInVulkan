@@ -15,7 +15,6 @@ public:
 	bool OnMouseButton(int button, int action, int mods);
 	bool UpdateCamera(double speed, double timeDelta);
 
-
 private:
 
 	void MoveForward(float d);

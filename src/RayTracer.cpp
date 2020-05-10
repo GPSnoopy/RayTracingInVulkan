@@ -40,7 +40,7 @@ Assets::UniformBufferObject RayTracer::GetUniformBufferObject(const VkExtent2D e
 	const auto& init = cameraInitialSate_;
 
 	Assets::UniformBufferObject ubo = {};
-	ubo.ModelView = camera_.ModelView();
+	ubo.ModelView = modelViewController_.ModelView();
 	ubo.Projection = glm::perspective(glm::radians(userSettings_.FieldOfView), extent.width / static_cast<float>(extent.height), 0.1f, 10000.0f);
 	ubo.Projection[1][1] *= -1; // Inverting Y for Vulkan, https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/
 	ubo.ModelViewInverse = glm::inverse(ubo.ModelView);
@@ -122,7 +122,7 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 	const auto timeDelta = time_ - prevTime;
 
 	// Update the camera position / angle.
-	resetAccumulation_ = camera_.UpdateCamera(10.0, timeDelta);
+	resetAccumulation_ = modelViewController_.UpdateCamera(10.0, timeDelta);
 
 	// Check the current state of the benchmark, update it for the new frame.
 	CheckAndUpdateBenchmarkState(prevTime);
@@ -179,7 +179,7 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 	}
 
 	// Camera motions
-	resetAccumulation_ |= camera_.OnKey(key, scancode, action, mods);
+	resetAccumulation_ |= modelViewController_.OnKey(key, scancode, action, mods);
 }
 
 void RayTracer::OnCursorPosition(const double xpos, const double ypos)
@@ -192,7 +192,7 @@ void RayTracer::OnCursorPosition(const double xpos, const double ypos)
 	}
 
 	// Camera motions
-	resetAccumulation_ |= camera_.OnCursorPosition(xpos, ypos);
+	resetAccumulation_ |= modelViewController_.OnCursorPosition(xpos, ypos);
 }
 
 void RayTracer::OnMouseButton(const int button, const int action, const int mods)
@@ -204,7 +204,7 @@ void RayTracer::OnMouseButton(const int button, const int action, const int mods
 	}
 
 	// Camera motions
-	resetAccumulation_ |= camera_.OnMouseButton(button, action, mods);
+	resetAccumulation_ |= modelViewController_.OnMouseButton(button, action, mods);
 }
 
 void RayTracer::LoadScene(const uint32_t sceneIndex)
@@ -225,7 +225,7 @@ void RayTracer::LoadScene(const uint32_t sceneIndex)
 	userSettings_.FocusDistance = cameraInitialSate_.FocusDistance;
 	userSettings_.GammaCorrection = cameraInitialSate_.GammaCorrection;
 
-	camera_.Reset(cameraInitialSate_.ModelView);
+	modelViewController_.Reset(cameraInitialSate_.ModelView);
 
 	periodTotalFrames_ = 0;
 	resetAccumulation_ = true;

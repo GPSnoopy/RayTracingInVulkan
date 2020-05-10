@@ -122,8 +122,8 @@ set(src_files_vulkan_raytracing
 
 set(src_files
 	main.cpp
-	Camera.cpp
-	Camera.hpp
+	ModelViewController.cpp
+	ModelViewController.hpp
 	Options.cpp
 	Options.hpp
 	RayTracer.cpp
