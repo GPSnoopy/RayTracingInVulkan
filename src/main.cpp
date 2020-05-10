@@ -83,8 +83,6 @@ int main(int argc, const char* argv[]) noexcept
 		});
 	}
 
-	std::cin.get();
-
 	return EXIT_FAILURE;
 }
 
