@@ -32,36 +32,18 @@ protected:
 private:
 
 	void LoadScene(uint32_t sceneIndex);
-	void UpdateCamera(double timeDelta);
 	void CheckAndUpdateBenchmarkState(double prevTime);
 	void CheckFramebufferSize() const;
 
 	uint32_t sceneIndex_{};
 	UserSettings userSettings_{};
 	UserSettings previousSettings_{};
-	Camera camera_{};
 	SceneList::CameraInitialSate cameraInitialSate_{};
+	ModelViewController camera_{};
 
 	std::unique_ptr<const Assets::Scene> scene_;
 	std::unique_ptr<class UserInterface> userInterface_;
 
-	double mouseX_{};
-	double mouseY_{};
-	bool mouseLeftPressed_{};
-
-	// TODO Controls
-	bool cameraMovingLeft_{};
-	bool cameraMovingRight_{};
-	bool cameraMovingBackward_{};
-	bool cameraMovingForward_{};
-	bool cameraMovingDown_{};
-	bool cameraMovingUp_{};
-
-	float cameraRotX_{};
-	float cameraRotY_{};
-
-	float cameraX_{};
-	float cameraY_{};
 	double time_{};
 
 	uint32_t totalNumberOfSamples_{};

@@ -37,17 +37,10 @@ RayTracer::~RayTracer()
 
 Assets::UniformBufferObject RayTracer::GetUniformBufferObject(const VkExtent2D extent) const
 {
-	const auto cameraRotX = static_cast<float>(cameraY_ / 300.0);
-	const auto cameraRotY = static_cast<float>(cameraX_ / 300.0);
-
 	const auto& init = cameraInitialSate_;
-	const auto view = camera_.ModelView();//init.ModelView;
-	const auto model =
-		glm::rotate(glm::mat4(1.0f), cameraRotY * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) *
-		glm::rotate(glm::mat4(1.0f), cameraRotX * glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 	Assets::UniformBufferObject ubo = {};
-	ubo.ModelView = view*model;
+	ubo.ModelView = camera_.ModelView();
 	ubo.Projection = glm::perspective(glm::radians(userSettings_.FieldOfView), extent.width / static_cast<float>(extent.height), 0.1f, 10000.0f);
 	ubo.Projection[1][1] *= -1; // Inverting Y for Vulkan, https://matthewwellings.com/blog/the-new-vulkan-coordinate-system/
 	ubo.ModelViewInverse = glm::inverse(ubo.ModelView);
@@ -126,10 +119,10 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 	// Record delta time between calls to Render.
 	const auto prevTime = time_;
 	time_ = Window().Time();
-	const auto deltaTime = time_ - prevTime;
+	const auto timeDelta = time_ - prevTime;
 
 	// Update the camera position / angle.
-	UpdateCamera(deltaTime);
+	resetAccumulation_ = camera_.UpdateCamera(10.0, timeDelta);
 
 	// Check the current state of the benchmark, update it for the new frame.
 	CheckAndUpdateBenchmarkState(prevTime);
@@ -142,7 +135,7 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 	// Render the UI
 	Statistics stats = {};
 	stats.FramebufferSize = Window().FramebufferSize();
-	stats.FrameRate = static_cast<float>(1 / deltaTime);
+	stats.FrameRate = static_cast<float>(1 / timeDelta);
 
 	if (userSettings_.IsRayTraced)
 	{
@@ -150,7 +143,7 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 
 		stats.RayRate = static_cast<float>(
 			double(extent.width*extent.height)*numberOfSamples_
-			/ (deltaTime * 1000000000));
+			/ (timeDelta * 1000000000));
 
 		stats.TotalSamples = totalNumberOfSamples_;
 	}
@@ -186,15 +179,7 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 	}
 
 	// Camera motions
-	switch (key)
-	{
-	case GLFW_KEY_S: cameraMovingBackward_ = action != GLFW_RELEASE; break;
-	case GLFW_KEY_W: cameraMovingForward_ = action != GLFW_RELEASE; break;
-	case GLFW_KEY_A: cameraMovingLeft_ = action != GLFW_RELEASE; break;
-	case GLFW_KEY_D: cameraMovingRight_ = action != GLFW_RELEASE; break;
-	case GLFW_KEY_LEFT_CONTROL: cameraMovingDown_= action != GLFW_RELEASE; break;
-	case GLFW_KEY_LEFT_SHIFT: cameraMovingUp_ = action != GLFW_RELEASE; break;
-	}
+	resetAccumulation_ |= camera_.OnKey(key, scancode, action, mods);
 }
 
 void RayTracer::OnCursorPosition(const double xpos, const double ypos)
@@ -206,22 +191,8 @@ void RayTracer::OnCursorPosition(const double xpos, const double ypos)
 		return;
 	}
 
-	if (mouseLeftPressed_)
-	{
-		const auto deltaX = static_cast<float>(xpos - mouseX_);
-		const auto deltaY = static_cast<float>(ypos - mouseY_);
-
-		//cameraX_ += deltaX;
-		//cameraY_ += deltaY;
-
-		cameraRotX_ = deltaY;
-		cameraRotY_ = deltaX;
-
-		resetAccumulation_ = true;
-	}
-
-	mouseX_ = xpos;
-	mouseY_ = ypos;
+	// Camera motions
+	resetAccumulation_ |= camera_.OnCursorPosition(xpos, ypos);
 }
 
 void RayTracer::OnMouseButton(const int button, const int action, const int mods)
@@ -232,10 +203,8 @@ void RayTracer::OnMouseButton(const int button, const int action, const int mods
 		return;
 	}
 
-	if (button == GLFW_MOUSE_BUTTON_LEFT)
-	{
-		mouseLeftPressed_ = action == GLFW_PRESS;
-	}
+	// Camera motions
+	resetAccumulation_ |= camera_.OnMouseButton(button, action, mods);
 }
 
 void RayTracer::LoadScene(const uint32_t sceneIndex)
@@ -257,40 +226,9 @@ void RayTracer::LoadScene(const uint32_t sceneIndex)
 	userSettings_.GammaCorrection = cameraInitialSate_.GammaCorrection;
 
 	camera_.Reset(cameraInitialSate_.ModelView);
-	cameraX_ = 0;
-	cameraY_ = 0;
 
 	periodTotalFrames_ = 0;
 	resetAccumulation_ = true;
-}
-
-void RayTracer::UpdateCamera(double deltaTime)
-{
-	const double speed = 10; // TODO speed from scene description!
-	const auto d = static_cast<float>(speed * deltaTime);
-	
-	if (cameraMovingLeft_) camera_.MoveRight(-d);
-	if (cameraMovingRight_) camera_.MoveRight(d);
-	if (cameraMovingBackward_) camera_.MoveForward(-d);
-	if (cameraMovingForward_) camera_.MoveForward(d);
-	if (cameraMovingDown_) camera_.MoveUp(-d);
-	if (cameraMovingUp_) camera_.MoveUp(d);
-
-	const float rotationDiv = 300;
-	camera_.Rotate(cameraRotY_ / rotationDiv, cameraRotX_ / rotationDiv);
-
-	resetAccumulation_ = 
-		cameraMovingLeft_ ||
-		cameraMovingRight_ ||
-		cameraMovingBackward_ ||
-		cameraMovingForward_ ||
-		cameraMovingDown_ ||
-		cameraMovingUp_ ||
-		cameraRotY_ != 0 ||
-		cameraRotX_ != 0;
-
-	cameraRotY_ = 0;
-	cameraRotX_ = 0;
 }
 
 void RayTracer::CheckAndUpdateBenchmarkState(double prevTime)
