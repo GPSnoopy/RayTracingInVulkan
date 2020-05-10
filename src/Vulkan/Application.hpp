@@ -55,6 +55,7 @@ namespace Vulkan
 		virtual void OnMouseButton(int button, int action, int mods) { }
 		virtual void OnScroll(double xoffset, double yoffset) { }
 
+		bool HasSwapChain() const { return swapChain_.operator bool(); }
 		bool isWireFrame_{};
 
 	private:

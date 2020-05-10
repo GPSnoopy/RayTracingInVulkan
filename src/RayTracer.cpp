@@ -186,7 +186,8 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 
 void RayTracer::OnCursorPosition(const double xpos, const double ypos)
 {
-	if (userSettings_.Benchmark ||
+	if (!HasSwapChain() ||
+		userSettings_.Benchmark ||
 		userInterface_->WantsToCaptureKeyboard() || 
 		userInterface_->WantsToCaptureMouse())
 	{
@@ -199,7 +200,8 @@ void RayTracer::OnCursorPosition(const double xpos, const double ypos)
 
 void RayTracer::OnMouseButton(const int button, const int action, const int mods)
 {
-	if (userSettings_.Benchmark || 
+	if (!HasSwapChain() || 
+		userSettings_.Benchmark ||
 		userInterface_->WantsToCaptureMouse())
 	{
 		return;
@@ -211,7 +213,8 @@ void RayTracer::OnMouseButton(const int button, const int action, const int mods
 
 void RayTracer::OnScroll(const double xoffset, const double yoffset)
 {
-	if (userSettings_.Benchmark ||
+	if (!HasSwapChain() ||
+		userSettings_.Benchmark ||
 		userInterface_->WantsToCaptureMouse())
 	{
 		return;
