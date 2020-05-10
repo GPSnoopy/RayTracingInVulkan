@@ -118,11 +118,11 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 {
 	// Record delta time between calls to Render.
 	const auto prevTime = time_;
-	time_ = Window().Time();
+	time_ = Window().GetTime();
 	const auto timeDelta = time_ - prevTime;
 
 	// Update the camera position / angle.
-	resetAccumulation_ = modelViewController_.UpdateCamera(10.0, timeDelta);
+	resetAccumulation_ = modelViewController_.UpdateCamera(cameraInitialSate_.ControlSpeed, timeDelta);
 
 	// Check the current state of the benchmark, update it for the new frame.
 	CheckAndUpdateBenchmarkState(prevTime);
@@ -163,6 +163,7 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 		switch (key)
 		{
 		case GLFW_KEY_ESCAPE: Window().Close(); break;
+		default: break;
 		}
 
 		// Settings (toggle switches)
@@ -174,6 +175,7 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 			case GLFW_KEY_F2: userSettings_.ShowOverlay = !userSettings_.ShowOverlay; break;
 			case GLFW_KEY_R: userSettings_.IsRayTraced = !userSettings_.IsRayTraced; break;
 			case GLFW_KEY_P: isWireFrame_ = !isWireFrame_; break;
+			default: break;
 			}
 		}
 	}
@@ -205,6 +207,23 @@ void RayTracer::OnMouseButton(const int button, const int action, const int mods
 
 	// Camera motions
 	resetAccumulation_ |= modelViewController_.OnMouseButton(button, action, mods);
+}
+
+void RayTracer::OnScroll(const double xoffset, const double yoffset)
+{
+	if (userSettings_.Benchmark ||
+		userInterface_->WantsToCaptureMouse())
+	{
+		return;
+	}
+
+	const auto prevFov = userSettings_.FieldOfView;
+	userSettings_.FieldOfView = std::clamp(
+		static_cast<float>(prevFov - yoffset),
+		UserSettings::FieldOfViewMinValue,
+		UserSettings::FieldOfViewMaxValue);
+
+	resetAccumulation_ = prevFov != userSettings_.FieldOfView;
 }
 
 void RayTracer::LoadScene(const uint32_t sceneIndex)
@@ -265,7 +284,7 @@ void RayTracer::CheckAndUpdateBenchmarkState(double prevTime)
 
 	// If in benchmark mode, bail out from the scene if we've reached the time or sample limit.
 	{
-		const bool timeLimitReached = periodTotalFrames_ != 0 && Window().Time() - sceneInitialTime_ > userSettings_.BenchmarkMaxTime;
+		const bool timeLimitReached = periodTotalFrames_ != 0 && Window().GetTime() - sceneInitialTime_ > userSettings_.BenchmarkMaxTime;
 		const bool sampleLimitReached = numberOfSamples_ == 0;
 
 		if (timeLimitReached || sampleLimitReached)

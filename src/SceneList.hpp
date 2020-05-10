@@ -23,6 +23,7 @@ public:
 		float FieldOfView;
 		float Aperture;
 		float FocusDistance;
+		float ControlSpeed;
 		bool GammaCorrection;
 		bool HasSky;
 	};
