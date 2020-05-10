@@ -47,6 +47,7 @@ int main(int argc, const char* argv[]) noexcept
 		PrintVulkanDevices(application);
 
 		SetVulkanDevice(application);
+
 		PrintVulkanSwapChainInformation(application, options.Benchmark);
 
 		application.Run();
@@ -197,6 +198,7 @@ namespace
 		std::cout << "Swap Chain: " << std::endl;
 		std::cout << "- image count: " << swapChain.Images().size() << std::endl;
 		std::cout << "- present mode: " << swapChain.PresentMode() << std::endl;
+		std::cout << std::endl;
 	}
 
 	void SetVulkanDevice(Vulkan::Application& application)
@@ -228,7 +230,15 @@ namespace
 			Throw(std::runtime_error("cannot find a suitable device"));
 		}
 
+		VkPhysicalDeviceProperties2 deviceProp{};
+		deviceProp.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+		vkGetPhysicalDeviceProperties2(*result, &deviceProp);
+
+		std::cout << "Setting Device [" << deviceProp.properties.deviceID << "]:" << std::endl;
+
 		application.SetPhysicalDevice(*result);
+
+		std::cout << std::endl;
 	}
 
 }

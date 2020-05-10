@@ -8,7 +8,7 @@ namespace Assets {
 
 Texture Texture::LoadTexture(const std::string& filename, const Vulkan::SamplerConfig& samplerConfig)
 {
-	std::cout << "Loading '" << filename << "'... " << std::flush;
+	std::cout << "- loading '" << filename << "'... " << std::flush;
 	const auto timer = std::chrono::high_resolution_clock::now();
 
 	// Load the texture in normal host memory.

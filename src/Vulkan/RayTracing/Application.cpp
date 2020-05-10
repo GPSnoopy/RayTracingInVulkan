@@ -95,7 +95,6 @@ void Application::OnDeviceSet()
 
 void Application::CreateAccelerationStructures()
 {
-	std::cout << "Building acceleration structures..." << std::endl;
 	const auto timer = std::chrono::high_resolution_clock::now();
 
 	SingleTimeCommands::Submit(CommandPool(), [this](VkCommandBuffer commandBuffer)
@@ -111,7 +110,7 @@ void Application::CreateAccelerationStructures()
 	bottomScratchBufferMemory_.reset();
 
 	const auto elapsed = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - timer).count();
-	std::cout << "Built acceleration structures in " << elapsed << "s" << std::endl;
+	std::cout << "- built acceleration structures in " << elapsed << "s" << std::endl;
 }
 
 void Application::DeleteAccelerationStructures()
