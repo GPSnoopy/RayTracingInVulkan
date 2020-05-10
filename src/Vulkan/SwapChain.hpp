@@ -16,7 +16,7 @@ namespace Vulkan
 
 		VULKAN_NON_COPIABLE(SwapChain)
 
-		SwapChain(const Device& device, bool vsync);
+		SwapChain(const Device& device, VkPresentModeKHR presentMode);
 		~SwapChain();
 
 		VkPhysicalDevice PhysicalDevice() const { return physicalDevice_; }
@@ -26,6 +26,7 @@ namespace Vulkan
 		const std::vector<std::unique_ptr<ImageView>>& ImageViews() const { return imageViews_; }
 		const VkExtent2D& Extent() const { return extent_; }
 		VkFormat Format() const { return format_; }
+		VkPresentModeKHR PresentMode() const { return presentMode_; }
 
 	private:
 
@@ -38,7 +39,7 @@ namespace Vulkan
 
 		static SupportDetails QuerySwapChainSupport(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
 		static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& formats);
-		static VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes, bool vsync);
+		static VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes, VkPresentModeKHR presentMode);
 		static VkExtent2D ChooseSwapExtent(const Window& window, const VkSurfaceCapabilitiesKHR& capabilities);
 		static uint32_t ChooseImageCount(const VkSurfaceCapabilitiesKHR& capabilities);
 
@@ -48,6 +49,7 @@ namespace Vulkan
 		VULKAN_HANDLE(VkSwapchainKHR, swapChain_)
 
 		uint32_t minImageCount_;
+		VkPresentModeKHR presentMode_;
 		VkFormat format_;
 		VkExtent2D extent_{};
 		std::vector<VkImage> images_;

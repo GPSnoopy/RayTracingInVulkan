@@ -37,8 +37,8 @@ namespace
 	}
 }
 
-Application::Application(const WindowConfig& windowConfig, const bool vsync, const bool enableValidationLayers) :
-	Vulkan::Application(windowConfig, vsync, enableValidationLayers)
+Application::Application(const WindowConfig& windowConfig, const VkPresentModeKHR presentMode, const bool enableValidationLayers) :
+	Vulkan::Application(windowConfig, presentMode, enableValidationLayers)
 {
 }
 

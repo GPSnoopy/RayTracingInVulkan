@@ -11,7 +11,7 @@
 
 namespace Vulkan {
 
-SwapChain::SwapChain(const class Device& device, const bool vsync) :
+SwapChain::SwapChain(const class Device& device, const VkPresentModeKHR presentMode) :
 	physicalDevice_(device.PhysicalDevice()),
 	device_(device)
 {
@@ -25,7 +25,7 @@ SwapChain::SwapChain(const class Device& device, const bool vsync) :
 	const auto& window = surface.Instance().Window();
 
 	const auto surfaceFormat = ChooseSwapSurfaceFormat(details.Formats);
-	const auto presentMode = ChooseSwapPresentMode(details.PresentModes, vsync);
+	const auto actualPresentMode = ChooseSwapPresentMode(details.PresentModes, presentMode);
 	const auto extent = ChooseSwapExtent(window, details.Capabilities);
 	const auto imageCount = ChooseImageCount(details.Capabilities);
 
@@ -40,7 +40,7 @@ SwapChain::SwapChain(const class Device& device, const bool vsync) :
 	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 	createInfo.preTransform = details.Capabilities.currentTransform;
 	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-	createInfo.presentMode = presentMode;
+	createInfo.presentMode = actualPresentMode;
 	createInfo.clipped = VK_TRUE;
 	createInfo.oldSwapchain = nullptr;
 	
@@ -63,6 +63,7 @@ SwapChain::SwapChain(const class Device& device, const bool vsync) :
 		"create swap chain!");
 
 	minImageCount_ = details.Capabilities.minImageCount;
+	presentMode_ = actualPresentMode;
 	format_ = surfaceFormat.format;
 	extent_ = extent;
 	images_ = GetEnumerateVector(device_.Handle(), swapChain_, vkGetSwapchainImagesKHR);
@@ -114,45 +115,53 @@ VkSurfaceFormatKHR SwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfac
 	Throw(std::runtime_error("found no suitable surface format"));
 }
 
-VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes, const bool vsync) 
+VkPresentModeKHR SwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& presentModes, const VkPresentModeKHR presentMode)
 {
-	// VK_PRESENT_MODE_IMMEDIATE_KHR: 
-	//   Images submitted by your application are transferred to the screen right away, which may result in tearing.
-	// VK_PRESENT_MODE_FIFO_KHR: 
-	//   The swap chain is a queue where the display takes an image from the front of the queue when the display is
-	//   refreshed and the program inserts rendered images at the back of the queue. If the queue is full then the program 
-	//   has to wait. This is most similar to vertical sync as found in modern games. The moment that the display is 
-	//   refreshed is known as "vertical blank".
-	// VK_PRESENT_MODE_FIFO_RELAXED_KHR:
-	//   This mode only differs from the previous one if the application is late and the queue was empty at the last 
-	//   vertical blank. Instead of waiting for the next vertical blank, the image is transferred right away when it 
-	//   finally arrives. This may result in visible tearing.
-	// VK_PRESENT_MODE_MAILBOX_KHR: 
-	//   This is another variation of the second mode. Instead of blocking the application when the queue is full, the 
-	//   images that are already queued are simply replaced with the newer ones.This mode can be used to implement triple 
-	//   buffering, which allows you to avoid tearing with significantly less latency issues than standard vertical sync 
-	//   that uses double buffering.
+	// VK_PRESENT_MODE_IMMEDIATE_KHR specifies that the presentation engine does not wait for a vertical blanking period
+	// to update the current image, meaning this mode may result in visible tearing. No internal queuing of presentation
+	// requests is needed, as the requests are applied immediately.
 
-	if (vsync)
+	// VK_PRESENT_MODE_MAILBOX_KHR specifies that the presentation engine waits for the next vertical blanking period to
+	// update the current image. Tearing cannot be observed. An internal single-entry queue is used to hold pending
+	// presentation requests. If the queue is full when a new presentation request is received, the new request replaces
+	// the existing entry, and any images associated with the prior entry become available for re-use by the application.
+	// One request is removed from the queue and processed during each vertical blanking period in which the queue is non-empty.
+
+	// VK_PRESENT_MODE_FIFO_KHR specifies that the presentation engine waits for the next vertical blanking period to update
+	// the current image. Tearing cannot be observed. An internal queue is used to hold pending presentation requests.
+	// New requests are appended to the end of the queue, and one request is removed from the beginning of the queue and
+	// processed during each vertical blanking period in which the queue is non-empty. This is the only value of presentMode
+	// that is required to be supported.
+
+	// VK_PRESENT_MODE_FIFO_RELAXED_KHR specifies that the presentation engine generally waits for the next vertical blanking
+	// period to update the current image. If a vertical blanking period has already passed since the last update of the current
+	// image then the presentation engine does not wait for another vertical blanking period for the update, meaning this mode
+	// may result in visible tearing in this case. This mode is useful for reducing visual stutter with an application that will
+	// mostly present a new image before the next vertical blanking period, but may occasionally be late, and present a new
+	// image just after the next vertical blanking period. An internal queue is used to hold pending presentation requests.
+	// New requests are appended to the end of the queue, and one request is removed from the beginning of the queue and
+	// processed during or after each vertical blanking period in which the queue is non-empty.
+
+
+	switch (presentMode)
 	{
-		return VK_PRESENT_MODE_FIFO_KHR;
+	case VK_PRESENT_MODE_IMMEDIATE_KHR:
+	case VK_PRESENT_MODE_MAILBOX_KHR:
+	case VK_PRESENT_MODE_FIFO_KHR:
+	case VK_PRESENT_MODE_FIFO_RELAXED_KHR:
+		
+		if (std::find(presentModes.begin(), presentModes.end(), presentMode) != presentModes.end())
+		{
+			return presentMode;
+		}
+
+		break;
+
+	default:
+		Throw(std::out_of_range("unknown present mode"));
 	}
 
-	if (std::find(presentModes.begin(), presentModes.end(), VK_PRESENT_MODE_MAILBOX_KHR) != presentModes.end())
-	{
-		return VK_PRESENT_MODE_MAILBOX_KHR;
-	}
-
-	if (std::find(presentModes.begin(), presentModes.end(), VK_PRESENT_MODE_IMMEDIATE_KHR) != presentModes.end())
-	{
-		return VK_PRESENT_MODE_IMMEDIATE_KHR;
-	}
-
-	if (std::find(presentModes.begin(), presentModes.end(), VK_PRESENT_MODE_FIFO_RELAXED_KHR) != presentModes.end())
-	{
-		return VK_PRESENT_MODE_FIFO_RELAXED_KHR;
-	}
-
+	// Fallback
 	return VK_PRESENT_MODE_FIFO_KHR;
 }
 

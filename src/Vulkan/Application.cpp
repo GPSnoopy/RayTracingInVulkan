@@ -23,8 +23,8 @@
 
 namespace Vulkan {
 
-Application::Application(const WindowConfig& windowConfig, const bool vsync, const bool enableValidationLayers) :
-	vsync_(vsync)
+Application::Application(const WindowConfig& windowConfig, const VkPresentModeKHR presentMode, const bool enableValidationLayers) :
+	presentMode_(presentMode)
 {
 	const auto validationLayers = enableValidationLayers
 		? std::vector<const char*>{"VK_LAYER_KHRONOS_validation"}
@@ -104,7 +104,7 @@ void Application::CreateSwapChain()
 		window_->WaitForEvents();
 	}
 
-	swapChain_.reset(new class SwapChain(*device_, vsync_));
+	swapChain_.reset(new class SwapChain(*device_, presentMode_));
 	depthBuffer_.reset(new class DepthBuffer(*commandPool_, swapChain_->Extent()));
 
 	for (size_t i = 0; i != swapChain_->ImageViews().size(); ++i)

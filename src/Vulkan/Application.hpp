@@ -25,18 +25,21 @@ namespace Vulkan
 		const std::vector<VkExtensionProperties>& Extensions() const;
 		const std::vector<VkPhysicalDevice>& PhysicalDevices() const;
 
+		const class SwapChain& SwapChain() const { return *swapChain_; }
+		class Window& Window() { return *window_; }
+		const class Window& Window() const { return *window_; }
+
+		bool HasSwapChain() const { return swapChain_.operator bool(); }
+
 		void SetPhysicalDevice(VkPhysicalDevice physicalDevice);
 		void Run();
 
 	protected:
 
-		Application(const WindowConfig& windowConfig, bool vsync, bool enableValidationLayers);
+		Application(const WindowConfig& windowConfig, VkPresentModeKHR presentMode, bool enableValidationLayers);
 
-		class Window& Window() { return *window_; }
-		const class Window& Window() const { return *window_; }
 		const class Device& Device() const { return *device_; }
 		class CommandPool& CommandPool() { return *commandPool_; }
-		const class SwapChain& SwapChain() const { return *swapChain_; }
 		const class DepthBuffer& DepthBuffer() const { return *depthBuffer_; }
 		const std::vector<Assets::UniformBuffer>& UniformBuffers() const { return uniformBuffers_; }
 		const class GraphicsPipeline& GraphicsPipeline() const { return *graphicsPipeline_; }
@@ -56,7 +59,6 @@ namespace Vulkan
 		virtual void OnMouseButton(int button, int action, int mods) { }
 		virtual void OnScroll(double xoffset, double yoffset) { }
 
-		bool HasSwapChain() const { return swapChain_.operator bool(); }
 		bool isWireFrame_{};
 
 	private:
@@ -64,7 +66,8 @@ namespace Vulkan
 		void UpdateUniformBuffer(uint32_t imageIndex);
 		void RecreateSwapChain();
 
-		const bool vsync_;
+		const VkPresentModeKHR presentMode_;
+		
 		std::unique_ptr<class Window> window_;
 		std::unique_ptr<class Instance> instance_;
 		std::unique_ptr<class DebugUtilsMessenger> debugUtilsMessenger_;

@@ -11,7 +11,7 @@ public:
 
 	VULKAN_NON_COPIABLE(RayTracer)
 
-	RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, bool vsync);
+	RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, VkPresentModeKHR presentMode);
 	~RayTracer();
 
 protected:

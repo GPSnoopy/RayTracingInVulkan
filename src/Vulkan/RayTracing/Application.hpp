@@ -22,7 +22,7 @@ namespace Vulkan::RayTracing
 
 	protected:
 
-		Application(const WindowConfig& windowConfig, bool vsync, bool enableValidationLayers);
+		Application(const WindowConfig& windowConfig, VkPresentModeKHR presentMode, bool enableValidationLayers);
 		~Application();
 
 		void OnDeviceSet() override;

@@ -23,8 +23,8 @@ namespace
 #endif
 }
 
-RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, const bool vsync) :
-	Application(windowConfig, vsync, EnableValidationLayers),
+RayTracer::RayTracer(const UserSettings& userSettings, const Vulkan::WindowConfig& windowConfig, const VkPresentModeKHR presentMode) :
+	Application(windowConfig, presentMode, EnableValidationLayers),
 	userSettings_(userSettings)
 {
 	CheckFramebufferSize();

@@ -37,5 +37,5 @@ public:
 	uint32_t Width{};
 	uint32_t Height{};
 	bool Fullscreen{};
-	bool VSync{};
+	uint32_t PresentMode{};
 };
