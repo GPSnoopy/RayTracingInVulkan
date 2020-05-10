@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Camera.hpp"
+#include "ModelViewController.hpp"
 #include "SceneList.hpp"
 #include "UserSettings.hpp"
 #include "Vulkan/RayTracing/Application.hpp"
