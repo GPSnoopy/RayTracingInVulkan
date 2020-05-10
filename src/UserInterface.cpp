@@ -82,7 +82,7 @@ UserInterface::UserInterface(
 	io.IniFilename = nullptr;
 
 	// Window scaling and style.
-	const auto scaleFactor = window.GetContentScale();
+	const auto scaleFactor = window.ContentScale();
 
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().ScaleAllSizes(scaleFactor);

@@ -32,6 +32,7 @@ namespace Vulkan
 
 		Application(const WindowConfig& windowConfig, bool vsync, bool enableValidationLayers);
 
+		class Window& Window() { return *window_; }
 		const class Window& Window() const { return *window_; }
 		const class Device& Device() const { return *device_; }
 		class CommandPool& CommandPool() { return *commandPool_; }

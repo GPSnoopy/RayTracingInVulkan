@@ -109,6 +109,15 @@ Window::~Window()
 	glfwSetErrorCallback(nullptr);
 }
 
+float Window::ContentScale() const
+{
+	float xscale;
+	float yscale;
+	glfwGetWindowContentScale(window_, &xscale, &yscale);
+
+	return xscale;
+}
+
 VkExtent2D Window::FramebufferSize() const
 {
 	int width, height;
@@ -121,15 +130,6 @@ VkExtent2D Window::WindowSize() const
 	int width, height;
 	glfwGetWindowSize(window_, &width, &height);
 	return VkExtent2D{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
-}
-
-float Window::GetContentScale() const
-{
-	float xscale;
-	float yscale;
-	glfwGetWindowContentScale(window_, &xscale, &yscale);
-
-	return xscale;
 }
 
 const char* Window::GetKeyName(const int key, const int scancode) const
@@ -149,7 +149,7 @@ double Window::GetTime() const
 	return glfwGetTime();
 }
 
-void Window::Close() const
+void Window::Close()
 {
 	glfwSetWindowShouldClose(window_, 1);
 }
@@ -160,7 +160,7 @@ bool Window::IsMinimized() const
 	return size.height == 0 && size.width == 0;
 }
 
-void Window::Run() const
+void Window::Run()
 {
 	glfwSetTime(0.0);
 
