@@ -194,7 +194,10 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 	}
 
 	// Camera motions
-	resetAccumulation_ |= modelViewController_.OnKey(key, scancode, action, mods);
+	if (!userSettings_.Benchmark)
+	{
+		resetAccumulation_ |= modelViewController_.OnKey(key, scancode, action, mods);
+	}
 }
 
 void RayTracer::OnCursorPosition(const double xpos, const double ypos)
