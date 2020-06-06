@@ -30,7 +30,7 @@ namespace
 
 		// A SBT entry is made of a program ID and a set of 4-byte parameters (offsets or push constants)
 		// and must be 16-bytes-aligned.
-		return RoundUp(rayTracingProperties.ShaderGroupHandleSize() + maxArgs, 16);
+		return RoundUp(rayTracingProperties.ShaderGroupHandleSize() + maxArgs, rayTracingProperties.ShaderGroupBaseAlignment());
 	}
 
 	size_t CopyShaderData(
