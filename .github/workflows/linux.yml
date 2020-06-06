@@ -7,7 +7,7 @@ jobs:
 
     runs-on: ubuntu-18.04
     env: 
-      SDK_VERSION: 1.2.135
+      SDK_VERSION: 1.2.141
     
     steps:
     - uses: actions/checkout@v2
