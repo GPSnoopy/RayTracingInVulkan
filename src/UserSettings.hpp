@@ -23,7 +23,10 @@ struct UserSettings final
 	float FieldOfView;
 	float Aperture;
 	float FocusDistance;
-	bool GammaCorrection;
+
+	// Profiler
+	bool ShowHeatmap;
+	float HeatmapScale;
 
 	// UI
 	bool ShowSettings;

@@ -22,12 +22,13 @@ namespace Assets
 		glm::mat4 ProjectionInverse;
 		float Aperture;
 		float FocusDistance;
+		float HeatmapScale;
 		uint32_t TotalNumberOfSamples;
 		uint32_t NumberOfSamples;
 		uint32_t NumberOfBounces;
 		uint32_t RandomSeed;
-		uint32_t GammaCorrection; // bool
 		uint32_t HasSky; // bool
+		uint32_t ShowHeatmap; // bool
 	};
 
 	class UniformBuffer

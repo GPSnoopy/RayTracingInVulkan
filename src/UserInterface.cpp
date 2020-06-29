@@ -181,21 +181,15 @@ void UserInterface::DrawSettings()
 
 		ImGui::Text("Help");
 		ImGui::Separator();
-		ImGui::BulletText("Press F1 to toggle Settings.");
-		ImGui::BulletText("Press F2 to toggle Statistics.");
-		ImGui::BulletText("Press R to toggle ray tracing.");
-		ImGui::NewLine();
-
-		ImGui::Text("Controls");
-		ImGui::Separator();
+		ImGui::BulletText("F1: toggle Settings.");
+		ImGui::BulletText("F2: toggle Statistics.");
 		ImGui::BulletText(
-			"Press %c%c%c%c/SHIFT/CTRL to move camera.", 
+			"%c%c%c%c/SHIFT/CTRL: move camera.", 
 			std::toupper(window.GetKeyName(GLFW_KEY_W, 0)[0]),
 			std::toupper(window.GetKeyName(GLFW_KEY_A, 0)[0]),
 			std::toupper(window.GetKeyName(GLFW_KEY_S, 0)[0]),
 			std::toupper(window.GetKeyName(GLFW_KEY_D, 0)[0]));
-		ImGui::BulletText("Click left mouse to rotate camera.");
-		ImGui::BulletText("Click right mouse to rotate scene.");
+		ImGui::BulletText("L/R Mouse: rotate camera/scene.");
 		ImGui::NewLine();
 
 		ImGui::Text("Scene");
@@ -203,7 +197,6 @@ void UserInterface::DrawSettings()
 		ImGui::PushItemWidth(-1);
 		ImGui::Combo("", &Settings().SceneIndex, scenes.data(), static_cast<int>(scenes.size()));
 		ImGui::PopItemWidth();
-		ImGui::Checkbox("Show statistics overlay", &Settings().ShowOverlay);
 		ImGui::NewLine();
 
 		ImGui::Text("Ray Tracing");
@@ -221,7 +214,12 @@ void UserInterface::DrawSettings()
 		ImGui::SliderFloat("FoV", &Settings().FieldOfView, UserSettings::FieldOfViewMinValue, UserSettings::FieldOfViewMaxValue, "%.0f");
 		ImGui::SliderFloat("Aperture", &Settings().Aperture, 0.0f, 1.0f, "%.2f");
 		ImGui::SliderFloat("Focus", &Settings().FocusDistance, 0.1f, 20.0f, "%.1f");
-		ImGui::Checkbox("Apply gamma correction", &Settings().GammaCorrection);
+		ImGui::NewLine();
+
+		ImGui::Text("Profiler");
+		ImGui::Separator();
+		ImGui::Checkbox("Show heatmap", &Settings().ShowHeatmap);
+		ImGui::SliderFloat("Scaling", &Settings().HeatmapScale, 0.01f, 10.0f, "%.2f", 2);
 		ImGui::NewLine();
 	}
 	ImGui::End();

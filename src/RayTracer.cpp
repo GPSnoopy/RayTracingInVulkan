@@ -51,8 +51,9 @@ Assets::UniformBufferObject RayTracer::GetUniformBufferObject(const VkExtent2D e
 	ubo.NumberOfSamples = numberOfSamples_;
 	ubo.NumberOfBounces = userSettings_.NumberOfBounces;
 	ubo.RandomSeed = 1;
-	ubo.GammaCorrection = userSettings_.GammaCorrection;
 	ubo.HasSky = init.HasSky;
+	ubo.ShowHeatmap = userSettings_.ShowHeatmap;
+	ubo.HeatmapScale = userSettings_.HeatmapScale;
 
 	return ubo;
 }
@@ -174,6 +175,7 @@ void RayTracer::OnKey(int key, int scancode, int action, int mods)
 			case GLFW_KEY_F1: userSettings_.ShowSettings = !userSettings_.ShowSettings; break;
 			case GLFW_KEY_F2: userSettings_.ShowOverlay = !userSettings_.ShowOverlay; break;
 			case GLFW_KEY_R: userSettings_.IsRayTraced = !userSettings_.IsRayTraced; break;
+			case GLFW_KEY_H: userSettings_.ShowHeatmap = !userSettings_.ShowHeatmap; break;
 			case GLFW_KEY_P: isWireFrame_ = !isWireFrame_; break;
 			default: break;
 			}
@@ -248,7 +250,6 @@ void RayTracer::LoadScene(const uint32_t sceneIndex)
 	userSettings_.FieldOfView = cameraInitialSate_.FieldOfView;
 	userSettings_.Aperture = cameraInitialSate_.Aperture;
 	userSettings_.FocusDistance = cameraInitialSate_.FocusDistance;
-	userSettings_.GammaCorrection = cameraInitialSate_.GammaCorrection;
 
 	modelViewController_.Reset(cameraInitialSate_.ModelView);
 
