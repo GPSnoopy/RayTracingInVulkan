@@ -84,7 +84,7 @@ void main()
 	if (Camera.ShowHeatmap)
 	{
 		const uint64_t deltaTime = clockARB() - clock;
-		const float heatmapScale = 1000000.0f * Camera.HeatmapScaling * Camera.HeatmapScaling;
+		const float heatmapScale = 1000000.0f * Camera.HeatmapScale * Camera.HeatmapScale;
 		const float deltaTimeScaled = clamp(float(deltaTime) / heatmapScale, 0.0f, 1.0f);
 
 		pixelColor = heatmap(deltaTimeScaled);
