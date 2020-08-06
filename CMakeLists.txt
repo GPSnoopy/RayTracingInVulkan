@@ -32,11 +32,8 @@ endif()
 
 if (UNIX)
 	
-	# GCC 8 or higher is needed for <filesystem>
-	set(CMAKE_CXX_COMPILER "/usr/bin/g++-8")
-	
 	add_definitions(-DUNIX)
-	add_compile_options("-std=c++1z")
+	add_compile_options("-std=c++17")
 	add_compile_options("-Wall")
 	add_compile_options("-fvisibility=hidden")
 	
