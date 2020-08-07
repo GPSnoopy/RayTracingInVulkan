@@ -20,6 +20,7 @@ foreach(shader ${shader_files})
 	if (WIN32)
         add_custom_command(
             OUTPUT ${output_file}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${output_dir}
             COMMAND ${Vulkan_GLSLANG_VALIDATOR} -V ${full_path} -o ${output_file}
             DEPENDS ${full_path}
         )
