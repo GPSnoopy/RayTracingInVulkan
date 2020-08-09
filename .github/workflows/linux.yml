@@ -5,20 +5,20 @@ on: [push, pull_request]
 jobs:
   build:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     env: 
-      SDK_VERSION: 1.2.141
+      SDK_VERSION: 1.2.148
     
     steps:
     - uses: actions/checkout@v2
     - name: Install Ubuntu dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev g++-8
+        sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev xorg-dev
     - name: Install Vulkan SDK
       run: |
         wget -qO - http://packages.lunarg.com/lunarg-signing-key-pub.asc | sudo apt-key add -
-        sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-${SDK_VERSION}-bionic.list http://packages.lunarg.com/vulkan/${SDK_VERSION}/lunarg-vulkan-${SDK_VERSION}-bionic.list
+        sudo wget -qO /etc/apt/sources.list.d/lunarg-vulkan-${SDK_VERSION}-focal.list http://packages.lunarg.com/vulkan/${SDK_VERSION}/lunarg-vulkan-${SDK_VERSION}-focal.list
         sudo apt-get update
         sudo apt-get install vulkan-sdk
     - name: Compile vcpkg dependencies

@@ -43,10 +43,18 @@ void main()
 		vec3 rayColor = vec3(1);
 
 		// Ray scatters are handled in this loop. There are no recursive traceNV() calls in other shaders.
-		for (uint b = 0; b < Camera.NumberOfBounces; ++b)
+		for (uint b = 0; b <= Camera.NumberOfBounces; ++b)
 		{
 			const float tMin = 0.001;
 			const float tMax = 10000.0;
+
+			// If we've exceeded the ray bounce limit without hitting a light source, no light is gathered.
+			// Light emitting materials never scatter in this implementation, allowing us to make this logical shortcut.
+			if (b == Camera.NumberOfBounces) 
+			{
+				rayColor = vec3(0, 0, 0);
+				break;
+			}
 
 			traceNV(
 				Scene, gl_RayFlagsOpaqueNV, 0xff, 
