@@ -64,9 +64,17 @@ void RayTracer::SetPhysicalDevice(
 	VkPhysicalDeviceFeatures& deviceFeatures, 
 	void* nextDeviceFeatures)
 {
+	// Required extensions.
+	requiredExtensions.insert(requiredExtensions.end(),
+		{
+			// VK_KHR_SHADER_CLOCK is required for heatmap
+			VK_KHR_SHADER_CLOCK_EXTENSION_NAME
+		});
+	
 	// Opt-in into mandatory device features.
 	deviceFeatures.fillModeNonSolid = true;
 	deviceFeatures.samplerAnisotropy = true;
+	deviceFeatures.shaderInt64 = true;
 
 	Application::SetPhysicalDevice(physicalDevice, requiredExtensions, deviceFeatures, nextDeviceFeatures);
 }
