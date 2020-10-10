@@ -1,6 +1,10 @@
 #version 460
+#extension GL_ARB_gpu_shader_int64 : require
+#extension GL_ARB_shader_clock : require
 #extension GL_GOOGLE_include_directive : require
 #extension GL_EXT_ray_tracing : require
+
+#include "Heatmap.glsl"
 #include "Random.glsl"
 #include "RayPayload.glsl"
 #include "UniformBufferObject.glsl"
@@ -12,8 +16,11 @@ layout(binding = 3) readonly uniform UniformBufferObjectStruct { UniformBufferOb
 
 layout(location = 0) rayPayloadEXT RayPayload Ray;
 
+
 void main() 
 {
+	const uint64_t clock = Camera.ShowHeatmap ? clockARB() : 0;
+
 	// Initialise separate random seeds for the pixel and the rays.
 	// - pixel: we want the same random seed for each pixel to get a homogeneous anti-aliasing.
 	// - ray: we want a noisy random seed, different for each pixel.
@@ -79,10 +86,16 @@ void main()
 
 	pixelColor = accumulatedColor / Camera.TotalNumberOfSamples;
 
-	if (Camera.GammaCorrection)
+	// Apply raytracing-in-one-weekend gamma correction.
+	pixelColor = sqrt(pixelColor);
+
+	if (Camera.ShowHeatmap)
 	{
-		// Apply raytracing-in-one-weekend gamma correction.
-		pixelColor = sqrt(pixelColor);
+		const uint64_t deltaTime = clockARB() - clock;
+		const float heatmapScale = 1000000.0f * Camera.HeatmapScale * Camera.HeatmapScale;
+		const float deltaTimeScaled = clamp(float(deltaTime) / heatmapScale, 0.0f, 1.0f);
+
+		pixelColor = heatmap(deltaTimeScaled);
 	}
 
 	imageStore(AccumulationImage, ivec2(gl_LaunchIDEXT.xy), vec4(accumulatedColor, 0));

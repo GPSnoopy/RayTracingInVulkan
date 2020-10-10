@@ -13,6 +13,9 @@ void ModelViewController::Reset(const glm::mat4& modelView)
 	modelRotX_ = 0;
 	modelRotY_ = 0;
 
+	mouseLeftPressed_ = false;
+	mouseRightPressed_ = false;
+
 	UpdateVectors();
 }
 

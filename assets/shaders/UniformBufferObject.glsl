@@ -7,10 +7,11 @@ struct UniformBufferObject
 	mat4 ProjectionInverse;
 	float Aperture;
 	float FocusDistance;
+	float HeatmapScale;
 	uint TotalNumberOfSamples;
 	uint NumberOfSamples;
 	uint NumberOfBounces;
 	uint RandomSeed;
-	bool GammaCorrection;
 	bool HasSky;
+	bool ShowHeatmap;
 };

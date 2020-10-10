@@ -10,7 +10,7 @@ This personal project follows my own attempts at CPU ray tracing following Peter
 
 ## Gallery
 
-<img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/OneWeekend.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Planets.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBox.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBoxLucy.jpg" width="49%"></img>
+<img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/OneWeekend.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Planets.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/Heatmap/gallery/Heatmap.png" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/Heatmap/gallery/LucyHeatmap.png" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBox.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBoxLucy.jpg" width="49%"></img>
 
 ## Performance
 
@@ -78,6 +78,7 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 * [D3D12 Raytracing Samples](https://github.com/Microsoft/DirectX-Graphics-Samples/tree/master/Samples/Desktop/D3D12Raytracing)
 * [George Ouzounoudis's vk_exp](https://github.com/georgeouzou/vk_exp)
 * [NVIDIA Vulkan Forums](https://devtalk.nvidia.com/default/board/166/vulkan)
+* [Profiling DXR shaders with Timer Instrumentation](https://www.reddit.com/r/vulkan/comments/hhyeyj/profiling_dxr_shaders_with_timer_instrumentation/)
 
 ### VK_KHR_ray_tracing Port
 
