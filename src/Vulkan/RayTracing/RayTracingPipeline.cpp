@@ -31,26 +31,26 @@ RayTracingPipeline::RayTracingPipeline(
 	const std::vector<DescriptorBinding> descriptorBindings =
 	{
 		// Top level acceleration structure.
-		{0, 1, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV, VK_SHADER_STAGE_RAYGEN_BIT_NV},
+		{0, 1, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, VK_SHADER_STAGE_RAYGEN_BIT_KHR},
 
 		// Image accumulation & output
-		{1, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_NV},
-		{2, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_NV},
+		{1, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR},
+		{2, 1, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, VK_SHADER_STAGE_RAYGEN_BIT_KHR},
 
 		// Camera information & co
-		{3, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_MISS_BIT_NV},
+		{3, 1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR},
 
 		// Vertex buffer, Index buffer, Material buffer, Offset buffer
-		{4, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV},
-		{5, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV},
-		{6, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV},
-		{7, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV},
+		{4, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR},
+		{5, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR},
+		{6, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR},
+		{7, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR},
 
 		// Textures and image samplers
-		{8, static_cast<uint32_t>(scene.TextureSamplers().size()), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV},
+		{8, static_cast<uint32_t>(scene.TextureSamplers().size()), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR},
 
 		// The Procedural buffer.
-		{9, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV | VK_SHADER_STAGE_INTERSECTION_BIT_NV}
+		{9, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_INTERSECTION_BIT_KHR}
 	};
 
 	descriptorSetManager_.reset(new DescriptorSetManager(device, descriptorBindings, uniformBuffers.size()));
@@ -61,8 +61,8 @@ RayTracingPipeline::RayTracingPipeline(
 	{
 		// Top level acceleration structure.
 		const auto accelerationStructureHandle = accelerationStructure.Handle();
-		VkWriteDescriptorSetAccelerationStructureNV structureInfo = {};
-		structureInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
+		VkWriteDescriptorSetAccelerationStructureKHR structureInfo = {};
+		structureInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR;
 		structureInfo.pNext = nullptr;
 		structureInfo.accelerationStructureCount = 1;
 		structureInfo.pAccelerationStructures = &accelerationStructureHandle;
@@ -151,55 +151,55 @@ RayTracingPipeline::RayTracingPipeline(
 
 	std::vector<VkPipelineShaderStageCreateInfo> shaderStages =
 	{
-		rayGenShader.CreateShaderStage(VK_SHADER_STAGE_RAYGEN_BIT_NV),
-		missShader.CreateShaderStage(VK_SHADER_STAGE_MISS_BIT_NV),
-		closestHitShader.CreateShaderStage(VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV),
-		proceduralClosestHitShader.CreateShaderStage(VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV),
-		proceduralIntersectionShader.CreateShaderStage(VK_SHADER_STAGE_INTERSECTION_BIT_NV)
+		rayGenShader.CreateShaderStage(VK_SHADER_STAGE_RAYGEN_BIT_KHR),
+		missShader.CreateShaderStage(VK_SHADER_STAGE_MISS_BIT_KHR),
+		closestHitShader.CreateShaderStage(VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
+		proceduralClosestHitShader.CreateShaderStage(VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
+		proceduralIntersectionShader.CreateShaderStage(VK_SHADER_STAGE_INTERSECTION_BIT_KHR)
 	};
 
 	// Shader groups
-	VkRayTracingShaderGroupCreateInfoNV rayGenGroupInfo = {};
-	rayGenGroupInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV;
+	VkRayTracingShaderGroupCreateInfoKHR rayGenGroupInfo = {};
+	rayGenGroupInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR;
 	rayGenGroupInfo.pNext = nullptr;
-	rayGenGroupInfo.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV;
+	rayGenGroupInfo.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
 	rayGenGroupInfo.generalShader = 0;
-	rayGenGroupInfo.closestHitShader = VK_SHADER_UNUSED_NV;
-	rayGenGroupInfo.anyHitShader = VK_SHADER_UNUSED_NV;
-	rayGenGroupInfo.intersectionShader = VK_SHADER_UNUSED_NV;
+	rayGenGroupInfo.closestHitShader = VK_SHADER_UNUSED_KHR;
+	rayGenGroupInfo.anyHitShader = VK_SHADER_UNUSED_KHR;
+	rayGenGroupInfo.intersectionShader = VK_SHADER_UNUSED_KHR;
 	rayGenIndex_ = 0;
 
-	VkRayTracingShaderGroupCreateInfoNV missGroupInfo = {};
-	missGroupInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV;
+	VkRayTracingShaderGroupCreateInfoKHR missGroupInfo = {};
+	missGroupInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR;
 	missGroupInfo.pNext = nullptr;
-	missGroupInfo.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV;
+	missGroupInfo.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
 	missGroupInfo.generalShader = 1;
-	missGroupInfo.closestHitShader = VK_SHADER_UNUSED_NV;
-	missGroupInfo.anyHitShader = VK_SHADER_UNUSED_NV;
-	missGroupInfo.intersectionShader = VK_SHADER_UNUSED_NV;
+	missGroupInfo.closestHitShader = VK_SHADER_UNUSED_KHR;
+	missGroupInfo.anyHitShader = VK_SHADER_UNUSED_KHR;
+	missGroupInfo.intersectionShader = VK_SHADER_UNUSED_KHR;
 	missIndex_ = 1;
 
-	VkRayTracingShaderGroupCreateInfoNV triangleHitGroupInfo = {};
-	triangleHitGroupInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV;
+	VkRayTracingShaderGroupCreateInfoKHR triangleHitGroupInfo = {};
+	triangleHitGroupInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR;
 	triangleHitGroupInfo.pNext = nullptr;
-	triangleHitGroupInfo.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_NV;
-	triangleHitGroupInfo.generalShader = VK_SHADER_UNUSED_NV;
+	triangleHitGroupInfo.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR;
+	triangleHitGroupInfo.generalShader = VK_SHADER_UNUSED_KHR;
 	triangleHitGroupInfo.closestHitShader = 2;
-	triangleHitGroupInfo.anyHitShader = VK_SHADER_UNUSED_NV;
-	triangleHitGroupInfo.intersectionShader = VK_SHADER_UNUSED_NV;
+	triangleHitGroupInfo.anyHitShader = VK_SHADER_UNUSED_KHR;
+	triangleHitGroupInfo.intersectionShader = VK_SHADER_UNUSED_KHR;
 	triangleHitGroupIndex_ = 2;
 
-	VkRayTracingShaderGroupCreateInfoNV proceduralHitGroupInfo = {};
-	proceduralHitGroupInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV;
+	VkRayTracingShaderGroupCreateInfoKHR proceduralHitGroupInfo = {};
+	proceduralHitGroupInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR;
 	proceduralHitGroupInfo.pNext = nullptr;
-	proceduralHitGroupInfo.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_PROCEDURAL_HIT_GROUP_NV;
-	proceduralHitGroupInfo.generalShader = VK_SHADER_UNUSED_NV;
+	proceduralHitGroupInfo.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_PROCEDURAL_HIT_GROUP_KHR;
+	proceduralHitGroupInfo.generalShader = VK_SHADER_UNUSED_KHR;
 	proceduralHitGroupInfo.closestHitShader = 3;
-	proceduralHitGroupInfo.anyHitShader = VK_SHADER_UNUSED_NV;
+	proceduralHitGroupInfo.anyHitShader = VK_SHADER_UNUSED_KHR;
 	proceduralHitGroupInfo.intersectionShader = 4;
 	proceduralHitGroupIndex_ = 3;
 
-	std::vector<VkRayTracingShaderGroupCreateInfoNV> groups =
+	std::vector<VkRayTracingShaderGroupCreateInfoKHR> groups =
 	{
 		rayGenGroupInfo, 
 		missGroupInfo, 
@@ -208,8 +208,8 @@ RayTracingPipeline::RayTracingPipeline(
 	};
 
 	// Create graphic pipeline
-	VkRayTracingPipelineCreateInfoNV pipelineInfo = {};
-	pipelineInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_NV;
+	VkRayTracingPipelineCreateInfoKHR pipelineInfo = {};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR;
 	pipelineInfo.pNext = nullptr;
 	pipelineInfo.flags = 0;
 	pipelineInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
@@ -220,8 +220,9 @@ RayTracingPipeline::RayTracingPipeline(
 	pipelineInfo.layout = pipelineLayout_->Handle();
 	pipelineInfo.basePipelineHandle = nullptr;
 	pipelineInfo.basePipelineIndex = 0;
+	pipelineInfo.libraries.sType = VK_STRUCTURE_TYPE_PIPELINE_LIBRARY_CREATE_INFO_KHR;
 
-	Check(deviceProcedures.vkCreateRayTracingPipelinesNV(device.Handle(), nullptr, 1, &pipelineInfo, nullptr, &pipeline_), 
+	Check(deviceProcedures.vkCreateRayTracingPipelinesKHR(device.Handle(), nullptr, 1, &pipelineInfo, nullptr, &pipeline_), 
 		"create ray tracing pipeline");
 }
 

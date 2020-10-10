@@ -58,6 +58,19 @@ Assets::UniformBufferObject RayTracer::GetUniformBufferObject(const VkExtent2D e
 	return ubo;
 }
 
+void RayTracer::SetPhysicalDevice(
+	VkPhysicalDevice physicalDevice, 
+	std::vector<const char*>& requiredExtensions,
+	VkPhysicalDeviceFeatures& deviceFeatures, 
+	void* nextDeviceFeatures)
+{
+	// Opt-in into mandatory device features.
+	deviceFeatures.fillModeNonSolid = true;
+	deviceFeatures.samplerAnisotropy = true;
+
+	Application::SetPhysicalDevice(physicalDevice, requiredExtensions, deviceFeatures, nextDeviceFeatures);
+}
+
 void RayTracer::OnDeviceSet()
 {
 	Application::OnDeviceSet();
