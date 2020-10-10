@@ -8,43 +8,42 @@
 
 namespace Vulkan {
 
-	namespace
+namespace
+{
+	std::vector<VkQueueFamilyProperties>::const_iterator FindQueue(
+		const std::vector<VkQueueFamilyProperties>& queueFamilies,
+		const std::string& name,
+		const VkQueueFlags requiredBits,
+		const VkQueueFlags excludedBits)
 	{
-		std::vector<VkQueueFamilyProperties>::const_iterator FindQueue(
-			const std::vector<VkQueueFamilyProperties>& queueFamilies,
-			const std::string& name,
-			const VkQueueFlags requiredBits,
-			const VkQueueFlags excludedBits)
+		const auto family = std::find_if(queueFamilies.begin(), queueFamilies.end(), [requiredBits, excludedBits](const VkQueueFamilyProperties& queueFamily)
 		{
-			const auto family = std::find_if(queueFamilies.begin(), queueFamilies.end(), [requiredBits, excludedBits](const VkQueueFamilyProperties& queueFamily)
-			{
-				return 
-					queueFamily.queueCount > 0 && 
-					queueFamily.queueFlags & requiredBits &&
-					!(queueFamily.queueFlags & excludedBits);
-			});
+			return 
+				queueFamily.queueCount > 0 && 
+				queueFamily.queueFlags & requiredBits &&
+				!(queueFamily.queueFlags & excludedBits);
+		});
 
-			if (family == queueFamilies.end())
-			{
-				Throw(std::runtime_error("found no matching " + name + " queue"));
-			}
-
-			return family;
+		if (family == queueFamilies.end())
+		{
+			Throw(std::runtime_error("found no matching " + name + " queue"));
 		}
 
+		return family;
 	}
+}
 
-const std::vector<const char*> Device::RequiredExtensions =
-{
-	VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-	VK_NV_RAY_TRACING_EXTENSION_NAME
-};
-
-Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface) :
+Device::Device(
+	VkPhysicalDevice physicalDevice, 
+	const class Surface& surface, 
+	const std::vector<const char*>& requiredExtensions,
+	const VkPhysicalDeviceFeatures& deviceFeatures,
+	const void* nextDeviceFeatures) :
 	physicalDevice_(physicalDevice),
-	surface_(surface)
+	surface_(surface),
+	debugUtils_(surface.Instance().Handle())
 {
-	CheckRequiredExtensions(physicalDevice);
+	CheckRequiredExtensions(physicalDevice, requiredExtensions);
 
 	const auto queueFamilies = GetEnumerateVector(physicalDevice, vkGetPhysicalDeviceQueueFamilyProperties);
 
@@ -96,27 +95,22 @@ Device::Device(VkPhysicalDevice physicalDevice, const class Surface& surface) :
 		queueCreateInfos.push_back(queueCreateInfo);
 	}
 
-	VkPhysicalDeviceFeatures deviceFeatures = {};
-	deviceFeatures.fillModeNonSolid = true;
-	deviceFeatures.samplerAnisotropy = true;
-
-	VkPhysicalDeviceDescriptorIndexingFeaturesEXT indexingFeatures = {};
-	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
-	indexingFeatures.runtimeDescriptorArray = true;
-
+	// Create device
 	VkDeviceCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	createInfo.pNext = &indexingFeatures;
+	createInfo.pNext = nextDeviceFeatures;
 	createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
 	createInfo.pQueueCreateInfos = queueCreateInfos.data();
 	createInfo.pEnabledFeatures = &deviceFeatures;
 	createInfo.enabledLayerCount = static_cast<uint32_t>(surface_.Instance().ValidationLayers().size());
 	createInfo.ppEnabledLayerNames = surface_.Instance().ValidationLayers().data();
-	createInfo.enabledExtensionCount = static_cast<uint32_t>(RequiredExtensions.size());
-	createInfo.ppEnabledExtensionNames = RequiredExtensions.data();
+	createInfo.enabledExtensionCount = static_cast<uint32_t>(requiredExtensions.size());
+	createInfo.ppEnabledExtensionNames = requiredExtensions.data();
 
 	Check(vkCreateDevice(physicalDevice, &createInfo, nullptr, &device_),
 		"create logical device");
+
+	debugUtils_.SetDevice(device_);
 
 	vkGetDeviceQueue(device_, graphicsFamilyIndex_, 0, &graphicsQueue_);
 	vkGetDeviceQueue(device_, computeFamilyIndex_, 0, &computeQueue_);
@@ -139,22 +133,22 @@ void Device::WaitIdle() const
 		"wait for device idle");
 }
 
-void Device::CheckRequiredExtensions(VkPhysicalDevice physicalDevice) const
+void Device::CheckRequiredExtensions(VkPhysicalDevice physicalDevice, const std::vector<const char*>& requiredExtensions) const
 {
 	const auto availableExtensions = GetEnumerateVector(physicalDevice, static_cast<const char*>(nullptr), vkEnumerateDeviceExtensionProperties);
-	std::set<std::string> requiredExtensions(RequiredExtensions.begin(), RequiredExtensions.end());
+	std::set<std::string> required(requiredExtensions.begin(), requiredExtensions.end());
 
 	for (const auto& extension : availableExtensions) 
 	{
-		requiredExtensions.erase(extension.extensionName);
+		required.erase(extension.extensionName);
 	}
 
-	if (!requiredExtensions.empty())
+	if (!required.empty())
 	{
 		bool first = true;
 		std::string extensions;
 
-		for (const auto& extension : requiredExtensions)
+		for (const auto& extension : required)
 		{
 			if (!first)
 			{

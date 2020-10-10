@@ -44,7 +44,7 @@ namespace Assets {
 
 Model Model::LoadModel(const std::string& filename)
 {
-	std::cout << "Loading '" << filename << "'... " << std::flush;
+	std::cout << "- loading '" << filename << "'... " << std::flush;
 
 	const auto timer = std::chrono::high_resolution_clock::now();
 	const std::string materialPath = std::filesystem::path(filename).parent_path().string();

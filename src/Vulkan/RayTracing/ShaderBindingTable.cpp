@@ -28,8 +28,8 @@ namespace
 			maxArgs = std::max(maxArgs, entry.InlineData.size());
 		}
 
-		// A SBT entry is made of a program ID and a set of 4-byte parameters (offsets or push constants)
-		// and must be 16-bytes-aligned.
+		// A SBT entry is made of a program ID and a set of 4-byte parameters (see shaderRecordEXT).
+		// Its size is ShaderGroupHandleSize (plus parameters) and must be aligned to ShaderGroupBaseAlignment.
 		return RoundUp(rayTracingProperties.ShaderGroupHandleSize() + maxArgs, rayTracingProperties.ShaderGroupBaseAlignment());
 	}
 
@@ -46,7 +46,7 @@ namespace
 
 		for (const auto& entry : entries)
 		{
-			// Copy the shader identifier that was previously obtained with vkGetRayTracingShaderGroupHandlesNV.
+			// Copy the shader identifier that was previously obtained with vkGetRayTracingShaderGroupHandlesKHR.
 			std::memcpy(pDst, shaderHandleStorage + entry.GroupIndex * handleSize, handleSize);
 			std::memcpy(pDst + handleSize, entry.InlineData.data(), entry.InlineData.size());
 
@@ -65,12 +65,18 @@ ShaderBindingTable::ShaderBindingTable(
 	const std::vector<Entry>& rayGenPrograms,
 	const std::vector<Entry>& missPrograms, 
 	const std::vector<Entry>& hitGroups) :
+	
 	rayGenEntrySize_(GetEntrySize(rayTracingProperties, rayGenPrograms)),
 	missEntrySize_(GetEntrySize(rayTracingProperties, missPrograms)),
 	hitGroupEntrySize_(GetEntrySize(rayTracingProperties, hitGroups)),
+	
 	rayGenOffset_(0),
 	missOffset_(rayGenPrograms.size() * rayGenEntrySize_),
-	hitGroupOffset_(missOffset_ + missPrograms.size() * missEntrySize_)
+	hitGroupOffset_(missOffset_ + missPrograms.size() * missEntrySize_),
+
+	rayGenSize_(rayGenPrograms.size() * rayGenEntrySize_),
+	missSize_(missPrograms.size() * missEntrySize_),
+	hitGroupSize_(hitGroups.size() * hitGroupEntrySize_)
 {
 	// Compute the size of the table.
 	const size_t sbtSize =
@@ -89,7 +95,7 @@ ShaderBindingTable::ShaderBindingTable(
 	const size_t groupCount = rayGenPrograms.size() + missPrograms.size() + hitGroups.size();
 	std::vector<uint8_t> shaderHandleStorage(groupCount * handleSize);
 
-	Check(deviceProcedures.vkGetRayTracingShaderGroupHandlesNV(
+	Check(deviceProcedures.vkGetRayTracingShaderGroupHandlesKHR(
 		device.Handle(), 
 		rayTracingPipeline.Handle(), 
 		0, static_cast<uint32_t>(groupCount),

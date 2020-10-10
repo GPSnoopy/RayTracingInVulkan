@@ -8,14 +8,12 @@
 
 namespace Vulkan {
 
-Instance::Instance(const class Window& window, const std::vector<const char*>& validationLayers) :
+Instance::Instance(const class Window& window, const std::vector<const char*>& validationLayers, uint32_t vulkanVersion) :
 	window_(window),
 	validationLayers_(validationLayers)
 {
 	// Check the minimum version.
-	const uint32_t version = VK_API_VERSION_1_1;
-
-	CheckVulkanMinimumVersion(version);
+	CheckVulkanMinimumVersion(vulkanVersion);
 
 	// Get the list of required extensions.
 	auto extensions = window.GetRequiredInstanceExtensions();
@@ -35,7 +33,7 @@ Instance::Instance(const class Window& window, const std::vector<const char*>& v
 	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	appInfo.pEngineName = "No Engine";
 	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	appInfo.apiVersion = version;
+	appInfo.apiVersion = vulkanVersion;
 
 	VkInstanceCreateInfo createInfo = {};
 	createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -48,7 +46,8 @@ Instance::Instance(const class Window& window, const std::vector<const char*>& v
 	Check(vkCreateInstance(&createInfo, nullptr, &instance_),
 		"create instance");
 
-	GetVulkanDevices();
+	GetVulkanPhysicalDevices();
+	GetVulkanLayers();
 	GetVulkanExtensions();
 }
 
@@ -61,7 +60,17 @@ Instance::~Instance()
 	}
 }
 
-void Instance::GetVulkanDevices()
+void Instance::GetVulkanExtensions()
+{
+	GetEnumerateVector(static_cast<const char*>(nullptr), vkEnumerateInstanceExtensionProperties, extensions_);
+}
+
+void Instance::GetVulkanLayers()
+{
+	GetEnumerateVector(vkEnumerateInstanceLayerProperties, layers_);
+}
+
+void Instance::GetVulkanPhysicalDevices()
 {
 	GetEnumerateVector(instance_, vkEnumeratePhysicalDevices, physicalDevices_);
 
@@ -69,11 +78,6 @@ void Instance::GetVulkanDevices()
 	{
 		Throw(std::runtime_error("found no Vulkan physical devices"));
 	}
-}
-
-void Instance::GetVulkanExtensions()
-{
-	GetEnumerateVector(static_cast<const char*>(nullptr), vkEnumerateInstanceExtensionProperties, extensions_);
 }
 
 void Instance::CheckVulkanMinimumVersion(const uint32_t minVersion)

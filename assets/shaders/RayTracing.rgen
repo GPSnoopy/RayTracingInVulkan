@@ -1,16 +1,16 @@
 #version 460
 #extension GL_GOOGLE_include_directive : require
-#extension GL_NV_ray_tracing : require
+#extension GL_EXT_ray_tracing : require
 #include "Random.glsl"
 #include "RayPayload.glsl"
 #include "UniformBufferObject.glsl"
 
-layout(binding = 0, set = 0) uniform accelerationStructureNV Scene;
+layout(binding = 0, set = 0) uniform accelerationStructureEXT Scene;
 layout(binding = 1, rgba32f) uniform image2D AccumulationImage;
 layout(binding = 2, rgba8) uniform image2D OutputImage;
 layout(binding = 3) readonly uniform UniformBufferObjectStruct { UniformBufferObject Camera; };
 
-layout(location = 0) rayPayloadNV RayPayload Ray;
+layout(location = 0) rayPayloadEXT RayPayload Ray;
 
 void main() 
 {
@@ -18,7 +18,7 @@ void main()
 	// - pixel: we want the same random seed for each pixel to get a homogeneous anti-aliasing.
 	// - ray: we want a noisy random seed, different for each pixel.
 	uint pixelRandomSeed = Camera.RandomSeed;
-	Ray.RandomSeed = InitRandomSeed(InitRandomSeed(gl_LaunchIDNV.x, gl_LaunchIDNV.y), Camera.TotalNumberOfSamples);
+	Ray.RandomSeed = InitRandomSeed(InitRandomSeed(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y), Camera.TotalNumberOfSamples);
 
 	vec3 pixelColor = vec3(0);
 
@@ -26,8 +26,8 @@ void main()
 	for (uint s = 0; s < Camera.NumberOfSamples; ++s)
 	{
 		//if (Camera.NumberOfSamples != Camera.TotalNumberOfSamples) break;
-		const vec2 pixel = vec2(gl_LaunchIDNV.x + RandomFloat(pixelRandomSeed), gl_LaunchIDNV.y + RandomFloat(pixelRandomSeed));
-		const vec2 uv = (pixel / gl_LaunchSizeNV.xy) * 2.0 - 1.0;
+		const vec2 pixel = vec2(gl_LaunchIDEXT.x + RandomFloat(pixelRandomSeed), gl_LaunchIDEXT.y + RandomFloat(pixelRandomSeed));
+		const vec2 uv = (pixel / gl_LaunchSizeEXT.xy) * 2.0 - 1.0;
 
 		vec2 offset = Camera.Aperture/2 * RandomInUnitDisk(Ray.RandomSeed);
 		vec4 origin = Camera.ModelViewInverse * vec4(offset, 0, 1);
@@ -35,7 +35,7 @@ void main()
 		vec4 direction = Camera.ModelViewInverse * vec4(normalize(target.xyz * Camera.FocusDistance - vec3(offset, 0)), 0);
 		vec3 rayColor = vec3(1);
 
-		// Ray scatters are handled in this loop. There are no recursive traceNV() calls in other shaders.
+		// Ray scatters are handled in this loop. There are no recursive traceRayEXT() calls in other shaders.
 		for (uint b = 0; b <= Camera.NumberOfBounces; ++b)
 		{
 			const float tMin = 0.001;
@@ -49,8 +49,8 @@ void main()
 				break;
 			}
 
-			traceNV(
-				Scene, gl_RayFlagsOpaqueNV, 0xff, 
+			traceRayEXT(
+				Scene, gl_RayFlagsOpaqueEXT, 0xff, 
 				0 /*sbtRecordOffset*/, 0 /*sbtRecordStride*/, 0 /*missIndex*/, 
 				origin.xyz, tMin, direction.xyz, tMax, 0 /*payload*/);
 			
@@ -75,7 +75,7 @@ void main()
 	}
 
 	const bool accumulate = Camera.NumberOfSamples != Camera.TotalNumberOfSamples;
-	const vec3 accumulatedColor = (accumulate ? imageLoad(AccumulationImage, ivec2(gl_LaunchIDNV.xy)) : vec4(0)).rgb + pixelColor;
+	const vec3 accumulatedColor = (accumulate ? imageLoad(AccumulationImage, ivec2(gl_LaunchIDEXT.xy)) : vec4(0)).rgb + pixelColor;
 
 	pixelColor = accumulatedColor / Camera.TotalNumberOfSamples;
 
@@ -85,6 +85,6 @@ void main()
 		pixelColor = sqrt(pixelColor);
 	}
 
-	imageStore(AccumulationImage, ivec2(gl_LaunchIDNV.xy), vec4(accumulatedColor, 0));
-    imageStore(OutputImage, ivec2(gl_LaunchIDNV.xy), vec4(pixelColor, 0));
+	imageStore(AccumulationImage, ivec2(gl_LaunchIDEXT.xy), vec4(accumulatedColor, 0));
+    imageStore(OutputImage, ivec2(gl_LaunchIDEXT.xy), vec4(pixelColor, 0));
 }

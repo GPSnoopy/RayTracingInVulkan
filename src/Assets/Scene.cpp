@@ -4,6 +4,7 @@
 #include "Texture.hpp"
 #include "TextureImage.hpp"
 #include "Vulkan/Buffer.hpp"
+#include "Vulkan/Device.hpp"
 #include "Vulkan/CommandPool.hpp"
 #include "Vulkan/ImageView.hpp"
 #include "Vulkan/Sampler.hpp"
@@ -40,17 +41,23 @@ namespace
 	template <class T>
 	void CreateDeviceBuffer(
 		Vulkan::CommandPool& commandPool,
+		const char* const name,
 		const VkBufferUsageFlags usage, 
 		const std::vector<T>& content,
 		std::unique_ptr<Vulkan::Buffer>& buffer,
 		std::unique_ptr<Vulkan::DeviceMemory>& memory)
 	{
 		const auto& device = commandPool.Device();
+		const auto& debugUtils = device.DebugUtils();
 		const auto contentSize = sizeof(content[0]) * content.size();
+		const VkMemoryAllocateFlags allocateFlags = usage & VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT ? VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT : 0;
 
 		buffer.reset(new Vulkan::Buffer(device, contentSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usage));
-		memory.reset(new Vulkan::DeviceMemory(buffer->AllocateMemory(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)));
+		memory.reset(new Vulkan::DeviceMemory(buffer->AllocateMemory(allocateFlags, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)));
 
+		debugUtils.SetObjectName(buffer->Handle(), (name + std::string(" Buffer")).c_str());
+		debugUtils.SetObjectName(memory->Handle(), (name + std::string(" Memory")).c_str());
+		
 		CopyFromStagingBuffer(commandPool, *buffer, content);
 	}
 
@@ -65,7 +72,7 @@ Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std:
 	std::vector<uint32_t> indices;
 	std::vector<Material> materials;
 	std::vector<glm::vec4> procedurals;
-	std::vector<std::pair<glm::vec3, glm::vec3>> aabbs;
+	std::vector<VkAabbPositionsKHR> aabbs;
 	std::vector<glm::uvec2> offsets;
 
 	for (const auto& model : models_)
@@ -92,7 +99,8 @@ Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std:
 		const auto sphere = dynamic_cast<const Sphere*>(model.Procedural());
 		if (sphere != nullptr)
 		{
-			aabbs.push_back(sphere->BoundingBox());
+			const auto aabb = sphere->BoundingBox();
+			aabbs.push_back({aabb.first.x, aabb.first.y, aabb.first.z, aabb.second.x, aabb.second.y, aabb.second.z});
 			procedurals.emplace_back(sphere->Center, sphere->Radius);
 		}
 		else
@@ -102,15 +110,15 @@ Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std:
 		}
 	}
 
-	const auto flag = usedForRayTracing ? VK_BUFFER_USAGE_STORAGE_BUFFER_BIT : 0;
+	const auto flag = usedForRayTracing ? VK_BUFFER_USAGE_STORAGE_BUFFER_BIT  | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT : 0;
 
-	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | flag, vertices, vertexBuffer_, vertexBufferMemory_);
-	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag, indices, indexBuffer_, indexBufferMemory_);
-	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, materials, materialBuffer_, materialBufferMemory_);
-	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, offsets, offsetBuffer_, offsetBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Vertices", VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | flag, vertices, vertexBuffer_, vertexBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Indices", VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag, indices, indexBuffer_, indexBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Materials", flag, materials, materialBuffer_, materialBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Offsets", flag, offsets, offsetBuffer_, offsetBufferMemory_);
 
-	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, aabbs, aabbBuffer_, aabbBufferMemory_);
-	CreateDeviceBuffer(commandPool, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, procedurals, proceduralBuffer_, proceduralBufferMemory_);
+	CreateDeviceBuffer(commandPool, "AABBs", flag, aabbs, aabbBuffer_, aabbBufferMemory_);
+	CreateDeviceBuffer(commandPool, "Procedurals", flag, procedurals, proceduralBuffer_, proceduralBufferMemory_);
 
 	// Upload all textures
 	textureImages_.reserve(textures_.size());

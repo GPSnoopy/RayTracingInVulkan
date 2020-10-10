@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 project(RayTracingInVulkan)
 
-# On Linux, default to Release if not specified.
-if (UNIX AND NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Specifies the build type on single-configuration generators" FORCE)
-endif ()
-
 set(CMAKE_DEBUG_POSTFIX d)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)

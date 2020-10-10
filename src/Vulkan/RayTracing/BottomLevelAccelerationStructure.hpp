@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AccelerationStructure.hpp"
-#include <vector>
+#include "BottomLevelGeometry.hpp"
 
 namespace Assets
 {
@@ -20,7 +20,7 @@ namespace Vulkan::RayTracing
 		BottomLevelAccelerationStructure& operator = (const BottomLevelAccelerationStructure&) = delete;
 		BottomLevelAccelerationStructure& operator = (BottomLevelAccelerationStructure&&) = delete;
 
-		BottomLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, const std::vector<VkGeometryNV>& geometries, bool allowUpdate);
+		BottomLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, const BottomLevelGeometry& geometries, bool allowUpdate);
 		BottomLevelAccelerationStructure(BottomLevelAccelerationStructure&& other) noexcept;
 		~BottomLevelAccelerationStructure();
 
@@ -32,21 +32,9 @@ namespace Vulkan::RayTracing
 			VkDeviceSize resultOffset,
 			bool updateOnly) const;
 
-		static VkGeometryNV CreateGeometry(
-			const Assets::Scene& scene, 
-			uint32_t vertexOffset, uint32_t vertexCount,
-			uint32_t indexOffset, uint32_t indexCount,
-			bool isOpaque);
-
-		static VkGeometryNV CreateGeometryAabb(
-			const Assets::Scene& scene,
-			uint32_t aabbOffset,
-			uint32_t aabbCount,
-			bool isOpaque);
-
 	private:
 
-		std::vector<VkGeometryNV> geometries_;
+		BottomLevelGeometry geometries_;
 	};
 
 }

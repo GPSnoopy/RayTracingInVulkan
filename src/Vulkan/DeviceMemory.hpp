@@ -14,7 +14,7 @@ namespace Vulkan
 		DeviceMemory& operator = (const DeviceMemory&) = delete;
 		DeviceMemory& operator = (DeviceMemory&&) = delete;
 
-		DeviceMemory(const Device& device, size_t size, uint32_t memoryTypeBits, VkMemoryPropertyFlags properties);
+		DeviceMemory(const Device& device, size_t size, uint32_t memoryTypeBits, VkMemoryAllocateFlags allocateFLags, VkMemoryPropertyFlags propertyFlags);
 		DeviceMemory(DeviceMemory&& other) noexcept;
 		~DeviceMemory();
 

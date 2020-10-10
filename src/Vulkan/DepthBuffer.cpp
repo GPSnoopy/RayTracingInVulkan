@@ -52,6 +52,12 @@ namespace Vulkan {
 		imageView_.reset(new class ImageView(device, image_->Handle(), format_, VK_IMAGE_ASPECT_DEPTH_BIT));
 
 		image_->TransitionImageLayout(commandPool, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+		const auto& debugUtils = device.DebugUtils();
+
+		debugUtils.SetObjectName(image_->Handle(), "Depth Buffer Image");
+		debugUtils.SetObjectName(imageMemory_->Handle(), "Depth Buffer Image Memory");
+		debugUtils.SetObjectName(imageView_->Handle(), "Depth Buffer ImageView");
 	}
 
 	DepthBuffer::~DepthBuffer()

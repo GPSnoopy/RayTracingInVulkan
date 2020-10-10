@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vulkan/Vulkan.hpp"
+#include <vector>
 
 namespace Vulkan
 {
@@ -40,7 +41,11 @@ namespace Vulkan::RayTracing
 
 	protected:
 
-		AccelerationStructure(const class DeviceProcedures& deviceProcedures, const VkAccelerationStructureCreateInfoNV& createInfo);
+		AccelerationStructure(
+			const class DeviceProcedures& deviceProcedures, 
+			VkAccelerationStructureTypeKHR accelerationStructureType,
+			const std::vector<VkAccelerationStructureCreateGeometryTypeInfoKHR>& geometries,
+			bool allowUpdate);
 		
 		const class DeviceProcedures& deviceProcedures_;
 		const bool allowUpdate_;
@@ -49,7 +54,7 @@ namespace Vulkan::RayTracing
 
 		const class Device& device_;
 
-		VULKAN_HANDLE(VkAccelerationStructureNV, accelerationStructure_)
+		VULKAN_HANDLE(VkAccelerationStructureKHR, accelerationStructure_)
 	};
 
 }
