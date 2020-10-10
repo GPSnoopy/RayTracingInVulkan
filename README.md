@@ -10,7 +10,7 @@ This personal project follows my own attempts at CPU ray tracing following Peter
 
 ## Gallery
 
-<img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/OneWeekend.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Planets.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/Heatmap/gallery/Heatmap.png" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/Heatmap/gallery/LucyHeatmap.png" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBox.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBoxLucy.jpg" width="49%"></img>
+<img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/OneWeekend.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Planets.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Heatmap.png" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucyHeatmap.png" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBox.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBoxLucy.jpg" width="49%"></img>
 
 ## Performance
 
@@ -61,9 +61,6 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 - When I upgraded the drivers to 430.86, performance significantly improved (+50%). This was around the same time Quake II RTX was released by NVIDIA. Coincidence?
 
 - When looking at the benchmark results of an RTX 2070 and an RTX 2080 Ti, the performance differences mostly in line with the number of CUDA cores and RT cores rather than being influences by other metrics. Although I do not know at this point whether the CUDA cores or the RT cores are the main bottleneck.
-
-- The benchmark mode makes the Boost clock behaviour quite obvious. Performance degrades rapidly by a few % over 60-120 seconds. For example, in theory the RTX 2080 Ti should be getting exactly the same result for Scene 1 and Scene 2 (or very close). Yet because Scene 2 is run after, the GPU has had to reduce its Boost clock as the GPU gets close to its thermal limit.
-
 
 ## References
 
