@@ -12,9 +12,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Download Vulkan SDK
-      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/${env:SDK_VERSION}/windows/VulkanSDK-${env:SDK_VERSION}-Installer.exe?Human=true" -OutFile VulkanSDK.exe -v
+      run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/${env:SDK_VERSION}/windows/vulkan_sdk.exe?Human=true" -v
     - name: Install Vulkan SDK
-      run: .\VulkanSDK.exe /S
+      run: .\vulkan_sdk.exe /S
       shell: cmd
     - name: Compile vcpkg dependencies
       run: vcpkg_windows.bat

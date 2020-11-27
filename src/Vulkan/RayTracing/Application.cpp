@@ -62,8 +62,9 @@ void Application::SetPhysicalDevice(
 	{
 		// VK_KHR_ray_tracing
 		VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
-		VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME,
-		VK_KHR_RAY_TRACING_EXTENSION_NAME,
+		//VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME,
+		"VK_KHR_acceleration_structure"
+		//VK_KHR_RAY_TRACING_EXTENSION_NAME,
 	});
 
 	// Required device features.
