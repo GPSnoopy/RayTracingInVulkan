@@ -4,6 +4,7 @@
 #include "CommandPool.hpp"
 #include "Device.hpp"
 #include "DeviceMemory.hpp"
+#include <cstring>
 #include <memory>
 #include <string>
 #include <vector>
