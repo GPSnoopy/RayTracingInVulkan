@@ -25,7 +25,7 @@ jobs:
     # (originally at https://github.com/warrenbuckley/Setup-MSBuild, later on adopted by Microsoft themselves).
     # Comedy bonus: GitHub is now owned by Microsoft.
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.0.0
+      uses: microsoft/setup-msbuild@v1
     - name: Compile raytracer
       run: |
         set VULKAN_SDK=C:\VulkanSDK\%SDK_VERSION%
