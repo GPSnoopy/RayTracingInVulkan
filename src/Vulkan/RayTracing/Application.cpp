@@ -8,6 +8,7 @@
 #include "Assets/Scene.hpp"
 #include "Utilities/Glm.hpp"
 #include "Vulkan/Buffer.hpp"
+#include "Vulkan/BufferUtil.hpp"
 #include "Vulkan/Image.hpp"
 #include "Vulkan/ImageMemoryBarrier.hpp"
 #include "Vulkan/ImageView.hpp"
@@ -18,19 +19,30 @@
 #include <iostream>
 #include <numeric>
 
+
 namespace Vulkan::RayTracing {
 
 namespace
 {
-	AccelerationStructure::MemoryRequirements GetTotalRequirements(const std::vector<AccelerationStructure::MemoryRequirements>& requirements)
+	// AccelerationStructure offset needs to be 256 bytes aligned (official Vulkan specs, don't ask me why).
+	const uint64_t AccelerationStructureAlignment = 256;
+	
+	uint64_t RoundUp(uint64_t size, uint64_t granularity)
 	{
-		AccelerationStructure::MemoryRequirements total{};
+		const auto divUp = (size + granularity - 1) / granularity;
+		return divUp * granularity;
+	}
+	
+	template <class TAccelerationStructure>
+	VkAccelerationStructureBuildSizesInfoKHR GetTotalRequirements(const std::vector<TAccelerationStructure>& accelerationStructures)
+	{
+		VkAccelerationStructureBuildSizesInfoKHR total{};
 
-		for (const auto& req : requirements)
+		for (const auto& accelerationStructure : accelerationStructures)
 		{
-			total.Result.size += req.Result.size;
-			total.Build.size += req.Build.size;
-			total.Update.size += req.Update.size;
+			total.accelerationStructureSize += RoundUp(accelerationStructure.BuildSizes().accelerationStructureSize, AccelerationStructureAlignment);
+			total.buildScratchSize += accelerationStructure.BuildSizes().buildScratchSize;
+			total.updateScratchSize += accelerationStructure.BuildSizes().updateScratchSize;
 		}
 
 		return total;
@@ -59,12 +71,10 @@ void Application::SetPhysicalDevice(
 {
 	// Required extensions.
 	requiredExtensions.insert(requiredExtensions.end(),
-	{
-		// VK_KHR_ray_tracing
+	{	
 		VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME,
-		//VK_KHR_PIPELINE_LIBRARY_EXTENSION_NAME,
-		"VK_KHR_acceleration_structure"
-		//VK_KHR_RAY_TRACING_EXTENSION_NAME,
+		VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME,
+		VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME
 	});
 
 	// Required device features.
@@ -78,10 +88,15 @@ void Application::SetPhysicalDevice(
 	indexingFeatures.pNext = &bufferDeviceAddressFeatures;
 	indexingFeatures.runtimeDescriptorArray = true;
 
-	VkPhysicalDeviceRayTracingFeaturesKHR rayTracingFeatures = {};
-	rayTracingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_FEATURES_KHR;
-	rayTracingFeatures.pNext = &indexingFeatures;
-	rayTracingFeatures.rayTracing = true;
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures = {};
+	accelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
+	accelerationStructureFeatures.pNext = &indexingFeatures;
+	accelerationStructureFeatures.accelerationStructure = true;
+	
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rayTracingFeatures = {};
+	rayTracingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
+	rayTracingFeatures.pNext = &accelerationStructureFeatures;
+	rayTracingFeatures.rayTracingPipeline = true;
 
 	Vulkan::Application::SetPhysicalDevice(physicalDevice, requiredExtensions, deviceFeatures, &rayTracingFeatures);
 }
@@ -101,7 +116,6 @@ void Application::CreateAccelerationStructures()
 	SingleTimeCommands::Submit(CommandPool(), [this](VkCommandBuffer commandBuffer)
 	{
 		CreateBottomLevelStructures(commandBuffer);
-		AccelerationStructure::MemoryBarrier(commandBuffer);
 		CreateTopLevelStructures(commandBuffer);
 	});
 
@@ -185,25 +199,22 @@ void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageInde
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, rayTracingPipeline_->PipelineLayout().Handle(), 0, 1, descriptorSets, 0, nullptr);
 
 	// Describe the shader binding table.
-	VkStridedBufferRegionKHR raygenShaderBindingTable = {};
-	raygenShaderBindingTable.buffer = shaderBindingTable_->Buffer().Handle();
-	raygenShaderBindingTable.offset = shaderBindingTable_->RayGenOffset();
+	VkStridedDeviceAddressRegionKHR raygenShaderBindingTable = {};
+	raygenShaderBindingTable.deviceAddress = shaderBindingTable_->RayGenDeviceAddress();
 	raygenShaderBindingTable.stride = shaderBindingTable_->RayGenEntrySize();
 	raygenShaderBindingTable.size = shaderBindingTable_->RayGenSize();
 
-	VkStridedBufferRegionKHR missShaderBindingTable = {};
-	missShaderBindingTable.buffer = shaderBindingTable_->Buffer().Handle();
-	missShaderBindingTable.offset = shaderBindingTable_->MissOffset();
+	VkStridedDeviceAddressRegionKHR missShaderBindingTable = {};
+	missShaderBindingTable.deviceAddress = shaderBindingTable_->MissDeviceAddress();
 	missShaderBindingTable.stride = shaderBindingTable_->MissEntrySize();
 	missShaderBindingTable.size = shaderBindingTable_->MissSize();
 
-	VkStridedBufferRegionKHR hitShaderBindingTable = {};
-	hitShaderBindingTable.buffer = shaderBindingTable_->Buffer().Handle();
-	hitShaderBindingTable.offset = shaderBindingTable_->HitGroupOffset();
+	VkStridedDeviceAddressRegionKHR hitShaderBindingTable = {};
+	hitShaderBindingTable.deviceAddress = shaderBindingTable_->HitGroupDeviceAddress();
 	hitShaderBindingTable.stride = shaderBindingTable_->HitGroupEntrySize();
 	hitShaderBindingTable.size = shaderBindingTable_->HitGroupSize();
 
-	VkStridedBufferRegionKHR callableShaderBindingTable = {};
+	VkStridedDeviceAddressRegionKHR callableShaderBindingTable = {};
 
 	// Execute ray tracing shaders.
 	deviceProcedures_->vkCmdTraceRaysKHR(commandBuffer,
@@ -245,8 +256,6 @@ void Application::CreateBottomLevelStructures(VkCommandBuffer commandBuffer)
 	uint32_t indexOffset = 0;
 	uint32_t aabbOffset = 0;
 
-	std::vector<AccelerationStructure::MemoryRequirements> requirements;
-
 	for (const auto& model : scene.Models())
 	{
 		const auto vertexCount = static_cast<uint32_t>(model.NumberOfVertices());
@@ -257,20 +266,19 @@ void Application::CreateBottomLevelStructures(VkCommandBuffer commandBuffer)
 			? geometries.AddGeometryAabb(scene, aabbOffset, 1, true)
 			: geometries.AddGeometryTriangles(scene, vertexOffset, vertexCount, indexOffset, indexCount, true);
 
-		bottomAs_.emplace_back(*deviceProcedures_, geometries, false);
-		requirements.push_back(bottomAs_.back().GetMemoryRequirements());
+		bottomAs_.emplace_back(*deviceProcedures_, geometries);
 
 		vertexOffset += vertexCount * sizeof(Assets::Vertex);
 		indexOffset += indexCount * sizeof(uint32_t);
 		aabbOffset += sizeof(VkAabbPositionsKHR);
 	}
 
-	// Allocate the structure memory.
-	const auto total = GetTotalRequirements(requirements);
+	// Allocate the structures memory.
+	const auto total = GetTotalRequirements(bottomAs_);
 
-	bottomBuffer_.reset(new Buffer(Device(), total.Result.size, VK_BUFFER_USAGE_RAY_TRACING_BIT_KHR));
+	bottomBuffer_.reset(new Buffer(Device(), total.accelerationStructureSize, VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR));
 	bottomBufferMemory_.reset(new DeviceMemory(bottomBuffer_->AllocateMemory(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)));
-	bottomScratchBuffer_.reset(new Buffer(Device(), total.Build.size, VK_BUFFER_USAGE_RAY_TRACING_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT));
+	bottomScratchBuffer_.reset(new Buffer(Device(), total.buildScratchSize, VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR));
 	bottomScratchBufferMemory_.reset(new DeviceMemory(bottomScratchBuffer_->AllocateMemory(VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)));
 
 	debugUtils.SetObjectName(bottomBuffer_->Handle(), "BLAS Buffer");
@@ -284,10 +292,10 @@ void Application::CreateBottomLevelStructures(VkCommandBuffer commandBuffer)
 
 	for (size_t i = 0; i != bottomAs_.size(); ++i)
 	{
-		bottomAs_[i].Generate(commandBuffer, *bottomScratchBuffer_, scratchOffset, *bottomBufferMemory_, resultOffset, false);
+		bottomAs_[i].Generate(commandBuffer, *bottomScratchBuffer_, scratchOffset, *bottomBuffer_, resultOffset);
 		
-		resultOffset += requirements[i].Result.size;
-		scratchOffset += requirements[i].Build.size;
+		resultOffset += RoundUp(bottomAs_[i].BuildSizes().accelerationStructureSize, AccelerationStructureAlignment);
+		scratchOffset += bottomAs_[i].BuildSizes().buildScratchSize;
 
 		debugUtils.SetObjectName(bottomAs_[i].Handle(), ("BLAS #" + std::to_string(i)).c_str());
 	}
@@ -300,7 +308,6 @@ void Application::CreateTopLevelStructures(VkCommandBuffer commandBuffer)
 
 	// Top level acceleration structure
 	std::vector<VkAccelerationStructureInstanceKHR> instances;
-	std::vector<AccelerationStructure::MemoryRequirements> requirements;
 
 	// Hit group 0: triangles
 	// Hit group 1: procedurals
@@ -313,23 +320,24 @@ void Application::CreateTopLevelStructures(VkCommandBuffer commandBuffer)
 		instanceId++;
 	}
 
-	topAs_.emplace_back(*deviceProcedures_, instances, false);
-	requirements.push_back(topAs_.back().GetMemoryRequirements());
+	// Create and copy instances buffer (do it in a separate one-time synchronous command buffer).
+	BufferUtil::CreateDeviceBuffer(CommandPool(), "TLAS Instances", VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, instances, instancesBuffer_, instancesBufferMemory_);
+
+	// Memory barrier for the bottom level acceleration structure builds.
+	AccelerationStructure::MemoryBarrier(commandBuffer);
+	
+	topAs_.emplace_back(*deviceProcedures_, instancesBuffer_->GetDeviceAddress(), static_cast<uint32_t>(instances.size()));
 
 	// Allocate the structure memory.
-	const auto total = GetTotalRequirements(requirements);
+	const auto total = GetTotalRequirements(topAs_);
 
-	topBuffer_.reset(new Buffer(Device(), total.Result.size, VK_BUFFER_USAGE_RAY_TRACING_BIT_KHR));
+	topBuffer_.reset(new Buffer(Device(), total.accelerationStructureSize, VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR));
 	topBufferMemory_.reset(new DeviceMemory(topBuffer_->AllocateMemory(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)));
 
-	topScratchBuffer_.reset(new Buffer(Device(), total.Build.size, VK_BUFFER_USAGE_RAY_TRACING_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT));
+	topScratchBuffer_.reset(new Buffer(Device(), total.buildScratchSize, VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR));
 	topScratchBufferMemory_.reset(new DeviceMemory(topScratchBuffer_->AllocateMemory(VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)));
 
-	// Instances buffer
-	const size_t instancesBufferSize = sizeof(VkAccelerationStructureInstanceKHR) * instances.size();
-	instancesBuffer_.reset(new Buffer(Device(), instancesBufferSize, VK_BUFFER_USAGE_RAY_TRACING_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT));
-	instancesBufferMemory_.reset(new DeviceMemory(instancesBuffer_->AllocateMemory(VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)));
-
+	
 	debugUtils.SetObjectName(topBuffer_->Handle(), "TLAS Buffer");
 	debugUtils.SetObjectName(topBufferMemory_->Handle(), "TLAS Memory");
 	debugUtils.SetObjectName(topScratchBuffer_->Handle(), "TLAS Scratch Buffer");
@@ -338,7 +346,7 @@ void Application::CreateTopLevelStructures(VkCommandBuffer commandBuffer)
 	debugUtils.SetObjectName(instancesBufferMemory_->Handle(), "TLAS Instances Memory");
 
 	// Generate the structures.
-	topAs_[0].Generate(commandBuffer, *topScratchBuffer_, 0, *topBufferMemory_, 0, *instancesBuffer_, *instancesBufferMemory_, 0, false);
+	topAs_[0].Generate(commandBuffer, *topScratchBuffer_, 0, *topBuffer_, 0);
 
 	debugUtils.SetObjectName(topAs_[0].Handle(), "TLAS");
 }

@@ -216,13 +216,12 @@ RayTracingPipeline::RayTracingPipeline(
 	pipelineInfo.pStages = shaderStages.data();
 	pipelineInfo.groupCount = static_cast<uint32_t>(groups.size());
 	pipelineInfo.pGroups = groups.data();
-	pipelineInfo.maxRecursionDepth = 1;
+	pipelineInfo.maxPipelineRayRecursionDepth = 1;
 	pipelineInfo.layout = pipelineLayout_->Handle();
 	pipelineInfo.basePipelineHandle = nullptr;
 	pipelineInfo.basePipelineIndex = 0;
-	pipelineInfo.libraries.sType = VK_STRUCTURE_TYPE_PIPELINE_LIBRARY_CREATE_INFO_KHR;
 
-	Check(deviceProcedures.vkCreateRayTracingPipelinesKHR(device.Handle(), nullptr, 1, &pipelineInfo, nullptr, &pipeline_), 
+	Check(deviceProcedures.vkCreateRayTracingPipelinesKHR(device.Handle(), nullptr, nullptr, 1, &pipelineInfo, nullptr, &pipeline_), 
 		"create ray tracing pipeline");
 }
 

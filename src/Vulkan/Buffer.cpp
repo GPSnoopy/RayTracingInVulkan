@@ -60,7 +60,7 @@ VkDeviceAddress Buffer::GetDeviceAddress() const
 
 void Buffer::CopyFrom(CommandPool& commandPool, const Buffer& src, VkDeviceSize size)
 {
-	SingleTimeCommands::Submit(commandPool, [&] (VkCommandBuffer commandBuffer)
+	SingleTimeCommands::Submit(commandPool, [&](VkCommandBuffer commandBuffer)
 	{
 		VkBufferCopy copyRegion = {};
 		copyRegion.srcOffset = 0; // Optional

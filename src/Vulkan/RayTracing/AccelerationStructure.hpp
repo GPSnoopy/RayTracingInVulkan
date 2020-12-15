@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Vulkan/Vulkan.hpp"
-#include <vector>
 
 namespace Vulkan
 {
@@ -18,13 +17,6 @@ namespace Vulkan::RayTracing
 	{
 	public:
 
-		struct MemoryRequirements
-		{
-			VkMemoryRequirements Result;
-			VkMemoryRequirements Build;
-			VkMemoryRequirements Update;
-		};
-
 		AccelerationStructure(const AccelerationStructure&) = delete;
 		AccelerationStructure& operator = (const AccelerationStructure&) = delete;
 		AccelerationStructure& operator = (AccelerationStructure&&) = delete;
@@ -34,21 +26,22 @@ namespace Vulkan::RayTracing
 
 		const class Device& Device() const { return device_; }
 		const class DeviceProcedures& DeviceProcedures() const { return deviceProcedures_; }
+		const VkAccelerationStructureBuildSizesInfoKHR BuildSizes() const { return buildSizesInfo_; }
 
-		MemoryRequirements GetMemoryRequirements() const;
-		
 		static void MemoryBarrier(VkCommandBuffer commandBuffer);
-
+	
 	protected:
 
-		AccelerationStructure(
-			const class DeviceProcedures& deviceProcedures, 
-			VkAccelerationStructureTypeKHR accelerationStructureType,
-			const std::vector<VkAccelerationStructureCreateGeometryTypeInfoKHR>& geometries,
-			bool allowUpdate);
-		
+		explicit AccelerationStructure(const class DeviceProcedures& deviceProcedures);
+
+		VkAccelerationStructureBuildSizesInfoKHR GetBuildSizes(const uint32_t* pMaxPrimitiveCounts) const;
+		void CreateAccelerationStructure(Buffer& resultBuffer, VkDeviceSize resultOffset);
+
 		const class DeviceProcedures& deviceProcedures_;
-		const bool allowUpdate_;
+		const VkBuildAccelerationStructureFlagsKHR flags_;
+
+		VkAccelerationStructureBuildGeometryInfoKHR buildGeometryInfo_{};
+		VkAccelerationStructureBuildSizesInfoKHR buildSizesInfo_{};
 
 	private:
 

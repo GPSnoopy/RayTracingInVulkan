@@ -25,9 +25,8 @@ namespace
 DeviceProcedures::DeviceProcedures(const class Device& device) :
 	vkCreateAccelerationStructureKHR(GetProcedure<PFN_vkCreateAccelerationStructureKHR>(device, "vkCreateAccelerationStructureKHR")),
 	vkDestroyAccelerationStructureKHR(GetProcedure<PFN_vkDestroyAccelerationStructureKHR>(device, "vkDestroyAccelerationStructureKHR")),
-	vkGetAccelerationStructureMemoryRequirementsKHR(GetProcedure<PFN_vkGetAccelerationStructureMemoryRequirementsKHR>(device, "vkGetAccelerationStructureMemoryRequirementsKHR")),
-	vkBindAccelerationStructureMemoryKHR(GetProcedure<PFN_vkBindAccelerationStructureMemoryKHR>(device, "vkBindAccelerationStructureMemoryKHR")),
-	vkCmdBuildAccelerationStructureKHR(GetProcedure<PFN_vkCmdBuildAccelerationStructureKHR>(device, "vkCmdBuildAccelerationStructureKHR")),
+	vkGetAccelerationStructureBuildSizesKHR(GetProcedure<PFN_vkGetAccelerationStructureBuildSizesKHR>(device, "vkGetAccelerationStructureBuildSizesKHR")),
+	vkCmdBuildAccelerationStructuresKHR(GetProcedure<PFN_vkCmdBuildAccelerationStructuresKHR>(device, "vkCmdBuildAccelerationStructuresKHR")),
 	vkCmdCopyAccelerationStructureKHR(GetProcedure<PFN_vkCmdCopyAccelerationStructureKHR>(device, "vkCmdCopyAccelerationStructureKHR")),
 	vkCmdTraceRaysKHR(GetProcedure<PFN_vkCmdTraceRaysKHR>(device, "vkCmdTraceRaysKHR")),
 	vkCreateRayTracingPipelinesKHR(GetProcedure<PFN_vkCreateRayTracingPipelinesKHR>(device, "vkCreateRayTracingPipelinesKHR")),

@@ -4,6 +4,8 @@
 #include <memory>
 #include <vector>
 
+#include "Vulkan/Buffer.hpp"
+
 namespace Vulkan
 {
 	class Buffer;
@@ -40,6 +42,10 @@ namespace Vulkan::RayTracing
 		~ShaderBindingTable();
 
 		const class Buffer& Buffer() const { return *buffer_; }
+
+		VkDeviceAddress RayGenDeviceAddress() const { return Buffer().GetDeviceAddress() + RayGenOffset(); }
+		VkDeviceAddress MissDeviceAddress() const { return Buffer().GetDeviceAddress() + MissOffset(); }
+		VkDeviceAddress HitGroupDeviceAddress() const { return Buffer().GetDeviceAddress() + HitGroupOffset(); }
 
 		size_t RayGenOffset() const { return rayGenOffset_; }
 		size_t MissOffset() const { return missOffset_; }
