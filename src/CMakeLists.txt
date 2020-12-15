@@ -41,6 +41,7 @@ set(src_files_vulkan
 	Vulkan/Application.hpp
 	Vulkan/Buffer.cpp
 	Vulkan/Buffer.hpp
+	Vulkan/BufferUtil.hpp
 	Vulkan/CommandBuffers.cpp
 	Vulkan/CommandBuffers.hpp
 	Vulkan/CommandPool.cpp

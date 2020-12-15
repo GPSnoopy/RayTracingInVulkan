@@ -1,41 +1,24 @@
 #include "AccelerationStructure.hpp"
 #include "DeviceProcedures.hpp"
 #include "Utilities/Exception.hpp"
+#include "Vulkan/Buffer.hpp"
 #include "Vulkan/Device.hpp"
 #undef MemoryBarrier
 
 namespace Vulkan::RayTracing {
 
-AccelerationStructure::AccelerationStructure(
-	const class DeviceProcedures& deviceProcedures,
-	const VkAccelerationStructureTypeKHR accelerationStructureType,
-	const std::vector<VkAccelerationStructureCreateGeometryTypeInfoKHR>& geometries,
-	const bool allowUpdate) :
+AccelerationStructure::AccelerationStructure(const class DeviceProcedures& deviceProcedures) :
 	deviceProcedures_(deviceProcedures),
-	allowUpdate_(allowUpdate),
+	flags_(VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR),
 	device_(deviceProcedures.Device())
 {
-	const auto flags = allowUpdate
-		? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR
-		: VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR;
-
-	VkAccelerationStructureCreateInfoKHR createInfo = {};
-	createInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
-	createInfo.pNext = nullptr;
-	createInfo.compactedSize = 0;
-	createInfo.type = accelerationStructureType;
-	createInfo.flags = flags;
-	createInfo.maxGeometryCount = static_cast<uint32_t>(geometries.size());
-	createInfo.pGeometryInfos = geometries.data();
-	createInfo.deviceAddress = 0;
-	
-	Check(deviceProcedures.vkCreateAccelerationStructureKHR(device_.Handle(), &createInfo, nullptr, &accelerationStructure_), 
-		"create acceleration structure");
 }
 
 AccelerationStructure::AccelerationStructure(AccelerationStructure&& other) noexcept :
 	deviceProcedures_(other.deviceProcedures_),
-	allowUpdate_(other.allowUpdate_),
+	flags_(other.flags_),
+	buildGeometryInfo_(other.buildGeometryInfo_),
+	buildSizesInfo_(other.buildSizesInfo_),
 	device_(other.device_),
 	accelerationStructure_(other.accelerationStructure_)
 {
@@ -51,32 +34,34 @@ AccelerationStructure::~AccelerationStructure()
 	}
 }
 
-AccelerationStructure::MemoryRequirements AccelerationStructure::GetMemoryRequirements() const
+VkAccelerationStructureBuildSizesInfoKHR AccelerationStructure::GetBuildSizes(const uint32_t* pMaxPrimitiveCounts) const
 {
-	VkAccelerationStructureMemoryRequirementsInfoKHR memoryRequirementsInfo{};
-	memoryRequirementsInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_KHR;
-	memoryRequirementsInfo.pNext = nullptr;
-	memoryRequirementsInfo.buildType = VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR;
-	memoryRequirementsInfo.accelerationStructure = accelerationStructure_;
+	// Query both the size of the finished acceleration structure and the amount of scratch memory needed.
+	VkAccelerationStructureBuildSizesInfoKHR sizeInfo = {};
+	sizeInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR;
 
-	// If the descriptor already contains the geometry info, so we can directly compute the estimated size and required scratch memory.
-	VkMemoryRequirements2 memoryRequirements = {};
-	memoryRequirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
-	memoryRequirements.pNext = nullptr;
-	
-	memoryRequirementsInfo.type = VK_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_TYPE_OBJECT_KHR;
-	deviceProcedures_.vkGetAccelerationStructureMemoryRequirementsKHR(device_.Handle(), &memoryRequirementsInfo, &memoryRequirements);
-	const auto resultRequirements = memoryRequirements.memoryRequirements;
+	deviceProcedures_.vkGetAccelerationStructureBuildSizesKHR(
+		device_.Handle(), 
+		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
+		&buildGeometryInfo_,
+		pMaxPrimitiveCounts,
+		&sizeInfo);
 
-	memoryRequirementsInfo.type = VK_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_TYPE_BUILD_SCRATCH_KHR;
-	deviceProcedures_.vkGetAccelerationStructureMemoryRequirementsKHR(device_.Handle(), &memoryRequirementsInfo, &memoryRequirements);
-	const auto buildRequirements = memoryRequirements.memoryRequirements;
+	return sizeInfo;
+}
 
-	memoryRequirementsInfo.type = VK_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_TYPE_UPDATE_SCRATCH_KHR;
-	deviceProcedures_.vkGetAccelerationStructureMemoryRequirementsKHR(device_.Handle(), &memoryRequirementsInfo, &memoryRequirements);
-	const auto updateRequirements = memoryRequirements.memoryRequirements;
+void AccelerationStructure::CreateAccelerationStructure(Buffer& resultBuffer, const VkDeviceSize resultOffset)
+{
+	VkAccelerationStructureCreateInfoKHR createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR;
+	createInfo.pNext = nullptr;
+	createInfo.type = buildGeometryInfo_.type;
+	createInfo.size = BuildSizes().accelerationStructureSize;
+	createInfo.buffer = resultBuffer.Handle();
+	createInfo.offset = resultOffset;
 
-	return { resultRequirements, buildRequirements, updateRequirements };
+	Check(deviceProcedures_.vkCreateAccelerationStructureKHR(device_.Handle(), &createInfo, nullptr, &accelerationStructure_),
+		"create acceleration structure");
 }
 
 void AccelerationStructure::MemoryBarrier(VkCommandBuffer commandBuffer)

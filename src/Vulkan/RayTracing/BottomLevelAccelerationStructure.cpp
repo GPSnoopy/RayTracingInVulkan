@@ -4,17 +4,29 @@
 #include "Assets/Vertex.hpp"
 #include "Utilities/Exception.hpp"
 #include "Vulkan/Buffer.hpp"
-#include "Vulkan/Device.hpp"
 
 namespace Vulkan::RayTracing {
 
-BottomLevelAccelerationStructure::BottomLevelAccelerationStructure(
-	const class DeviceProcedures& deviceProcedures, 
-	const BottomLevelGeometry& geometries,
-	const bool allowUpdate) :
-	AccelerationStructure(deviceProcedures, VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR, geometries.CreateGeometryTypeInfo(), allowUpdate),
+BottomLevelAccelerationStructure::BottomLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, const BottomLevelGeometry& geometries) :
+	AccelerationStructure(deviceProcedures),
 	geometries_(geometries)
 {
+	buildGeometryInfo_.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
+	buildGeometryInfo_.flags = flags_;
+	buildGeometryInfo_.geometryCount = static_cast<uint32_t>(geometries_.Geometry().size());
+	buildGeometryInfo_.pGeometries = geometries_.Geometry().data();
+	buildGeometryInfo_.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
+	buildGeometryInfo_.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
+	buildGeometryInfo_.srcAccelerationStructure = nullptr;
+
+	std::vector<uint32_t> maxPrimCount(geometries_.BuildOffsetInfo().size());
+
+	for (size_t i = 0; i != maxPrimCount.size(); ++i)
+	{
+		maxPrimCount[i] = geometries_.BuildOffsetInfo()[i].primitiveCount;
+	}
+	
+	buildSizesInfo_ = GetBuildSizes(maxPrimCount.data());
 }
 
 BottomLevelAccelerationStructure::BottomLevelAccelerationStructure(BottomLevelAccelerationStructure&& other) noexcept :
@@ -28,55 +40,22 @@ BottomLevelAccelerationStructure::~BottomLevelAccelerationStructure()
 }
 
 void BottomLevelAccelerationStructure::Generate(
-	VkCommandBuffer commandBuffer, 
+	VkCommandBuffer commandBuffer,
 	Buffer& scratchBuffer,
 	const VkDeviceSize scratchOffset,
-	DeviceMemory& resultMemory,
-	const VkDeviceSize resultOffset,
-	const bool updateOnly) const
+	Buffer& resultBuffer,
+	const VkDeviceSize resultOffset)
 {
-	if (updateOnly && !allowUpdate_)
-	{
-		throw std::invalid_argument("cannot update readonly structure");
-	}
-
-	const VkAccelerationStructureKHR previousStructure = updateOnly ? Handle() : nullptr;
-
-	// Bind the acceleration structure descriptor to the actual memory that will contain it
-	VkBindAccelerationStructureMemoryInfoKHR bindInfo = {};	
-	bindInfo.sType = VK_STRUCTURE_TYPE_BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_KHR;
-	bindInfo.pNext = nullptr;
-	bindInfo.accelerationStructure = Handle();
-	bindInfo.memory = resultMemory.Handle();
-	bindInfo.memoryOffset = resultOffset;
-	bindInfo.deviceIndexCount = 0;
-	bindInfo.pDeviceIndices = nullptr;
-
-	Check(deviceProcedures_.vkBindAccelerationStructureMemoryKHR(Device().Handle(), 1, &bindInfo),
-		"bind acceleration structure");
+	// Create the acceleration structure.
+	CreateAccelerationStructure(resultBuffer, resultOffset);
 
 	// Build the actual bottom-level acceleration structure
-	const auto flags = allowUpdate_ 
-		? VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR 
-		: VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR;
+	const VkAccelerationStructureBuildRangeInfoKHR* pBuildOffsetInfo = geometries_.BuildOffsetInfo().data();
 
-	const VkAccelerationStructureGeometryKHR* pGeometry = geometries_.Geometry().data();
-	const VkAccelerationStructureBuildOffsetInfoKHR* pBuildOffsetInfo = geometries_.BuildOffsetInfo().data();
-	
-	VkAccelerationStructureBuildGeometryInfoKHR buildInfo = {};
-	buildInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;
-	buildInfo.pNext = nullptr;
-	buildInfo.flags = flags;
-	buildInfo.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
-	buildInfo.update = updateOnly;
-	buildInfo.srcAccelerationStructure = previousStructure;
-	buildInfo.dstAccelerationStructure = Handle(),
-	buildInfo.geometryArrayOfPointers = false;
-	buildInfo.geometryCount = static_cast<uint32_t>(geometries_.size());
-	buildInfo.ppGeometries = &pGeometry;
-	buildInfo.scratchData.deviceAddress = scratchBuffer.GetDeviceAddress() + scratchOffset;
+	buildGeometryInfo_.dstAccelerationStructure = Handle();
+	buildGeometryInfo_.scratchData.deviceAddress = scratchBuffer.GetDeviceAddress() + scratchOffset;
 
-	deviceProcedures_.vkCmdBuildAccelerationStructureKHR(commandBuffer, 1, &buildInfo, &pBuildOffsetInfo);
+	deviceProcedures_.vkCmdBuildAccelerationStructuresKHR(commandBuffer, 1, &buildGeometryInfo_, &pBuildOffsetInfo);
 }
 
 }

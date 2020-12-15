@@ -20,7 +20,7 @@ namespace Vulkan::RayTracing
 		BottomLevelAccelerationStructure& operator = (const BottomLevelAccelerationStructure&) = delete;
 		BottomLevelAccelerationStructure& operator = (BottomLevelAccelerationStructure&&) = delete;
 
-		BottomLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, const BottomLevelGeometry& geometries, bool allowUpdate);
+		BottomLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, const BottomLevelGeometry& geometries);
 		BottomLevelAccelerationStructure(BottomLevelAccelerationStructure&& other) noexcept;
 		~BottomLevelAccelerationStructure();
 
@@ -28,9 +28,8 @@ namespace Vulkan::RayTracing
 			VkCommandBuffer commandBuffer,
 			Buffer& scratchBuffer,
 			VkDeviceSize scratchOffset,
-			DeviceMemory& resultMemory,
-			VkDeviceSize resultOffset,
-			bool updateOnly) const;
+			Buffer& resultBuffer,
+			VkDeviceSize resultOffset);
 
 	private:
 

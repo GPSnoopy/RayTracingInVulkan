@@ -35,22 +35,18 @@ namespace Vulkan
 
 			const std::function<void(
 				VkDevice device,
-				const VkAccelerationStructureMemoryRequirementsInfoKHR* pInfo,
-				VkMemoryRequirements2KHR* pMemoryRequirements)>
-			vkGetAccelerationStructureMemoryRequirementsKHR;
-
-			const std::function<VkResult(
-				VkDevice device,
-				uint32_t bindInfoCount,
-				const VkBindAccelerationStructureMemoryInfoKHR* pBindInfos)>
-			vkBindAccelerationStructureMemoryKHR;
+				VkAccelerationStructureBuildTypeKHR buildType,
+				const VkAccelerationStructureBuildGeometryInfoKHR* pBuildInfo,
+				const uint32_t* pMaxPrimitiveCounts,
+				VkAccelerationStructureBuildSizesInfoKHR* pSizeInfo)>
+			vkGetAccelerationStructureBuildSizesKHR;
 
 			const std::function<void(
 				VkCommandBuffer commandBuffer,
-				uint32_t infoCount, 
-				const VkAccelerationStructureBuildGeometryInfoKHR* pInfos, 
-				const VkAccelerationStructureBuildOffsetInfoKHR* const* ppOffsetInfos)>
-			vkCmdBuildAccelerationStructureKHR;
+				uint32_t infoCount,
+				const VkAccelerationStructureBuildGeometryInfoKHR* pInfos,
+				const VkAccelerationStructureBuildRangeInfoKHR* const* ppBuildRangeInfos)>
+			vkCmdBuildAccelerationStructuresKHR;
 
 			const std::function<void(
 				VkCommandBuffer commandBuffer,
@@ -59,10 +55,10 @@ namespace Vulkan
 
 			const std::function<void(
 				VkCommandBuffer commandBuffer,
-				const VkStridedBufferRegionKHR* pRaygenShaderBindingTable, 
-				const VkStridedBufferRegionKHR* pMissShaderBindingTable, 
-				const VkStridedBufferRegionKHR* pHitShaderBindingTable, 
-				const VkStridedBufferRegionKHR* pCallableShaderBindingTable, 
+				const VkStridedDeviceAddressRegionKHR* pRaygenShaderBindingTable, 
+				const VkStridedDeviceAddressRegionKHR* pMissShaderBindingTable,
+				const VkStridedDeviceAddressRegionKHR* pHitShaderBindingTable,
+				const VkStridedDeviceAddressRegionKHR* pCallableShaderBindingTable,
 				uint32_t width, 
 				uint32_t height, 
 				uint32_t depth)>
@@ -70,6 +66,7 @@ namespace Vulkan
 
 			const std::function<VkResult(
 				VkDevice device,
+				VkDeferredOperationKHR deferredOperation,
 				VkPipelineCache pipelineCache,
 				uint32_t createInfoCount,
 				const VkRayTracingPipelineCreateInfoKHR* pCreateInfos,

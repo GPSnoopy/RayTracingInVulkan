@@ -3,6 +3,7 @@
 #include "Vulkan.hpp"
 #include "DeviceMemory.hpp"
 
+
 namespace Vulkan
 {
 	class CommandPool;
@@ -32,5 +33,4 @@ namespace Vulkan
 
 		VULKAN_HANDLE(VkBuffer, buffer_)
 	};
-
 }

@@ -2,7 +2,7 @@
 
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
 
-My implementation of [Peter Shirley's Ray Tracing in One Weekend](https://github.com/RayTracing/raytracing.github.io) books using Vulkan and NVIDIA's RTX extension (VK_NV_ray_tracing, now ported to VK_KHR_ray_tracing). This allows most scenes to be rendered at interactive speed on appropriate hardware.
+My implementation of [Peter Shirley's Ray Tracing in One Weekend](https://github.com/RayTracing/raytracing.github.io) books using Vulkan and NVIDIA's RTX extension (formerly VK_NV_ray_tracing, now ported to Khronos cross platform extensions). This allows most scenes to be rendered at interactive speed on appropriate hardware.
 
 The real-time ray tracer can also load full geometry from OBJ files as well as render the procedural spheres from the book. An accumulation buffer is used to increase the sample count when the camera is not moving while keeping the frame rate interactive. I have added a UI built using [Dear ImGui](https://github.com/ocornut/imgui) to allow changing the renderer parameters on the fly. Unlike projects such as [Q2VKPT](http://brechpunkt.de/q2vkpt/), there is no denoising filter. So the image will get noisy when moving the camera.
 
@@ -64,7 +64,7 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 
 ## References
 
-### Initial Implementation
+### Initial Implementation (NVIDIA vendor specific extension)
 
 * [Vulkan Tutorial](https://vulkan-tutorial.com/)
 * [Introduction to Real-Time Ray Tracing with Vulkan](https://devblogs.nvidia.com/vulkan-raytracing)
@@ -77,8 +77,9 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 * [NVIDIA Vulkan Forums](https://devtalk.nvidia.com/default/board/166/vulkan)
 * [Profiling DXR shaders with Timer Instrumentation](https://www.reddit.com/r/vulkan/comments/hhyeyj/profiling_dxr_shaders_with_timer_instrumentation/)
 
-### VK_KHR_ray_tracing Port
+### Vulkan Khronos Ray Tracing (cross platform extension)
 
 * [Khronos Vulkan Registry](https://www.khronos.org/registry/vulkan/)
-* [NVIDIA Vulkan Ray Tracing Tutorial (VK_KHR_ray_tracing)](https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR)
+* [NVIDIA Vulkan Ray Tracing Tutorial (VK_KHR_ray_tracing)](https://github.com/nvpro-samples/vk_raytracing_tutorial_KHR)
 * [NVIDIA Converting VK_NV_ray_tracing to VK_KHR_ray_tracing](https://nvpro-samples.github.io/vk_raytracing_tutorial_KHR/NV_to_KHR.md.htm)
+* [Vulkan Ray Tracing Final Specification Release](https://www.khronos.org/blog/vulkan-ray-tracing-final-specification-release)

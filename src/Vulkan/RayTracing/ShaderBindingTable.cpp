@@ -87,8 +87,8 @@ ShaderBindingTable::ShaderBindingTable(
 	// Allocate buffer & memory.
 	const auto& device = rayTracingProperties.Device();
 
-	buffer_.reset(new class Buffer(device, sbtSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT));
-	bufferMemory_.reset(new DeviceMemory(buffer_->AllocateMemory(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)));
+	buffer_.reset(new class Buffer(device, sbtSize, VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT));
+	bufferMemory_.reset(new DeviceMemory(buffer_->AllocateMemory(VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)));
 
 	// Generate the table.
 	const uint32_t handleSize = rayTracingProperties.ShaderGroupHandleSize();
@@ -105,7 +105,7 @@ ShaderBindingTable::ShaderBindingTable(
 
 	// Copy the shader identifiers followed by their resource pointers or root constants: 
 	// first the ray generation, then the miss shaders, and finally the set of hit groups.
-	auto pData = static_cast<uint8_t*>(bufferMemory_->Map(0, sbtSize));
+	auto* pData = static_cast<uint8_t*>(bufferMemory_->Map(0, sbtSize));
 
 	pData += CopyShaderData(pData, rayTracingProperties, rayGenPrograms, rayGenEntrySize_, shaderHandleStorage.data());
 	pData += CopyShaderData(pData, rayTracingProperties, missPrograms, missEntrySize_, shaderHandleStorage.data());

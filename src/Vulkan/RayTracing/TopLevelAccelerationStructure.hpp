@@ -16,22 +16,16 @@ namespace Vulkan::RayTracing
 		TopLevelAccelerationStructure& operator = (const TopLevelAccelerationStructure&) = delete;
 		TopLevelAccelerationStructure& operator = (TopLevelAccelerationStructure&&) = delete;
 
-		TopLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, const std::vector<VkAccelerationStructureInstanceKHR>& instances, bool allowUpdate);
+		TopLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, VkDeviceAddress instanceAddress, uint32_t instancesCount);
 		TopLevelAccelerationStructure(TopLevelAccelerationStructure&& other) noexcept;
 		virtual ~TopLevelAccelerationStructure();
-
-		//const std::vector<TopLevelInstance>& GeometryInstances() const { return geometryInstances_; }
 
 		void Generate(
 			VkCommandBuffer commandBuffer,
 			Buffer& scratchBuffer,
 			VkDeviceSize scratchOffset,
-			DeviceMemory& resultMemory,
-			VkDeviceSize resultOffset,
-			Buffer& instanceBuffer,
-			DeviceMemory& instanceMemory,
-			VkDeviceSize instanceOffset,
-			bool updateOnly) const;
+			Buffer& resultBuffer,
+			VkDeviceSize resultOffset);
 
 		static VkAccelerationStructureInstanceKHR CreateInstance(
 			const BottomLevelAccelerationStructure& bottomLevelAs,
@@ -41,7 +35,9 @@ namespace Vulkan::RayTracing
 
 	private:
 
-		std::vector<VkAccelerationStructureInstanceKHR> instances_;
+		uint32_t instancesCount_;
+		VkAccelerationStructureGeometryInstancesDataKHR instancesVk_{};
+		VkAccelerationStructureGeometryKHR topASGeometry_{};
 	};
 
 }

@@ -3,7 +3,6 @@
 #define NOMINMAX
 #define GLFW_INCLUDE_NONE
 #define GLFW_INCLUDE_VULKAN
-#define VK_ENABLE_BETA_EXTENSIONS // Until VK_KHR_ray_tracing is out of beta
 #include <GLFW/glfw3.h>
 #undef APIENTRY
 
