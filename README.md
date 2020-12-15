@@ -2,7 +2,7 @@
 
 <img align="center" src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucySettings.jpg">
 
-My implementation of [Peter Shirley's Ray Tracing in One Weekend](https://github.com/RayTracing/raytracing.github.io) books using Vulkan and NVIDIA's RTX extension (formerly VK_NV_ray_tracing, now ported to Khronos cross platform extensions). This allows most scenes to be rendered at interactive speed on appropriate hardware.
+My implementation of [Peter Shirley's Ray Tracing in One Weekend](https://github.com/RayTracing/raytracing.github.io) books using Vulkan and NVIDIA's RTX extension (formerly VK_NV_ray_tracing, now ported to Khronos cross platform VK_KHR_ray_tracing_pipeline extension). This allows most scenes to be rendered at interactive speed on appropriate hardware.
 
 The real-time ray tracer can also load full geometry from OBJ files as well as render the procedural spheres from the book. An accumulation buffer is used to increase the sample count when the camera is not moving while keeping the frame rate interactive. I have added a UI built using [Dear ImGui](https://github.com/ocornut/imgui) to allow changing the renderer parameters on the fly. Unlike projects such as [Q2VKPT](http://brechpunkt.de/q2vkpt/), there is no denoising filter. So the image will get noisy when moving the camera.
 
