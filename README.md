@@ -30,14 +30,14 @@ To benchmark all the scenes, starting from scene #1:
 ```
 Here are my results with the command above on a few different computers.
 
-### RayTracer Release 5 (NVIDIA drivers 460.89)
+**RayTracer Release 5 (NVIDIA drivers 460.89)**
 
 | Platform | Scene 1 | Scene 2 | Scene 3 | Scene 4 | Scene 5 |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | GeForce RTX 3090 FE | 42.7 fps | 43.6 fps | 39.1 fps | 78.5 fps | 40.0 fps |
 | GeForce RTX 2080 Ti FE | 37.7 fps | 38.2 fps | 24.2 fps | 58.7 fps | 21.4 fps |
 
-### RayTracer Release 4 (NVIDIA drivers 436.48)
+**RayTracer Release 4 (NVIDIA drivers 436.48)**
 
 | Platform | Scene 1 | Scene 2 | Scene 3 | Scene 4 | Scene 5 |
 | --- | ---: | ---: | ---: | ---: | ---: |
