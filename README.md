@@ -58,7 +58,7 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 ```
 **Linux (GCC 9+ Makefile)** [![Linux CI Status](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Linux%20CI/badge.svg)](https://github.com/GPSnoopy/RayTracingInVulkan/actions?query=workflow%3A%22Linux+CI%22)
 ```
-> sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev
+> sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev xorg-dev
 > ./vcpkg_linux.sh
 > ./build_linux.sh
 ```
