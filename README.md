@@ -69,7 +69,9 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 
 - When I upgraded the drivers to 430.86, performance significantly improved (+50%). This was around the same time Quake II RTX was released by NVIDIA. Coincidence?
 
-- When looking at the benchmark results of an RTX 2070 and an RTX 2080 Ti, the performance differences mostly in line with the number of CUDA cores and RT cores rather than being influences by other metrics. Although I do not know at this point whether the CUDA cores or the RT cores are the main bottleneck.
+- When looking at the benchmark results of an RTX 2070 and an RTX 2080 Ti, the performance differences mostly in line with the number of CUDA cores and RT cores rather than being influences by other metrics. Although I do not know at this point whether the CUDA cores or the RT cores are the main bottleneck. 
+
+- UPDATE 2020-01-07: the RTX 30xx results seem to imply that performance is mostly dictated by the number of RT cores. Compared to Turing, Ampere achieves 2x RT performance only when using ray-triangle intersection (as expected as per NVIDIA Ampere whitepaper), otherwise performance per RT core is the same. This leads to situations such as an RTX 2080 Ti being faster than an RTX 3080 when using procedural geometry.
 
 ## References
 
