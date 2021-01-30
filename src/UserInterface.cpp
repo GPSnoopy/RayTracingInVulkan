@@ -45,7 +45,7 @@ UserInterface::UserInterface(
 		{0, 1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 0},
 	};
 	descriptorPool_.reset(new Vulkan::DescriptorPool(device, descriptorBindings, 1));
-	renderPass_.reset(new Vulkan::RenderPass(swapChain, depthBuffer, false, false));
+	renderPass_.reset(new Vulkan::RenderPass(swapChain, depthBuffer, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_LOAD_OP_LOAD));
 
 	// Initialise ImGui
 	IMGUI_CHECKVERSION();
