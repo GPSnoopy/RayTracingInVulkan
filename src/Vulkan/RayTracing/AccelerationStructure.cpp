@@ -1,5 +1,6 @@
 #include "AccelerationStructure.hpp"
 #include "DeviceProcedures.hpp"
+#include "RayTracingProperties.hpp"
 #include "Utilities/Exception.hpp"
 #include "Vulkan/Buffer.hpp"
 #include "Vulkan/Device.hpp"
@@ -7,10 +8,20 @@
 
 namespace Vulkan::RayTracing {
 
-AccelerationStructure::AccelerationStructure(const class DeviceProcedures& deviceProcedures) :
+namespace
+{
+	uint64_t RoundUp(uint64_t size, uint64_t granularity)
+	{
+		const auto divUp = (size + granularity - 1) / granularity;
+		return divUp * granularity;
+	}
+}
+
+AccelerationStructure::AccelerationStructure(const class DeviceProcedures& deviceProcedures, const RayTracingProperties& rayTracingProperties) :
 	deviceProcedures_(deviceProcedures),
 	flags_(VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR),
-	device_(deviceProcedures.Device())
+	device_(deviceProcedures.Device()),
+	rayTracingProperties_(rayTracingProperties)
 {
 }
 
@@ -20,6 +31,7 @@ AccelerationStructure::AccelerationStructure(AccelerationStructure&& other) noex
 	buildGeometryInfo_(other.buildGeometryInfo_),
 	buildSizesInfo_(other.buildSizesInfo_),
 	device_(other.device_),
+	rayTracingProperties_(other.rayTracingProperties_),
 	accelerationStructure_(other.accelerationStructure_)
 {
 	other.accelerationStructure_ = nullptr;
@@ -47,6 +59,13 @@ VkAccelerationStructureBuildSizesInfoKHR AccelerationStructure::GetBuildSizes(co
 		pMaxPrimitiveCounts,
 		&sizeInfo);
 
+	// AccelerationStructure offset needs to be 256 bytes aligned (official Vulkan specs, don't ask me why).
+	const uint64_t AccelerationStructureAlignment = 256;
+	const uint64_t ScratchAlignment = rayTracingProperties_.MinAccelerationStructureScratchOffsetAlignment();
+
+	sizeInfo.accelerationStructureSize = RoundUp(sizeInfo.accelerationStructureSize, AccelerationStructureAlignment);
+	sizeInfo.buildScratchSize = RoundUp(sizeInfo.buildScratchSize, ScratchAlignment);
+	
 	return sizeInfo;
 }
 

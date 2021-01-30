@@ -32,7 +32,7 @@ namespace Vulkan::RayTracing
 	
 	protected:
 
-		explicit AccelerationStructure(const class DeviceProcedures& deviceProcedures);
+		explicit AccelerationStructure(const class DeviceProcedures& deviceProcedures, const class RayTracingProperties& rayTracingProperties);
 
 		VkAccelerationStructureBuildSizesInfoKHR GetBuildSizes(const uint32_t* pMaxPrimitiveCounts) const;
 		void CreateAccelerationStructure(Buffer& resultBuffer, VkDeviceSize resultOffset);
@@ -46,7 +46,8 @@ namespace Vulkan::RayTracing
 	private:
 
 		const class Device& device_;
-
+		const class RayTracingProperties& rayTracingProperties_;
+		
 		VULKAN_HANDLE(VkAccelerationStructureKHR, accelerationStructure_)
 	};
 

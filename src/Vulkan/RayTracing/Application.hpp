@@ -43,8 +43,8 @@ namespace Vulkan::RayTracing
 		void CreateTopLevelStructures(VkCommandBuffer commandBuffer);
 		void CreateOutputImage();
 
-		std::unique_ptr<class RayTracingProperties> properties_;
 		std::unique_ptr<class DeviceProcedures> deviceProcedures_;
+		std::unique_ptr<class RayTracingProperties> rayTracingProperties_;
 
 		std::vector<class BottomLevelAccelerationStructure> bottomAs_;
 		std::unique_ptr<Buffer> bottomBuffer_;

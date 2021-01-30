@@ -10,9 +10,10 @@ namespace Vulkan::RayTracing {
 
 TopLevelAccelerationStructure::TopLevelAccelerationStructure(
 	const class DeviceProcedures& deviceProcedures,
+	const class RayTracingProperties& rayTracingProperties,
 	const VkDeviceAddress instanceAddress,
 	const uint32_t instancesCount) :
-	AccelerationStructure(deviceProcedures),
+	AccelerationStructure(deviceProcedures, rayTracingProperties),
 	instancesCount_(instancesCount)
 {
 	// Create VkAccelerationStructureGeometryInstancesDataKHR. This wraps a device pointer to the above uploaded instances.

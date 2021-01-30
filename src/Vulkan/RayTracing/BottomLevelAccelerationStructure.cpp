@@ -7,8 +7,11 @@
 
 namespace Vulkan::RayTracing {
 
-BottomLevelAccelerationStructure::BottomLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, const BottomLevelGeometry& geometries) :
-	AccelerationStructure(deviceProcedures),
+BottomLevelAccelerationStructure::BottomLevelAccelerationStructure(
+	const class DeviceProcedures& deviceProcedures,
+	const class RayTracingProperties& rayTracingProperties,
+	const BottomLevelGeometry& geometries) :
+	AccelerationStructure(deviceProcedures, rayTracingProperties),
 	geometries_(geometries)
 {
 	buildGeometryInfo_.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR;

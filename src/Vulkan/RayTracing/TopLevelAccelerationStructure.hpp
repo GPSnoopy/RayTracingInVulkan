@@ -16,7 +16,11 @@ namespace Vulkan::RayTracing
 		TopLevelAccelerationStructure& operator = (const TopLevelAccelerationStructure&) = delete;
 		TopLevelAccelerationStructure& operator = (TopLevelAccelerationStructure&&) = delete;
 
-		TopLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, VkDeviceAddress instanceAddress, uint32_t instancesCount);
+		TopLevelAccelerationStructure(
+			const class DeviceProcedures& deviceProcedures,
+			const class RayTracingProperties& rayTracingProperties,
+			VkDeviceAddress instanceAddress, 
+			uint32_t instancesCount);
 		TopLevelAccelerationStructure(TopLevelAccelerationStructure&& other) noexcept;
 		virtual ~TopLevelAccelerationStructure();
 

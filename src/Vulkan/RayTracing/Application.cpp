@@ -24,15 +24,6 @@ namespace Vulkan::RayTracing {
 
 namespace
 {
-	// AccelerationStructure offset needs to be 256 bytes aligned (official Vulkan specs, don't ask me why).
-	const uint64_t AccelerationStructureAlignment = 256;
-	
-	uint64_t RoundUp(uint64_t size, uint64_t granularity)
-	{
-		const auto divUp = (size + granularity - 1) / granularity;
-		return divUp * granularity;
-	}
-	
 	template <class TAccelerationStructure>
 	VkAccelerationStructureBuildSizesInfoKHR GetTotalRequirements(const std::vector<TAccelerationStructure>& accelerationStructures)
 	{
@@ -40,7 +31,7 @@ namespace
 
 		for (const auto& accelerationStructure : accelerationStructures)
 		{
-			total.accelerationStructureSize += RoundUp(accelerationStructure.BuildSizes().accelerationStructureSize, AccelerationStructureAlignment);
+			total.accelerationStructureSize += accelerationStructure.BuildSizes().accelerationStructureSize;
 			total.buildScratchSize += accelerationStructure.BuildSizes().buildScratchSize;
 			total.updateScratchSize += accelerationStructure.BuildSizes().updateScratchSize;
 		}
@@ -59,8 +50,8 @@ Application::~Application()
 	Application::DeleteSwapChain();
 	DeleteAccelerationStructures();
 
+	rayTracingProperties_.reset();
 	deviceProcedures_.reset();
-	properties_.reset();
 }
 
 void Application::SetPhysicalDevice(
@@ -105,8 +96,8 @@ void Application::OnDeviceSet()
 {
 	Vulkan::Application::OnDeviceSet();
 
-	properties_.reset(new RayTracingProperties(Device()));
 	deviceProcedures_.reset(new DeviceProcedures(Device()));
+	rayTracingProperties_.reset(new RayTracingProperties(Device()));
 }
 
 void Application::CreateAccelerationStructures()
@@ -157,7 +148,7 @@ void Application::CreateSwapChain()
 	const std::vector<ShaderBindingTable::Entry> missPrograms = { {rayTracingPipeline_->MissShaderIndex(), {}} };
 	const std::vector<ShaderBindingTable::Entry> hitGroups = { {rayTracingPipeline_->TriangleHitGroupIndex(), {}}, {rayTracingPipeline_->ProceduralHitGroupIndex(), {}} };
 
-	shaderBindingTable_.reset(new ShaderBindingTable(*deviceProcedures_, *rayTracingPipeline_, *properties_, rayGenPrograms, missPrograms, hitGroups));
+	shaderBindingTable_.reset(new ShaderBindingTable(*deviceProcedures_, *rayTracingPipeline_, *rayTracingProperties_, rayGenPrograms, missPrograms, hitGroups));
 }
 
 void Application::DeleteSwapChain()
@@ -266,7 +257,7 @@ void Application::CreateBottomLevelStructures(VkCommandBuffer commandBuffer)
 			? geometries.AddGeometryAabb(scene, aabbOffset, 1, true)
 			: geometries.AddGeometryTriangles(scene, vertexOffset, vertexCount, indexOffset, indexCount, true);
 
-		bottomAs_.emplace_back(*deviceProcedures_, geometries);
+		bottomAs_.emplace_back(*deviceProcedures_, *rayTracingProperties_, geometries);
 
 		vertexOffset += vertexCount * sizeof(Assets::Vertex);
 		indexOffset += indexCount * sizeof(uint32_t);
@@ -294,7 +285,7 @@ void Application::CreateBottomLevelStructures(VkCommandBuffer commandBuffer)
 	{
 		bottomAs_[i].Generate(commandBuffer, *bottomScratchBuffer_, scratchOffset, *bottomBuffer_, resultOffset);
 		
-		resultOffset += RoundUp(bottomAs_[i].BuildSizes().accelerationStructureSize, AccelerationStructureAlignment);
+		resultOffset += bottomAs_[i].BuildSizes().accelerationStructureSize;
 		scratchOffset += bottomAs_[i].BuildSizes().buildScratchSize;
 
 		debugUtils.SetObjectName(bottomAs_[i].Handle(), ("BLAS #" + std::to_string(i)).c_str());
@@ -326,7 +317,7 @@ void Application::CreateTopLevelStructures(VkCommandBuffer commandBuffer)
 	// Memory barrier for the bottom level acceleration structure builds.
 	AccelerationStructure::MemoryBarrier(commandBuffer);
 	
-	topAs_.emplace_back(*deviceProcedures_, instancesBuffer_->GetDeviceAddress(), static_cast<uint32_t>(instances.size()));
+	topAs_.emplace_back(*deviceProcedures_, *rayTracingProperties_, instancesBuffer_->GetDeviceAddress(), static_cast<uint32_t>(instances.size()));
 
 	// Allocate the structure memory.
 	const auto total = GetTotalRequirements(topAs_);

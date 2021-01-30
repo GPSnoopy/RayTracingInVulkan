@@ -20,7 +20,10 @@ namespace Vulkan::RayTracing
 		BottomLevelAccelerationStructure& operator = (const BottomLevelAccelerationStructure&) = delete;
 		BottomLevelAccelerationStructure& operator = (BottomLevelAccelerationStructure&&) = delete;
 
-		BottomLevelAccelerationStructure(const class DeviceProcedures& deviceProcedures, const BottomLevelGeometry& geometries);
+		BottomLevelAccelerationStructure(
+			const class DeviceProcedures& deviceProcedures, 
+			const class RayTracingProperties& rayTracingProperties, 
+			const BottomLevelGeometry& geometries);
 		BottomLevelAccelerationStructure(BottomLevelAccelerationStructure&& other) noexcept;
 		~BottomLevelAccelerationStructure();
 
