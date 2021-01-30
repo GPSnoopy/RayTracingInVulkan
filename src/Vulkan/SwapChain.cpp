@@ -62,7 +62,7 @@ SwapChain::SwapChain(const class Device& device, const VkPresentModeKHR presentM
 	Check(vkCreateSwapchainKHR(device.Handle(), &createInfo, nullptr, &swapChain_),
 		"create swap chain!");
 
-	minImageCount_ = details.Capabilities.minImageCount;
+	minImageCount_ = std::max(2u, details.Capabilities.minImageCount);
 	presentMode_ = actualPresentMode;
 	format_ = surfaceFormat.format;
 	extent_ = extent;
