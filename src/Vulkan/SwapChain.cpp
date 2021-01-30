@@ -197,7 +197,7 @@ uint32_t SwapChain::ChooseImageCount(const VkSurfaceCapabilitiesKHR& capabilitie
 	// The implementation specifies the minimum amount of images to function properly
 	// and we'll try to have one more than that to properly implement triple buffering.
 	// (tanguyf: or not, we can just rely on VK_PRESENT_MODE_MAILBOX_KHR with two buffers)
-	uint32_t imageCount = capabilities.minImageCount;// +1; 
+	uint32_t imageCount = std::max(2u, capabilities.minImageCount);// +1; 
 	
 	if (capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount)
 	{

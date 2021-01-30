@@ -7,7 +7,7 @@ jobs:
 
     runs-on: windows-latest
     env:
-      SDK_VERSION: 1.2.162.0
+      SDK_VERSION: 1.2.162.1
 
     steps:
     - uses: actions/checkout@v2
