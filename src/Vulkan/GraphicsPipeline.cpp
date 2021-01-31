@@ -160,7 +160,7 @@ GraphicsPipeline::GraphicsPipeline(
 
 	// Create pipeline layout and render pass.
 	pipelineLayout_.reset(new class PipelineLayout(device, descriptorSetManager_->DescriptorSetLayout()));
-	renderPass_.reset(new class RenderPass(swapChain, depthBuffer, true, true));
+	renderPass_.reset(new class RenderPass(swapChain, depthBuffer, VK_ATTACHMENT_LOAD_OP_CLEAR, VK_ATTACHMENT_LOAD_OP_CLEAR));
 
 	// Load shaders.
 	const ShaderModule vertShader(device, "../assets/shaders/Graphics.vert.spv");
