@@ -66,7 +66,7 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 
 ## Random Thoughts
 
-- I suspect the RTX 20 series RT cores to implement ray-AABB collision detection using reduced float precision. Early in the development, when trying to get the sphere procedural rendering to work, reporting an intersection every time the `rint` shader is invoked allowed to visualise the AABB of each procedural instance. The rendering of the bounding volume had many artifacts around the boxes edges, typical of reduced precision.
+- I suspect the RTX 2000 series RT cores to implement ray-AABB collision detection using reduced float precision. Early in the development, when trying to get the sphere procedural rendering to work, reporting an intersection every time the `rint` shader is invoked allowed to visualise the AABB of each procedural instance. The rendering of the bounding volume had many artifacts around the boxes edges, typical of reduced precision.
 
 - When I upgraded the drivers to 430.86, performance significantly improved (+50%). This was around the same time Quake II RTX was released by NVIDIA. Coincidence?
 
@@ -74,7 +74,7 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 
 - UPDATE 2020-01-07: the RTX 30xx results seem to imply that performance is mostly dictated by the number of RT cores. Compared to Turing, Ampere achieves 2x RT performance only when using ray-triangle intersection (as expected as per NVIDIA Ampere whitepaper), otherwise performance per RT core is the same. This leads to situations such as an RTX 2080 Ti being faster than an RTX 3080 when using procedural geometry.
 
-- UPDATE 2020-01-31: the 6900XT results show the RDNA 2 architecture performing surprisingly well in procedural geometry scenes. Is it because the RDNA2 BVH-ray intersections are done using the generic computing units (and there are plenty of those), whereas Ampere is bottlenecked by its small number of RT cores in these simple scenes? Or is RDNA2 Infinity Cache really shining here? The triangle-based geometry scenes highlight how efficient Ampere RT cores are in handling triangle-ray intersections; unsurprisingly as these scenes are more representative of what video games would do in practice.
+- UPDATE 2020-01-31: the 6900 XT results show the RDNA 2 architecture performing surprisingly well in procedural geometry scenes. Is it because the RDNA2 BVH-ray intersections are done using the generic computing units (and there are plenty of those), whereas Ampere is bottlenecked by its small number of RT cores in these simple scenes? Or is RDNA2 Infinity Cache really shining here? The triangle-based geometry scenes highlight how efficient Ampere RT cores are in handling triangle-ray intersections; unsurprisingly as these scenes are more representative of what video games would do in practice.
 
 ## References
 
