@@ -30,11 +30,12 @@ To benchmark all the scenes, starting from scene #1:
 ```
 Here are my results with the command above on a few different computers.
 
-**RayTracer Release 5 (NVIDIA drivers 460.89)**
+**RayTracer Release 6 (NVIDIA drivers 461.40, AMD drivers 21.1.1)**
 
 | Platform | Scene 1 | Scene 2 | Scene 3 | Scene 4 | Scene 5 |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| GeForce RTX 3090 FE | 42.7 fps | 43.6 fps | 39.1 fps | 78.5 fps | 40.0 fps |
+| Radeon RX 6900 XT | 52.9 fps | 52.2 fps | 24.0 fps | 41.0 fps | 14.1 fps |
+| GeForce RTX 3090 FE | 42.8 fps | 43.6 fps | 38.9 fps | 79.5 fps | 40.0 fps |
 | GeForce RTX 2080 Ti FE | 37.7 fps | 38.2 fps | 24.2 fps | 58.7 fps | 21.4 fps |
 
 **RayTracer Release 4 (NVIDIA drivers 436.48)**
@@ -72,6 +73,8 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 - When looking at the benchmark results of an RTX 2070 and an RTX 2080 Ti, the performance differences mostly in line with the number of CUDA cores and RT cores rather than being influences by other metrics. Although I do not know at this point whether the CUDA cores or the RT cores are the main bottleneck. 
 
 - UPDATE 2020-01-07: the RTX 30xx results seem to imply that performance is mostly dictated by the number of RT cores. Compared to Turing, Ampere achieves 2x RT performance only when using ray-triangle intersection (as expected as per NVIDIA Ampere whitepaper), otherwise performance per RT core is the same. This leads to situations such as an RTX 2080 Ti being faster than an RTX 3080 when using procedural geometry.
+
+- UPDATE 2020-01-31: the 6900XT results show the RDNA 2 architecture performing surprisingly well in procedural geometry scenes. Is it because the RDNA2 BVH-ray intersections are done using the generic computing units (and there are plenty of those), whereas Ampere is bottlenecked by its small number of RT cores in these simple scenes? Or is RDNA2 Infinity Cache really shining here? The triangle-based geometry scenes highlight how efficient Ampere RT cores are in handling triangle-ray intersections; unsurprisingly as these scenes are more representative of what video games would do in practice.
 
 ## References
 
