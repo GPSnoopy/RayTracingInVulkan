@@ -58,11 +58,14 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 > build_windows.bat
 ```
 **Linux (GCC 9+ Makefile)** [![Linux CI Status](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Linux%20CI/badge.svg)](https://github.com/GPSnoopy/RayTracingInVulkan/actions?query=workflow%3A%22Linux+CI%22)
+
+For example, on Ubuntu 20.04 (same as the CI pipeline):
 ```
 > sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev xorg-dev
 > ./vcpkg_linux.sh
 > ./build_linux.sh
 ```
+Build steps on other distributions may vary. For Arch Linux, the compilation requires `libbacktrace` to be installed (see Issues [#18](https://github.com/GPSnoopy/RayTracingInVulkan/issues/18) and [#31](https://github.com/GPSnoopy/RayTracingInVulkan/issues/31)).
 
 ## Random Thoughts
 
