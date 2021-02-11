@@ -166,7 +166,7 @@ add_executable(${exe_name}
 if (UNIX)
 	# GCC8 needs an extra lib for <filesystem>.
 	# This is not needed with GCC9 or higher.
-	set(extra_libs -lbacktrace -lstdc++fs)
+	set(extra_libs -lstdc++fs ${Backtrace_LIBRARIES})
 endif()
 
 set_target_properties(${exe_name} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})

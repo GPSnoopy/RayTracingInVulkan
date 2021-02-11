@@ -39,6 +39,12 @@ if (UNIX)
 	
 	find_package(Backtrace REQUIRED)
 
+	string(COMPARE EQUAL ${Backtrace_HEADER} "backtrace.h" BacktraceRequired)
+
+	if (BacktraceRequired)
+		add_compile_definitions(BOOST_STACKTRACE_USE_BACKTRACE)
+	endif (BacktraceRequired)
+
 endif ()
 
 find_package(Boost REQUIRED COMPONENTS exception program_options) 
