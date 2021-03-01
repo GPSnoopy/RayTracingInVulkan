@@ -103,6 +103,9 @@ namespace
 		userSettings.AccumulateRays = true;
 		userSettings.NumberOfSamples = options.Samples;
 		userSettings.NumberOfBounces = options.Bounces;
+		userSettings.DefaultBounces = options.DefaultBounces;
+		if (userSettings.DefaultBounces)
+			userSettings.NumberOfBounces = userSettings.NumberOfDefaultBounces(userSettings.SceneIndex);
 		userSettings.MaxNumberOfSamples = options.MaxSamples;
 
 		userSettings.ShowSettings = !options.Benchmark;

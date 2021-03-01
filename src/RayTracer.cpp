@@ -117,6 +117,9 @@ void RayTracer::DrawFrame()
 		CreateSwapChain();
 		return;
 	}
+	
+	if (userSettings_.DefaultBounces)
+		userSettings_.NumberOfBounces = userSettings_.NumberOfDefaultBounces(userSettings_.SceneIndex);
 
 	// Check if the accumulation buffer needs to be reset.
 	if (resetAccumulation_ || 

@@ -201,6 +201,7 @@ void UserInterface::DrawSettings()
 		ImGui::Checkbox("Accumulate rays between frames", &Settings().AccumulateRays);
 		uint32_t min = 1, max = 128;
 		ImGui::SliderScalar("Samples", ImGuiDataType_U32, &Settings().NumberOfSamples, &min, &max);
+		ImGui::Checkbox("Use Default Bounces", &Settings().DefaultBounces);
 		min = 1, max = 32;
 		ImGui::SliderScalar("Bounces", ImGuiDataType_U32, &Settings().NumberOfBounces, &min, &max);
 		ImGui::NewLine();
