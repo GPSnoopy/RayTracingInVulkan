@@ -14,26 +14,26 @@ foreach (OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${PROJECT_BINARY_DIR}/lib)
 endforeach()
 
-if (WIN32)
+set (CMAKE_CXX_STANDARD 17)
 
+if (WIN32)
 	add_definitions(-DUNICODE -D_UNICODE)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
-	
+endif ()
+
+if (MSVC)
 	foreach (flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
 		if (${flag_var} MATCHES "/MD")
 			string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
 		endif()
 	endforeach()
 	
-	add_compile_options("/std:c++17")
 	add_compile_options("/MP")
-	
 endif()
 
 if (UNIX)
 	
 	add_definitions(-DUNIX)
-	add_compile_options("-std=c++17")
 	add_compile_options("-Wall")
 	add_compile_options("-fvisibility=hidden")
 	
