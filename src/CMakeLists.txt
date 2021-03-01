@@ -154,6 +154,9 @@ include_directories(${glm_INCLUDE_DIRS})
 include_directories(${Vulkan_INCLUDE_DIRS})
 link_directories(${Vulkan_LIBRARY})
 
+find_path(STB_INCLUDE_DIRS NAMES stb_image.h PATH_SUFFIXES stb)
+include_directories(${STB_INCLUDE_DIRS})
+
 add_executable(${exe_name} 
 	${src_files_assets} 
 	${src_files_imgui} 
