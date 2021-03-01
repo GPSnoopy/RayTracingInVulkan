@@ -35,20 +35,12 @@ macro(copy_assets asset_files dir_name copied_files)
 		set(${copied_files} ${${copied_files}} ${output_file})
 		set(${copied_files} ${${copied_files}} PARENT_SCOPE)
 		set_source_files_properties(${asset} PROPERTIES HEADER_FILE_ONLY TRUE)
-		if (WIN32)
-			add_custom_command(
-				OUTPUT ${output_file}
-				#COMMAND mklink \"${output_file}\" \"${full_path}\"
-				COMMAND xcopy \"${full_path}\" \"${output_file}*\" /Y /Q /F
-				DEPENDS ${full_path}
-			)
-		else()
-			add_custom_command(
-				OUTPUT ${output_file}
-				COMMAND mkdir --parents ${output_dir} && cp --force --link \"${full_path}\" \"${output_file}\"
-				DEPENDS ${full_path}
-			)
-		endif()
+		add_custom_command(
+			OUTPUT ${output_file}
+			COMMAND ${CMAKE_COMMAND} -E make_directory ${output_dir}
+			COMMAND ${CMAKE_COMMAND} -E create_symlink ${full_path} ${output_file}
+			DEPENDS ${full_path}
+		)
 	endforeach()
 endmacro()
 
