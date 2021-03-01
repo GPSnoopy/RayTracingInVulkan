@@ -172,7 +172,7 @@ void Application::DrawFrame()
 	uint32_t imageIndex;
 	auto result = vkAcquireNextImageKHR(device_->Handle(), swapChain_->Handle(), noTimeout, imageAvailableSemaphore, nullptr, &imageIndex);
 
-	if (result == VK_ERROR_OUT_OF_DATE_KHR || isWireFrame_ != graphicsPipeline_->IsWireFrame())
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || isWireFrame_ != graphicsPipeline_->IsWireFrame())
 	{
 		RecreateSwapChain();
 		return;
@@ -222,7 +222,7 @@ void Application::DrawFrame()
 
 	result = vkQueuePresentKHR(device_->PresentQueue(), &presentInfo);
 
-	if (result == VK_ERROR_OUT_OF_DATE_KHR)
+	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 	{
 		RecreateSwapChain();
 		return;

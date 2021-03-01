@@ -1,8 +1,5 @@
 #pragma once
 
-#ifdef UNIX
-#define BOOST_STACKTRACE_USE_BACKTRACE
-#endif
 #include <boost/exception/all.hpp>
 #include <boost/stacktrace.hpp>
 #include <stdexcept>
