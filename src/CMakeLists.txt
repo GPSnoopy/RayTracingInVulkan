@@ -172,4 +172,5 @@ endif()
 set_target_properties(${exe_name} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 target_link_libraries(${exe_name} PRIVATE ${Boost_LIBRARIES} glfw glm imgui::imgui tinyobjloader::tinyobjloader ${Vulkan_LIBRARIES} ${extra_libs})
 add_dependencies(${exe_name} Assets)
+install(TARGETS ${exe_name} DESTINATION bin)
 
