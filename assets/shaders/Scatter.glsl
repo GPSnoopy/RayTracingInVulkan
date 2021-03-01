@@ -13,7 +13,7 @@ float Schlick(const float cosine, const float refractionIndex)
 RayPayload ScatterLambertian(const Material m, const vec3 direction, const vec3 normal, const vec2 texCoord, const float t, inout uint seed)
 {
 	const bool isScattered = dot(direction, normal) < 0;
-	const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[m.DiffuseTextureId], texCoord) : vec4(1);
+	const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[nonuniformEXT(m.DiffuseTextureId)], texCoord) : vec4(1);
 	const vec4 colorAndDistance = vec4(m.Diffuse.rgb * texColor.rgb, t);
 	const vec4 scatter = vec4(normal + RandomInUnitSphere(seed), isScattered ? 1 : 0);
 
@@ -26,7 +26,7 @@ RayPayload ScatterMetallic(const Material m, const vec3 direction, const vec3 no
 	const vec3 reflected = reflect(direction, normal);
 	const bool isScattered = dot(reflected, normal) > 0;
 
-	const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[m.DiffuseTextureId], texCoord) : vec4(1);
+	const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[nonuniformEXT(m.DiffuseTextureId)], texCoord) : vec4(1);
 	const vec4 colorAndDistance = isScattered ? vec4(m.Diffuse.rgb * texColor.rgb, t) : vec4(1, 1, 1, -1);
 	const vec4 scatter = vec4(reflected + m.Fuzziness*RandomInUnitSphere(seed), isScattered ? 1 : 0);
 
@@ -44,7 +44,7 @@ RayPayload ScatterDieletric(const Material m, const vec3 direction, const vec3 n
 	const vec3 refracted = refract(direction, outwardNormal, niOverNt);
 	const float reflectProb = refracted != vec3(0) ? Schlick(cosine, m.RefractionIndex) : 1;
 
-	const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[m.DiffuseTextureId], texCoord) : vec4(1);
+	const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[nonuniformEXT(m.DiffuseTextureId)], texCoord) : vec4(1);
 	
 	return RandomFloat(seed) < reflectProb
 		? RayPayload(vec4(texColor.rgb, t), vec4(reflect(direction, normal), 1), seed)
