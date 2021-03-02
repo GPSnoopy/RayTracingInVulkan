@@ -30,7 +30,7 @@ RayPayload ScatterMetallic(const Material m, const vec3 direction, const vec3 no
 	const bool isScattered = dot(reflected, normal) > 0;
 
 	const vec4 texColor = m.DiffuseTextureId >= 0 ? texture(TextureSamplers[nonuniformEXT(m.DiffuseTextureId)], texCoord) : vec4(1);
-	const vec4 colorAndDistance = isScattered ? vec4(m.Diffuse.rgb * texColor.rgb, t) : vec4(1, 1, 1, -1);
+	const vec4 colorAndDistance = vec4(m.Diffuse.rgb * texColor.rgb, t);
 	const vec4 scatter = vec4(reflected + m.Fuzziness*RandomInUnitSphere(seed), isScattered ? 1 : 0);
 
 	return RayPayload(colorAndDistance, scatter, seed);
