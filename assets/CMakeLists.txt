@@ -35,7 +35,7 @@ macro(copy_assets asset_files dir_name copied_files)
 		set(${copied_files} ${${copied_files}} ${output_file})
 		set(${copied_files} ${${copied_files}} PARENT_SCOPE)
 		set_source_files_properties(${asset} PROPERTIES HEADER_FILE_ONLY TRUE)
-		if (WIN32)
+		if (CMAKE_SYSTEM_NAME MATCHES "Windows")
 			add_custom_command(
 				OUTPUT ${output_file}
 				#COMMAND mklink \"${output_file}\" \"${full_path}\"
