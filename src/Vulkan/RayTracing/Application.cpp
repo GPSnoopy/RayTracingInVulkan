@@ -208,8 +208,8 @@ void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageInde
 	VkStridedDeviceAddressRegionKHR callableShaderBindingTable = {};
 
 
-	uint32_t MaxRayDispatchSize = rayTracingProperties_->MaxRayDispatchInvocationCount();
-	uint32_t MaxRayDepth = MaxRayDispatchSize / (extent.width * extent.height);
+	const uint32_t MaxRayDispatchSize = rayTracingProperties_->MaxRayDispatchInvocationCount();
+	const uint32_t MaxRayDepth = MaxRayDispatchSize / (extent.width * extent.height);
 
 	// Execute ray tracing shaders.	
 	for (uint32_t SamplesRemaining = numberOfSamples; SamplesRemaining > 0;)
