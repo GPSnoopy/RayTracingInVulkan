@@ -165,7 +165,7 @@ void Application::DeleteSwapChain()
 	Vulkan::Application::DeleteSwapChain();
 }
 
-void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
+void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex, const uint32_t numberOfSamples)
 {
 	const auto extent = SwapChain().Extent();
 
@@ -207,10 +207,22 @@ void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageInde
 
 	VkStridedDeviceAddressRegionKHR callableShaderBindingTable = {};
 
-	// Execute ray tracing shaders.
-	deviceProcedures_->vkCmdTraceRaysKHR(commandBuffer,
-		&raygenShaderBindingTable, &missShaderBindingTable, &hitShaderBindingTable, &callableShaderBindingTable,
-		extent.width, extent.height, 1);
+
+	uint32_t MaxRayDispatchSize = rayTracingProperties_->MaxRayDispatchInvocationCount();
+	uint32_t MaxRayDepth = MaxRayDispatchSize / (extent.width * extent.height);
+
+	// Execute ray tracing shaders.	
+	for (uint32_t SamplesRemaining = numberOfSamples; SamplesRemaining > 0;)
+	{
+		uint32_t depth = (SamplesRemaining > MaxRayDepth) ? MaxRayDepth : SamplesRemaining;
+
+		deviceProcedures_->vkCmdTraceRaysKHR(commandBuffer,
+			&raygenShaderBindingTable, &missShaderBindingTable, &hitShaderBindingTable, &callableShaderBindingTable,
+			extent.width, extent.height, depth);
+
+		SamplesRemaining -= depth;
+	}
+
 
 	// Acquire output image and swap-chain image for copying.
 	ImageMemoryBarrier::Insert(commandBuffer, outputImage_->Handle(), subresourceRange, 

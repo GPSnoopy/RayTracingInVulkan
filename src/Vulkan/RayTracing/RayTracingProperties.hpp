@@ -20,6 +20,7 @@ namespace Vulkan
 			uint64_t MaxGeometryCount() const { return accelProps_.maxGeometryCount; }
 			uint64_t MaxInstanceCount() const { return accelProps_.maxInstanceCount; }
 			uint64_t MaxPrimitiveCount() const { return accelProps_.maxPrimitiveCount; }
+			uint32_t MaxRayDispatchInvocationCount() const { return pipelineProps_.maxRayDispatchInvocationCount; }
 			uint32_t MaxRayRecursionDepth() const { return pipelineProps_.maxRayRecursionDepth; }
 			uint32_t MaxShaderGroupStride() const { return pipelineProps_.maxShaderGroupStride; }
 			uint32_t MinAccelerationStructureScratchOffsetAlignment() const { return accelProps_.minAccelerationStructureScratchOffsetAlignment; }

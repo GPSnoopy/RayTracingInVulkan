@@ -151,7 +151,7 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 
 	// Render the scene
 	userSettings_.IsRayTraced
-		? Vulkan::RayTracing::Application::Render(commandBuffer, imageIndex)
+		? Vulkan::RayTracing::Application::Render(commandBuffer, imageIndex, numberOfSamples_)
 		: Vulkan::Application::Render(commandBuffer, imageIndex);
 
 	// Render the UI
