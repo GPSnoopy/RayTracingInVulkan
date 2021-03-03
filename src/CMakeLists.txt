@@ -151,10 +151,9 @@ include_directories(.)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${glfw3_INCLUDE_DIRS})
 include_directories(${glm_INCLUDE_DIRS})
+include_directories(${STB_INCLUDE_DIRS})
 include_directories(${Vulkan_INCLUDE_DIRS})
 link_directories(${Vulkan_LIBRARY})
-
-include_directories(${STB_INCLUDE_DIRS})
 
 add_executable(${exe_name} 
 	${src_files_assets} 
