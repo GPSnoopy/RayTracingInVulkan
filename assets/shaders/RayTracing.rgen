@@ -24,7 +24,7 @@ void main()
 	// Initialise separate random seeds for the pixel and the rays.
 	// - pixel: we want the same random seed for each pixel to get a homogeneous anti-aliasing.
 	// - ray: we want a noisy random seed, different for each pixel.
-	uint pixelRandomSeed = Camera.RandomSeed;
+	uint pixelRandomSeed = InitRandomSeed(Camera.RandomSeed,Camera.RandomSeed);
 	Ray.RandomSeed = InitRandomSeed(InitRandomSeed(gl_LaunchIDEXT.x, gl_LaunchIDEXT.y), Camera.TotalNumberOfSamples);
 
 	vec3 pixelColor = vec3(0);
@@ -83,6 +83,8 @@ void main()
 
 	const bool accumulate = Camera.NumberOfSamples != Camera.TotalNumberOfSamples;
 	const vec3 accumulatedColor = (accumulate ? imageLoad(AccumulationImage, ivec2(gl_LaunchIDEXT.xy)) : vec4(0)).rgb + pixelColor;
+	
+	imageStore(AccumulationImage, ivec2(gl_LaunchIDEXT.xy), vec4(accumulatedColor, 0));
 
 	pixelColor = accumulatedColor / Camera.TotalNumberOfSamples;
 
@@ -98,6 +100,5 @@ void main()
 		pixelColor = heatmap(deltaTimeScaled);
 	}
 
-	imageStore(AccumulationImage, ivec2(gl_LaunchIDEXT.xy), vec4(accumulatedColor, 0));
-    imageStore(OutputImage, ivec2(gl_LaunchIDEXT.xy), vec4(pixelColor, 0));
+	imageStore(OutputImage, ivec2(gl_LaunchIDEXT.xy), vec4(pixelColor, 0));
 }
