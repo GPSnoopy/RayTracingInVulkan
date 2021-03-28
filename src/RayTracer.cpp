@@ -72,11 +72,16 @@ void RayTracer::SetPhysicalDevice(
 		});
 	
 	// Opt-in into mandatory device features.
+	VkPhysicalDeviceShaderClockFeaturesKHR shaderClockFeatures = {};
+	shaderClockFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR;
+	shaderClockFeatures.pNext = nextDeviceFeatures;
+	shaderClockFeatures.shaderSubgroupClock = true;
+	
 	deviceFeatures.fillModeNonSolid = true;
 	deviceFeatures.samplerAnisotropy = true;
 	deviceFeatures.shaderInt64 = true;
 
-	Application::SetPhysicalDevice(physicalDevice, requiredExtensions, deviceFeatures, nextDeviceFeatures);
+	Application::SetPhysicalDevice(physicalDevice, requiredExtensions, deviceFeatures, &shaderClockFeatures);
 }
 
 void RayTracer::OnDeviceSet()
