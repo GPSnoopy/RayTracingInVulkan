@@ -147,14 +147,6 @@ source_group("Vulkan" FILES ${src_files_vulkan})
 source_group("Vulkan.RayTracing" FILES ${src_files_vulkan_raytracing})
 source_group("Main" FILES ${src_files})
 
-include_directories(.)
-include_directories(${Boost_INCLUDE_DIRS})
-include_directories(${glfw3_INCLUDE_DIRS})
-include_directories(${glm_INCLUDE_DIRS})
-include_directories(${STB_INCLUDE_DIRS})
-include_directories(${Vulkan_INCLUDE_DIRS})
-link_directories(${Vulkan_LIBRARY})
-
 add_executable(${exe_name} 
 	${src_files_assets} 
 	${src_files_imgui} 
@@ -170,7 +162,8 @@ if (UNIX)
 	set(extra_libs -lstdc++fs ${Backtrace_LIBRARIES})
 endif()
 
-set_target_properties(${exe_name} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
-target_link_libraries(${exe_name} PRIVATE ${Boost_LIBRARIES} glfw glm imgui::imgui tinyobjloader::tinyobjloader ${Vulkan_LIBRARIES} ${extra_libs})
 add_dependencies(${exe_name} Assets)
-
+set_target_properties(${exe_name} PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+target_include_directories(${exe_name} PRIVATE . ${Boost_INCLUDE_DIRS} ${glfw3_INCLUDE_DIRS} ${glm_INCLUDE_DIRS} ${STB_INCLUDE_DIRS} ${Vulkan_INCLUDE_DIRS})
+target_link_directories(${exe_name} PRIVATE ${Vulkan_LIBRARY})
+target_link_libraries(${exe_name} PRIVATE ${Boost_LIBRARIES} glfw glm imgui::imgui tinyobjloader::tinyobjloader ${Vulkan_LIBRARIES} ${extra_libs})
