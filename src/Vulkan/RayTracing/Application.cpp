@@ -78,6 +78,7 @@ void Application::SetPhysicalDevice(
 	indexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
 	indexingFeatures.pNext = &bufferDeviceAddressFeatures;
 	indexingFeatures.runtimeDescriptorArray = true;
+	indexingFeatures.shaderSampledImageArrayNonUniformIndexing = true;
 
 	VkPhysicalDeviceAccelerationStructureFeaturesKHR accelerationStructureFeatures = {};
 	accelerationStructureFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR;
