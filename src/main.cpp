@@ -216,6 +216,7 @@ namespace
 				return false;
 			}
 
+			// We want a device that supports the ray tracing extensions
 			uint32_t extensionPropertiesCount;
 			std::vector<VkExtensionProperties> extensionProperties;
 			vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionPropertiesCount, nullptr);
@@ -230,9 +231,6 @@ namespace
 			if (hasRayTracingPipelineExtension == extensionProperties.end()) {
 				return false;
 			}
-
-			// We want a device that supports the ray tracing extensions
-			//const auto vec = Vulkan::GetEnumerateVector(device, vkEnumerateDeviceExtensionProperties);
 
 			// We want a device with a graphics queue.
 			const auto queueFamilies = Vulkan::GetEnumerateVector(device, vkGetPhysicalDeviceQueueFamilyProperties);
