@@ -225,7 +225,7 @@ namespace
 
 			const auto hasRayTracingPipelineExtension = std::find_if(extensionProperties.begin(), extensionProperties.end(), [](const VkExtensionProperties& extension)
 			{
-				return strcmp(extension.extensionName, "VK_KHR_ray_tracing_pipeline");
+				return strcmp(extension.extensionName, "VK_KHR_ray_tracing_pipeline") == 0;
 			});
 
 			if (hasRayTracingPipelineExtension == extensionProperties.end()) {
