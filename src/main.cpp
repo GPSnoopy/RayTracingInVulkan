@@ -216,19 +216,15 @@ namespace
 				return false;
 			}
 
-			// We want a device that supports the ray tracing extensions
-			uint32_t extensionPropertiesCount;
-			std::vector<VkExtensionProperties> extensionProperties;
-			vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionPropertiesCount, nullptr);
-			extensionProperties.resize(extensionPropertiesCount);
-			vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionPropertiesCount, extensionProperties.data());
-
-			const auto hasRayTracingPipelineExtension = std::find_if(extensionProperties.begin(), extensionProperties.end(), [](const VkExtensionProperties& extension)
+			// We want a device that supports the ray tracing extension.
+			const auto extensions = Vulkan::GetEnumerateVector(device, static_cast<const char*>(nullptr), vkEnumerateDeviceExtensionProperties);
+			const auto hasRayTracing = std::find_if(extensions.begin(), extensions.end(), [](const VkExtensionProperties& extension)
 			{
-				return strcmp(extension.extensionName, "VK_KHR_ray_tracing_pipeline") == 0;
+				return strcmp(extension.extensionName, VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME) == 0;
 			});
 
-			if (hasRayTracingPipelineExtension == extensionProperties.end()) {
+			if (hasRayTracing == extensions.end())
+			{
 				return false;
 			}
 
