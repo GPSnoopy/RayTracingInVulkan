@@ -216,6 +216,18 @@ namespace
 				return false;
 			}
 
+			// We want a device that supports the ray tracing extension.
+			const auto extensions = Vulkan::GetEnumerateVector(device, static_cast<const char*>(nullptr), vkEnumerateDeviceExtensionProperties);
+			const auto hasRayTracing = std::find_if(extensions.begin(), extensions.end(), [](const VkExtensionProperties& extension)
+			{
+				return strcmp(extension.extensionName, VK_KHR_RAY_TRACING_PIPELINE_EXTENSION_NAME) == 0;
+			});
+
+			if (hasRayTracing == extensions.end())
+			{
+				return false;
+			}
+
 			// We want a device with a graphics queue.
 			const auto queueFamilies = Vulkan::GetEnumerateVector(device, vkGetPhysicalDeviceQueueFamilyProperties);
 			const auto hasGraphicsQueue = std::find_if(queueFamilies.begin(), queueFamilies.end(), [](const VkQueueFamilyProperties& queueFamily)
