@@ -13,6 +13,7 @@
 #include "Vulkan/Window.hpp"
 
 #include "imgui.h"
+#include "ImGui/imgui_freetype.h"
 #include "ImGui/imgui_impl_glfw.h"
 #include "ImGui/imgui_impl_vulkan.h"
 
@@ -87,7 +88,8 @@ UserInterface::UserInterface(
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().ScaleAllSizes(scaleFactor);
 
-	// Upload ImGui fonts
+	// Upload ImGui fonts (use ImGuiFreeType for better font rendering, see https://github.com/ocornut/imgui/tree/master/misc/freetype).
+	io.Fonts->FontBuilderIO = ImGuiFreeType::GetBuilderForFreeType();
 	if (!io.Fonts->AddFontFromFileTTF("../assets/fonts/Cousine-Regular.ttf", 13 * scaleFactor))
 	{
 		Throw(std::runtime_error("failed to load ImGui font"));

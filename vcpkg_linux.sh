@@ -12,6 +12,7 @@ git checkout 2021.04.30
 	boost-exception:x64-linux \
 	boost-program-options:x64-linux \
 	boost-stacktrace:x64-linux \
+	freetype:x64-linux \
 	glfw3:x64-linux \
 	glm:x64-linux \
 	imgui:x64-linux \

@@ -9,6 +9,7 @@ vcpkg.exe install ^
 	boost-exception:x64-windows-static ^
 	boost-program-options:x64-windows-static ^
 	boost-stacktrace:x64-windows-static ^
+	freetype:x64-windows-static ^
 	glfw3:x64-windows-static ^
 	glm:x64-windows-static ^
 	imgui:x64-windows-static ^
