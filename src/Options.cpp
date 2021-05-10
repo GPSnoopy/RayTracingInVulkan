@@ -67,5 +67,6 @@ Options::Options(const int argc, const char* argv[])
 	{
 		Throw(std::out_of_range("invalid present mode"));
 	}
+	DefaultBounces = vm["bounces"].defaulted();
 }
 
