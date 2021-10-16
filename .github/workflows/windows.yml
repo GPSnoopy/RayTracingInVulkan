@@ -14,7 +14,7 @@ jobs:
     - name: Download Vulkan SDK
       run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/${env:SDK_VERSION}/windows/vulkan_sdk.exe?Human=true" -OutFile vulkan_sdk.exe -v
     - name: Install Vulkan SDK
-      run: .\vulkan_sdk.exe /S
+      run: .\vulkan_sdk.exe --accept-licenses --default-answer --confirm-command install
       shell: cmd
     - name: Compile vcpkg dependencies
       run: vcpkg_windows.bat
