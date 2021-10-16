@@ -22,11 +22,11 @@ I suspect performance could be improved further. I have created each object in t
 
 Command line arguments can be used to control various aspects of the application. Use `--help` to see all modes and arguments. For example, to run the ray tracer in benchmark mode in 2560x1440 fullscreen for scene #1 with vsync off:
 ```
-> RayTracer.exe --benchmark --width 2560 --height 1440 --fullscreen --scene 1 --present-mode 0
+RayTracer.exe --benchmark --width 2560 --height 1440 --fullscreen --scene 1 --present-mode 0
 ```
 To benchmark all the scenes, starting from scene #1:
 ```
-> RayTracer.exe --benchmark --width 2560 --height 1440 --fullscreen --scene 1 --next-scenes --present-mode 0
+RayTracer.exe --benchmark --width 2560 --height 1440 --fullscreen --scene 1 --next-scenes --present-mode 0
 ```
 Here are my results with the command above on a few different computers.
 
@@ -54,16 +54,16 @@ If in doubt, please check the GitHub Actions [continuous integration configurati
 
 **Windows (Visual Studio 2019 x64 solution)** [![Windows CI Status](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Windows%20CI/badge.svg)](https://github.com/GPSnoopy/RayTracingInVulkan/actions?query=workflow%3A%22Windows+CI%22)
 ```
-> vcpkg_windows.bat
-> build_windows.bat
+vcpkg_windows.bat
+build_windows.bat
 ```
 **Linux (GCC 9+ Makefile)** [![Linux CI Status](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Linux%20CI/badge.svg)](https://github.com/GPSnoopy/RayTracingInVulkan/actions?query=workflow%3A%22Linux+CI%22)
 
 For example, on Ubuntu 20.04 (same as the CI pipeline, build steps on other distributions may vary):
 ```
-> sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev xorg-dev
-> ./vcpkg_linux.sh
-> ./build_linux.sh
+sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev xorg-dev
+./vcpkg_linux.sh
+./build_linux.sh
 ```
 
 ## Random Thoughts
