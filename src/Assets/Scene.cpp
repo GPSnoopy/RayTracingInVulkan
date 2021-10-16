@@ -12,7 +12,7 @@
 
 namespace Assets {
 
-Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std::vector<Texture>&& textures, bool usedForRayTracing) :
+Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std::vector<Texture>&& textures) :
 	models_(std::move(models)),
 	textures_(std::move(textures))
 {
@@ -59,15 +59,15 @@ Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std:
 		}
 	}
 
-	const auto flag = usedForRayTracing ? VK_BUFFER_USAGE_STORAGE_BUFFER_BIT  | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT : 0;
+	constexpr auto flags = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 
-	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Vertices", VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | flag, vertices, vertexBuffer_, vertexBufferMemory_);
-	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Indices", VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag, indices, indexBuffer_, indexBufferMemory_);
-	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Materials", flag, materials, materialBuffer_, materialBufferMemory_);
-	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Offsets", flag, offsets, offsetBuffer_, offsetBufferMemory_);
+	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Vertices", VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | flags, vertices, vertexBuffer_, vertexBufferMemory_);
+	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Indices", VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | flags, indices, indexBuffer_, indexBufferMemory_);
+	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Materials", flags, materials, materialBuffer_, materialBufferMemory_);
+	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Offsets", flags, offsets, offsetBuffer_, offsetBufferMemory_);
 
-	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "AABBs", flag, aabbs, aabbBuffer_, aabbBufferMemory_);
-	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Procedurals", flag, procedurals, proceduralBuffer_, proceduralBufferMemory_);
+	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "AABBs", VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | flags, aabbs, aabbBuffer_, aabbBufferMemory_);
+	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Procedurals", flags, procedurals, proceduralBuffer_, proceduralBufferMemory_);
 
 	
 	// Upload all textures

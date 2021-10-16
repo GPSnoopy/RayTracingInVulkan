@@ -27,7 +27,7 @@ namespace Assets
 		Scene& operator = (const Scene&) = delete;
 		Scene& operator = (Scene&&) = delete;
 
-		Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std::vector<Texture>&& textures, bool usedForRayTracing);
+		Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std::vector<Texture>&& textures);
 		~Scene();
 
 		const std::vector<Model>& Models() const { return models_; }
