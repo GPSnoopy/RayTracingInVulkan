@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   build:
 
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       SDK_VERSION: 1.2.189.2
 
