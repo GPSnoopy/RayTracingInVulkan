@@ -52,7 +52,7 @@ First you will need to install the [Vulkan SDK](https://vulkan.lunarg.com/sdk/ho
 
 If in doubt, please check the GitHub Actions [continuous integration configurations](.github/workflows) for more details.
 
-**Windows (Visual Studio 2019 x64 solution)** [![Windows CI Status](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Windows%20CI/badge.svg)](https://github.com/GPSnoopy/RayTracingInVulkan/actions?query=workflow%3A%22Windows+CI%22)
+**Windows (Visual Studio 2022 x64 solution)** [![Windows CI Status](https://github.com/GPSnoopy/RayTracingInVulkan/workflows/Windows%20CI/badge.svg)](https://github.com/GPSnoopy/RayTracingInVulkan/actions?query=workflow%3A%22Windows+CI%22)
 ```
 vcpkg_windows.bat
 build_windows.bat
