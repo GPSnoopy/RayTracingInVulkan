@@ -10,6 +10,56 @@ using Assets::Material;
 using Assets::Model;
 using Assets::Texture;
 
+namespace
+{
+
+	void AddRayTracingInOneWeekendCommonScene(std::vector<Assets::Model>& models, const bool& isProc, std::function<float ()>& random)
+	{
+		// Common models from the final scene from Ray Tracing In One Weekend book. Only the three central spheres are missing.
+		// Calls to random() are always explicit and non-inlined to avoid C++ undefined evaluation order of function arguments,
+		// this guarantees consistent and reproducible behaviour across different platforms and compilers.
+
+		models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
+
+		for (int i = -11; i < 11; ++i)
+		{
+			for (int j = -11; j < 11; ++j)
+			{
+				const float chooseMat = random();
+				const float center_y = static_cast<float>(j) + 0.9f * random();
+				const float center_x = static_cast<float>(i) + 0.9f * random();
+				const vec3 center(center_x, 0.2f, center_y);
+
+				if (length(center - vec3(4, 0.2f, 0)) > 0.9f)
+				{
+					if (chooseMat < 0.8f) // Diffuse
+					{
+						const float b = random() * random();
+						const float g = random() * random();
+						const float r = random() * random();
+
+						models.push_back(Model::CreateSphere(center, 0.2f, Material::Lambertian(vec3(r, g, b)), isProc));
+					}
+					else if (chooseMat < 0.95f) // Metal
+					{
+						const float fuzziness = 0.5f * random();
+						const float b = 0.5f * (1 + random());
+						const float g = 0.5f * (1 + random());
+						const float r = 0.5f * (1 + random());
+
+						models.push_back(Model::CreateSphere(center, 0.2f, Material::Metallic(vec3(r, g, b), fuzziness), isProc));
+					}
+					else // Glass
+					{
+						models.push_back(Model::CreateSphere(center, 0.2f, Material::Dielectric(1.5f), isProc));
+					}
+				}
+			}
+		}
+	}
+
+}
+
 const std::vector<std::pair<std::string, std::function<SceneAssets (SceneList::CameraInitialSate&)>>> SceneList::AllScenes =
 {
 	{"Cube And Spheres", CubeAndSpheres},
@@ -60,43 +110,11 @@ SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 	const bool isProc = true;
 
 	std::mt19937 engine(42);
-	auto random = std::bind(std::uniform_real_distribution<float>(), engine);
+	std::function<float ()> random = std::bind(std::uniform_real_distribution<float>(), engine);
 
 	std::vector<Model> models;
 
-	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
-
-	for (int a = -11; a < 11; ++a)
-	{
-		for (int b = -11; b < 11; ++b)
-		{
-			const float chooseMat = random();
-			const vec3 center(a + 0.9f*random(), 0.2f, b + 0.9f*random());
-
-			if (length(center - vec3(4, 0.2f, 0)) > 0.9)
-			{
-				if (chooseMat < 0.8f) // Diffuse
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Lambertian(vec3(
-						random()*random(),
-						random()*random(),
-						random()*random())),
-						isProc));
-				}
-				else if (chooseMat < 0.95f) // Metal
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Metallic(
-						vec3(0.5f*(1 + random()), 0.5f*(1 + random()), 0.5f*(1 + random())),
-						0.5f*random()),
-						isProc));
-				}
-				else // Glass
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Dielectric(1.5f), isProc));
-				}
-			}
-		}
-	}
+	AddRayTracingInOneWeekendCommonScene(models, isProc, random);
 
 	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 1.0f, Material::Dielectric(1.5f), isProc));
 	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, Material::Lambertian(vec3(0.4f, 0.2f, 0.1f)), isProc));
@@ -104,7 +122,6 @@ SceneAssets SceneList::RayTracingInOneWeekend(CameraInitialSate& camera)
 
 	return std::forward_as_tuple(std::move(models), std::vector<Texture>());
 }
-
 
 SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 {
@@ -121,44 +138,12 @@ SceneAssets SceneList::PlanetsInOneWeekend(CameraInitialSate& camera)
 	const bool isProc = true;
 
 	std::mt19937 engine(42);
-	auto random = std::bind(std::uniform_real_distribution<float>(), engine);
+	std::function<float()> random = std::bind(std::uniform_real_distribution<float>(), engine);
 
 	std::vector<Model> models;
 	std::vector<Texture> textures;
 
-	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
-
-	for (int a = -11; a < 11; ++a)
-	{
-		for (int b = -11; b < 11; ++b)
-		{
-			const float chooseMat = random();
-			const vec3 center(a + 0.9f * random(), 0.2f, b + 0.9f * random());
-
-			if (length(center - vec3(4, 0.2f, 0)) > 0.9)
-			{
-				if (chooseMat < 0.8f) // Diffuse
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Lambertian(vec3(
-						random() * random(),
-						random() * random(),
-						random() * random())),
-						isProc));
-				}
-				else if (chooseMat < 0.95f) // Metal
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Metallic(
-						vec3(0.5f * (1 + random()), 0.5f * (1 + random()), 0.5f * (1 + random())),
-						0.5f * random()),
-						isProc));
-				}
-				else // Glass
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Dielectric(1.5f), isProc));
-				}
-			}
-		}
-	}
+	AddRayTracingInOneWeekendCommonScene(models, isProc, random);
 
 	models.push_back(Model::CreateSphere(vec3(0, 1, 0), 1.0f, Material::Metallic(vec3(1.0f), 0.1f, 2), isProc));
 	models.push_back(Model::CreateSphere(vec3(-4, 1, 0), 1.0f, Material::Lambertian(vec3(1.0f), 0), isProc));
@@ -186,43 +171,11 @@ SceneAssets SceneList::LucyInOneWeekend(CameraInitialSate& camera)
 	const bool isProc = true;
 
 	std::mt19937 engine(42);
-	auto random = std::bind(std::uniform_real_distribution<float>(), engine);
+	std::function<float()> random = std::bind(std::uniform_real_distribution<float>(), engine);
 
 	std::vector<Model> models;
 	
-	models.push_back(Model::CreateSphere(vec3(0, -1000, 0), 1000, Material::Lambertian(vec3(0.5f, 0.5f, 0.5f)), isProc));
-
-	for (int a = -11; a < 11; ++a)
-	{
-		for (int b = -11; b < 11; ++b)
-		{
-			const float chooseMat = random();
-			const vec3 center(a + 0.9f*random(), 0.2f, b + 0.9f*random());
-
-			if (length(center - vec3(4, 0.2f, 0)) > 0.9)
-			{
-				if (chooseMat < 0.8f) // Diffuse
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Lambertian(vec3(
-						random()*random(),
-						random()*random(),
-						random()*random())),
-						isProc));
-				}
-				else if (chooseMat < 0.95f) // Metal
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Metallic(
-						vec3(0.5f*(1 + random()), 0.5f*(1 + random()), 0.5f*(1 + random())),
-						0.5f*random()),
-						isProc));
-				}
-				else // Glass
-				{
-					models.push_back(Model::CreateSphere(center, 0.2f, Material::Dielectric(1.5f), isProc));
-				}
-			}
-		}
-	}
+	AddRayTracingInOneWeekendCommonScene(models, isProc, random);
 
 	auto lucy0 = Model::LoadModel("../assets/models/lucy.obj");
 	auto lucy1 = lucy0;
