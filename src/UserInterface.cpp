@@ -53,7 +53,7 @@ UserInterface::UserInterface(
 	ImGui::CreateContext();
 
 	// Initialise ImGui GLFW adapter
-	if (!ImGui_ImplGlfw_InitForVulkan(window.Handle(), false))
+	if (!ImGui_ImplGlfw_InitForVulkan(window.Handle(), true))
 	{
 		Throw(std::runtime_error("failed to initialise ImGui GLFW adapter"));
 	}
@@ -193,7 +193,7 @@ void UserInterface::DrawSettings()
 		ImGui::Text("Scene");
 		ImGui::Separator();
 		ImGui::PushItemWidth(-1);
-		ImGui::Combo("", &Settings().SceneIndex, scenes.data(), static_cast<int>(scenes.size()));
+		ImGui::Combo("##SceneList", &Settings().SceneIndex, scenes.data(), static_cast<int>(scenes.size()));
 		ImGui::PopItemWidth();
 		ImGui::NewLine();
 

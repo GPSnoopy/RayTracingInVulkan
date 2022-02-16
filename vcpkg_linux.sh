@@ -5,8 +5,8 @@ mkdir -p build
 cd build
 git clone https://github.com/Microsoft/vcpkg.git vcpkg.linux
 cd vcpkg.linux
-# vcpkg 2021-11-30 23:20 UTC
-git checkout ed74ff32c6a859b6b9a96f1ee028dcfcae184a26
+# vcpkg 2022-02-16 12:35 UTC
+git checkout 18e6e8855d2da137fada2387b6d137583c02b77c
 ./bootstrap-vcpkg.sh
 
 ./vcpkg install \
