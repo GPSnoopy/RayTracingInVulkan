@@ -87,7 +87,7 @@ ShaderBindingTable::ShaderBindingTable(
 	// Allocate buffer & memory.
 	const auto& device = rayTracingProperties.Device();
 
-	buffer_.reset(new class Buffer(device, sbtSize, VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT));
+	buffer_.reset(new class Buffer(device, sbtSize, VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR));
 	bufferMemory_.reset(new DeviceMemory(buffer_->AllocateMemory(VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)));
 
 	// Generate the table.
