@@ -28,6 +28,11 @@ Options::Options(const int argc, const char* argv[])
 		("scene", value<uint32_t>(&SceneIndex)->default_value(1), "The scene to start with.")
 		;
 
+	options_description vulkan("Vulkan options", lineLength);
+	vulkan.add_options()
+		("visible-device", value<std::vector<uint32_t>>(&VisibleDevices), "Explicitly set which Vulkan device ID is visible (can be repeated for multiple devices). If unspecified, all devices are visible.")
+		;
+
 	options_description window("Window options", lineLength);
 	window.add_options()
 		("width", value<uint32_t>(&Width)->default_value(1280), "The framebuffer width.")
@@ -45,6 +50,7 @@ Options::Options(const int argc, const char* argv[])
 	desc.add(benchmark);
 	desc.add(renderer);
 	desc.add(scene);
+	desc.add(vulkan);
 	desc.add(window);
 
 	const positional_options_description positional;

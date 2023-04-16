@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <exception>
+#include <vector>
 
 class Options final
 {
@@ -20,18 +21,21 @@ public:
 
 	// Application options.
 	bool Benchmark{};
-	// 
+	
 	// Benchmark options.
 	bool BenchmarkNextScenes{};
 	uint32_t BenchmarkMaxTime{};
-
-	// Scene options.
-	uint32_t SceneIndex{};
 
 	// Renderer options.
 	uint32_t Samples{};
 	uint32_t Bounces{};
 	uint32_t MaxSamples{};
+
+	// Scene options.
+	uint32_t SceneIndex{};
+
+	// Vulkan options
+	std::vector<uint32_t> VisibleDevices{};
 
 	// Window options
 	uint32_t Width{};

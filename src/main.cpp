@@ -18,9 +18,9 @@ namespace
 	void PrintVulkanSdkInformation();
 	void PrintVulkanInstanceInformation(const Vulkan::Application& application, bool benchmark);
 	void PrintVulkanLayersInformation(const Vulkan::Application& application, bool benchmark);
-	void PrintVulkanDevices(const Vulkan::Application& application);
+	void PrintVulkanDevices(const Vulkan::Application& application, const std::vector<uint32_t>& visible_devices);
 	void PrintVulkanSwapChainInformation(const Vulkan::Application& application, bool benchmark);
-	void SetVulkanDevice(Vulkan::Application& application);
+	void SetVulkanDevice(Vulkan::Application& application, const std::vector<uint32_t>& visible_devices);
 }
 
 int main(int argc, const char* argv[]) noexcept
@@ -44,9 +44,9 @@ int main(int argc, const char* argv[]) noexcept
 		PrintVulkanSdkInformation();
 		PrintVulkanInstanceInformation(application, options.Benchmark);
 		PrintVulkanLayersInformation(application, options.Benchmark);
-		PrintVulkanDevices(application);
+		PrintVulkanDevices(application, options.VisibleDevices);
 
-		SetVulkanDevice(application);
+		SetVulkanDevice(application, options.VisibleDevices);
 
 		PrintVulkanSwapChainInformation(application, options.Benchmark);
 
@@ -157,7 +157,7 @@ namespace
 		std::cout << std::endl;
 	}
 	
-	void PrintVulkanDevices(const Vulkan::Application& application)
+	void PrintVulkanDevices(const Vulkan::Application& application, const std::vector<uint32_t>& visible_devices)
 	{
 		std::cout << "Vulkan Devices: " << std::endl;
 
@@ -176,6 +176,12 @@ namespace
 			vkGetPhysicalDeviceFeatures(device, &features);
 
 			const auto& prop = deviceProp.properties;
+
+			// Check whether device has been explicitly filtered out.
+			if (!visible_devices.empty() && std::find(visible_devices.begin(), visible_devices.end(), prop.deviceID) == visible_devices.end())
+			{
+				break;
+			}
 
 			const Vulkan::Version vulkanVersion(prop.apiVersion);
 			const Vulkan::Version driverVersion(prop.driverVersion, prop.vendorID);
@@ -202,11 +208,21 @@ namespace
 		std::cout << std::endl;
 	}
 
-	void SetVulkanDevice(Vulkan::Application& application)
+	void SetVulkanDevice(Vulkan::Application& application, const std::vector<uint32_t>& visible_devices)
 	{
 		const auto& physicalDevices = application.PhysicalDevices();
-		const auto result = std::find_if(physicalDevices.begin(), physicalDevices.end(), [](const VkPhysicalDevice& device)
+		const auto result = std::find_if(physicalDevices.begin(), physicalDevices.end(), [&](const VkPhysicalDevice& device)
 		{
+			VkPhysicalDeviceProperties2 prop{};
+			prop.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+			vkGetPhysicalDeviceProperties2(device, &prop);
+
+			// Check whether device has been explicitly filtered out.
+			if (!visible_devices.empty() && std::find(visible_devices.begin(), visible_devices.end(), prop.properties.deviceID) == visible_devices.end())
+			{
+				return false;
+			}
+
 			// We want a device with geometry shader support.
 			VkPhysicalDeviceFeatures deviceFeatures;
 			vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
