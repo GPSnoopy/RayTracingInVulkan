@@ -2,7 +2,7 @@ mkdir build
 cd build || goto :error
 git clone https://github.com/Microsoft/vcpkg.git vcpkg.windows || goto :error
 cd vcpkg.windows || goto :error
-git checkout 2023.02.24 || goto :error
+git checkout 2023.04.15 || goto :error
 call bootstrap-vcpkg.bat || goto :error
 
 vcpkg.exe install ^
