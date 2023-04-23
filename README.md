@@ -66,6 +66,14 @@ sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev xor
 ./build_linux.sh
 ```
 
+Fedora Installation
+
+```
+sudo dnf install libXinerama-devel libXcursor-devel libX11-devel libXrandr-devel mesa-libGLU-devel pkgconfig ninja-build cmake gcc gcc-c++ vulkan-validation-layers-devel vulkan-headers vulkan-tools vulkan-loader-devel vulkan-loader glslang glslc
+./vcpkg_linux.sh
+./build_linux.sh
+```
+
 ## Random Thoughts
 
 - I suspect the RTX 2000 series RT cores to implement ray-AABB collision detection using reduced float precision. Early in the development, when trying to get the sphere procedural rendering to work, reporting an intersection every time the `rint` shader is invoked allowed to visualise the AABB of each procedural instance. The rendering of the bounding volume had many artifacts around the boxes edges, typical of reduced precision.
