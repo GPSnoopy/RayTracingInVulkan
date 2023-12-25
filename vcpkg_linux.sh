@@ -5,16 +5,15 @@ mkdir -p build
 cd build
 git clone https://github.com/Microsoft/vcpkg.git vcpkg.linux
 cd vcpkg.linux
-git checkout 2023.02.24
+git checkout 2023.12.12
 ./bootstrap-vcpkg.sh
 
 ./vcpkg install \
 	boost-exception:x64-linux \
 	boost-program-options:x64-linux \
 	boost-stacktrace:x64-linux \
-	freetype:x64-linux \
 	glfw3:x64-linux \
 	glm:x64-linux \
-	imgui:x64-linux \
+	imgui[core,freetype,glfw-binding,vulkan-binding]:x64-linux \
 	stb:x64-linux \
 	tinyobjloader:x64-linux

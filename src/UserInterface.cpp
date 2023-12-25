@@ -97,13 +97,11 @@ UserInterface::UserInterface(
 
 	Vulkan::SingleTimeCommands::Submit(commandPool, [] (VkCommandBuffer commandBuffer)
 	{
-		if (!ImGui_ImplVulkan_CreateFontsTexture(commandBuffer))
+		if (!ImGui_ImplVulkan_CreateFontsTexture())
 		{
 			Throw(std::runtime_error("failed to create ImGui font textures"));
 		}
 	});
-
-	ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
 
 UserInterface::~UserInterface()
