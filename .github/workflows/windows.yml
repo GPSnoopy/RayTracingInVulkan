@@ -17,7 +17,9 @@ jobs:
       run: .\vulkan_sdk.exe --accept-licenses --default-answer --confirm-command install
       shell: cmd
     - name: Compile vcpkg dependencies
-      run: vcpkg_windows.bat
+      run: |
+        set VULKAN_SDK=C:\VulkanSDK\%SDK_VERSION%
+        vcpkg_windows.bat
       shell: cmd
     # This is where GitHub actions on Windows get really nonsensical.
     # MSBuild is not on the path by default, despite this running on a Windows / Visual Studio 2019 docker image.
