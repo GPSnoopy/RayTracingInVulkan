@@ -12,10 +12,10 @@
 #include "Vulkan/SwapChain.hpp"
 #include "Vulkan/Window.hpp"
 
-#include "imgui.h"
-#include "ImGui/imgui_freetype.h"
-#include "ImGui/imgui_impl_glfw.h"
-#include "ImGui/imgui_impl_vulkan.h"
+#include <imgui.h>
+#include <imgui_freetype.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_vulkan.h>
 
 #include <array>
 
