@@ -68,6 +68,7 @@ const std::vector<std::pair<std::string, std::function<SceneAssets (SceneList::C
 	{"Lucy In One Weekend", LucyInOneWeekend},
 	{"Cornell Box", CornellBox},
 	{"Cornell Box & Lucy", CornellBoxLucy},
+	{"Cornell Box With Balls", CornellBoxWithBalls},
 };
 
 SceneAssets SceneList::CubeAndSpheres(CameraInitialSate& camera)
@@ -270,4 +271,58 @@ SceneAssets SceneList::CornellBoxLucy(CameraInitialSate& camera)
 	models.push_back(lucy0);
 
 	return std::forward_as_tuple(std::move(models), std::vector<Texture>());
+}
+
+SceneAssets SceneList::CornellBoxWithBalls(CameraInitialSate& camera)
+{
+	camera.ModelView = lookAt(vec3(278, 278, 800), vec3(278, 278, 0), vec3(0, 1, 0));
+	camera.FieldOfView = 40;
+	camera.Aperture = 0.0f;
+	camera.FocusDistance = 10.0f;
+	camera.ControlSpeed = 500.0f;
+	camera.GammaCorrection = true;
+	camera.HasSky = false;
+
+	std::mt19937 engine(42);
+	auto random = std::bind(std::uniform_real_distribution<float>(), engine);
+
+	const bool isProc = true;
+
+	std::vector<Model> models;
+	models.push_back(Model::CreateCornellBox(555));
+
+	for (size_t i = 0; i < 10; i++)
+	{
+		for (size_t j = 0; j < 10; j++)
+		{
+			for (size_t k = 0; k < 10; k++)
+			{
+				const float chooseMat = random();
+				const vec3 center(22.5 + i * 55.f + 20.*random() , 22.5 + j * 55.f + 20. * random(), -1.*(22.5 + k * 55.f + 20. * random()));
+
+				if (chooseMat < 0.8f) // Diffuse
+				{
+					models.push_back(Model::CreateSphere(center, 4.f, Material::Lambertian(vec3(
+						random() * random(),
+						random() * random(),
+						random() * random())),
+						isProc));
+				}
+				else if (chooseMat < 0.98f) // Metal
+				{
+					models.push_back(Model::CreateSphere(center, 4.f, Material::Metallic(
+						vec3(0.5f * (1 + random()), 0.5f * (1 + random()), 0.5f * (1 + random())),
+						0.5f * random()),
+						isProc));
+				}
+				else // Glass
+				{
+					models.push_back(Model::CreateSphere(center, 4.f, Material::Dielectric(1.5f), isProc));
+				}
+
+			}
+		}
+	}
+	
+	return std::make_tuple(std::move(models), std::vector<Texture>());
 }
