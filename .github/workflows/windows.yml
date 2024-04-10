@@ -10,7 +10,7 @@ jobs:
       SDK_VERSION: 1.3.280.0
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Download Vulkan SDK
       run: Invoke-WebRequest "https://sdk.lunarg.com/sdk/download/${env:SDK_VERSION}/windows/vulkan_sdk.exe?Human=true" -OutFile vulkan_sdk.exe -v
     - name: Install Vulkan SDK
