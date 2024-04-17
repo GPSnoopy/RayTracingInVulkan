@@ -69,7 +69,7 @@ sudo apt-get install curl unzip tar libxi-dev libxinerama-dev libxcursor-dev xor
 Fedora Installation
 
 ```
-sudo dnf install libXinerama-devel libXcursor-devel libX11-devel libXrandr-devel mesa-libGLU-devel pkgconfig ninja-build cmake gcc gcc-c++ vulkan-validation-layers-devel vulkan-headers vulkan-tools vulkan-loader-devel vulkan-loader glslang glslc
+sudo dnf install libXinerama-devel libXcursor-devel libX11-devel libXrandr-devel mesa-libGLU-devel pkgconfig ninja-build cmake gcc gcc-c++ vulkan-validation-layers-devel vulkan-headers vulkan-tools vulkan-loader-devel vulkan-loader glslang glslc glfw-devel
 ./vcpkg_linux.sh
 ./build_linux.sh
 ```
