@@ -29,7 +29,7 @@ protected:
 	void CreateSwapChain() override;
 	void DeleteSwapChain() override;
 	void DrawFrame() override;
-	void Render(VkCommandBuffer commandBuffer, uint32_t imageIndex) override;
+	void Render(VkCommandBuffer commandBuffer, size_t currentFrame, uint32_t imageIndex) override;
 
 	void OnKey(int key, int scancode, int action, int mods) override;
 	void OnCursorPosition(double xpos, double ypos) override;

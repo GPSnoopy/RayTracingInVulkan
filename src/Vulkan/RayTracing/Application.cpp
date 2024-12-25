@@ -166,11 +166,11 @@ void Application::DeleteSwapChain()
 	Vulkan::Application::DeleteSwapChain();
 }
 
-void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
+void Application::Render(VkCommandBuffer commandBuffer, const size_t currentFrame, const uint32_t imageIndex)
 {
 	const auto extent = SwapChain().Extent();
 
-	VkDescriptorSet descriptorSets[] = { rayTracingPipeline_->DescriptorSet(imageIndex) };
+	VkDescriptorSet descriptorSets[] = { rayTracingPipeline_->DescriptorSet(currentFrame) };
 
 	VkImageSubresourceRange subresourceRange = {};
 	subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;

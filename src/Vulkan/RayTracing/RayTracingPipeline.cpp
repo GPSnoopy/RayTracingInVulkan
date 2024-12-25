@@ -137,7 +137,7 @@ RayTracingPipeline::RayTracingPipeline(
 			descriptorWrites.push_back(descriptorSets.Bind(i, 9, proceduralBufferInfo));
 		}
 
-		descriptorSets.UpdateDescriptors(i, descriptorWrites);
+		descriptorSets.UpdateDescriptors(descriptorWrites);
 	}
 
 	pipelineLayout_.reset(new class PipelineLayout(device, descriptorSetManager_->DescriptorSetLayout()));
@@ -237,7 +237,7 @@ RayTracingPipeline::~RayTracingPipeline()
 	descriptorSetManager_.reset();
 }
 
-VkDescriptorSet RayTracingPipeline::DescriptorSet(const uint32_t index) const
+VkDescriptorSet RayTracingPipeline::DescriptorSet(const size_t index) const
 {
 	return descriptorSetManager_->DescriptorSets().Handle(index);
 }

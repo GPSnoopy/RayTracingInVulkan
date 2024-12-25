@@ -25,13 +25,13 @@ namespace Vulkan
 
 		~DescriptorSets();
 
-		VkDescriptorSet Handle(uint32_t index) const { return descriptorSets_[index]; }
+		VkDescriptorSet Handle(size_t index) const { return descriptorSets_[index]; }
 
-		VkWriteDescriptorSet Bind(uint32_t index, uint32_t binding, const VkDescriptorBufferInfo& bufferInfo, uint32_t count = 1) const;
-		VkWriteDescriptorSet Bind(uint32_t index, uint32_t binding, const VkDescriptorImageInfo& imageInfo, uint32_t count = 1) const;
-		VkWriteDescriptorSet Bind(uint32_t index, uint32_t binding, const VkWriteDescriptorSetAccelerationStructureKHR& structureInfo, uint32_t count = 1) const;
+		VkWriteDescriptorSet Bind(size_t index, uint32_t binding, const VkDescriptorBufferInfo& bufferInfo, uint32_t count = 1) const;
+		VkWriteDescriptorSet Bind(size_t index, uint32_t binding, const VkDescriptorImageInfo& imageInfo, uint32_t count = 1) const;
+		VkWriteDescriptorSet Bind(size_t index, uint32_t binding, const VkWriteDescriptorSetAccelerationStructureKHR& structureInfo, uint32_t count = 1) const;
 
-		void UpdateDescriptors(uint32_t index, const std::vector<VkWriteDescriptorSet>& descriptorWrites);
+		void UpdateDescriptors(const std::vector<VkWriteDescriptorSet>& descriptorWrites);
 
 	private:
 

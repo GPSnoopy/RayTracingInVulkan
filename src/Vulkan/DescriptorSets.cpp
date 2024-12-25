@@ -44,7 +44,7 @@ DescriptorSets::~DescriptorSets()
 	//}
 }
 
-VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t binding, const VkDescriptorBufferInfo& bufferInfo, const uint32_t count) const
+VkWriteDescriptorSet DescriptorSets::Bind(const size_t index, const uint32_t binding, const VkDescriptorBufferInfo& bufferInfo, const uint32_t count) const
 {
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -58,7 +58,7 @@ VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t b
 	return descriptorWrite;
 }
 
-VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t binding, const VkDescriptorImageInfo& imageInfo, const uint32_t count) const
+VkWriteDescriptorSet DescriptorSets::Bind(const size_t index, const uint32_t binding, const VkDescriptorImageInfo& imageInfo, const uint32_t count) const
 {
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -72,7 +72,7 @@ VkWriteDescriptorSet DescriptorSets::Bind(const uint32_t index, const uint32_t b
 	return descriptorWrite;
 }
 
-VkWriteDescriptorSet DescriptorSets::Bind(uint32_t index, uint32_t binding, const VkWriteDescriptorSetAccelerationStructureKHR& structureInfo, const uint32_t count) const
+VkWriteDescriptorSet DescriptorSets::Bind(const size_t index, const uint32_t binding, const VkWriteDescriptorSetAccelerationStructureKHR& structureInfo, const uint32_t count) const
 {
 	VkWriteDescriptorSet descriptorWrite = {};
 	descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -86,7 +86,7 @@ VkWriteDescriptorSet DescriptorSets::Bind(uint32_t index, uint32_t binding, cons
 	return descriptorWrite;
 }
 
-void DescriptorSets::UpdateDescriptors(uint32_t index, const std::vector<VkWriteDescriptorSet>& descriptorWrites)
+void DescriptorSets::UpdateDescriptors(const std::vector<VkWriteDescriptorSet>& descriptorWrites)
 {
 	vkUpdateDescriptorSets(
 		descriptorPool_.Device().Handle(),
@@ -94,7 +94,7 @@ void DescriptorSets::UpdateDescriptors(uint32_t index, const std::vector<VkWrite
 		descriptorWrites.data(), 0, nullptr);
 }
 
-VkDescriptorType DescriptorSets::GetBindingType(uint32_t binding) const
+VkDescriptorType DescriptorSets::GetBindingType(const uint32_t binding) const
 {
 	const auto it = bindingTypes_.find(binding);
 	if (it == bindingTypes_.end())

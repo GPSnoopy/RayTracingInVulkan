@@ -35,7 +35,7 @@ namespace Vulkan::RayTracing
 		void DeleteAccelerationStructures();
 		void CreateSwapChain() override;
 		void DeleteSwapChain() override;
-		void Render(VkCommandBuffer commandBuffer, uint32_t imageIndex) override;
+		void Render(VkCommandBuffer commandBuffer, size_t currentFrame, uint32_t imageIndex) override;
 			   
 	private:
 

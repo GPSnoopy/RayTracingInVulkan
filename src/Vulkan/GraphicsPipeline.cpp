@@ -155,7 +155,7 @@ GraphicsPipeline::GraphicsPipeline(
 			descriptorSets.Bind(i, 2, *imageInfos.data(), static_cast<uint32_t>(imageInfos.size()))
 		};
 
-		descriptorSets.UpdateDescriptors(i, descriptorWrites);
+		descriptorSets.UpdateDescriptors(descriptorWrites);
 	}
 
 	// Create pipeline layout and render pass.
@@ -208,7 +208,7 @@ GraphicsPipeline::~GraphicsPipeline()
 	descriptorSetManager_.reset();
 }
 
-VkDescriptorSet GraphicsPipeline::DescriptorSet(const uint32_t index) const
+VkDescriptorSet GraphicsPipeline::DescriptorSet(const size_t index) const
 {
 	return descriptorSetManager_->DescriptorSets().Handle(index);
 }

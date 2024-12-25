@@ -59,7 +59,7 @@ namespace Vulkan
 		virtual void CreateSwapChain();
 		virtual void DeleteSwapChain();
 		virtual void DrawFrame();
-		virtual void Render(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+		virtual void Render(VkCommandBuffer commandBuffer, size_t currentFrame, uint32_t imageIndex);
 
 		virtual void OnKey(int key, int scancode, int action, int mods) { }
 		virtual void OnCursorPosition(double xpos, double ypos) { }
@@ -70,7 +70,7 @@ namespace Vulkan
 
 	private:
 
-		void UpdateUniformBuffer(uint32_t imageIndex);
+		void UpdateUniformBuffer();
 		void RecreateSwapChain();
 
 		const VkPresentModeKHR presentMode_;

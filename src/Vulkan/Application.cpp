@@ -161,7 +161,7 @@ void Application::DeleteSwapChain()
 
 void Application::DrawFrame()
 {
-	const auto noTimeout = std::numeric_limits<uint64_t>::max();
+	constexpr auto noTimeout = std::numeric_limits<uint64_t>::max();
 
 	auto& inFlightFence = inFlightFences_[currentFrame_];
 	const auto imageAvailableSemaphore = imageAvailableSemaphores_[currentFrame_].Handle();
@@ -183,11 +183,11 @@ void Application::DrawFrame()
 		Throw(std::runtime_error(std::string("failed to acquire next image (") + ToString(result) + ")"));
 	}
 
-	const auto commandBuffer = commandBuffers_->Begin(imageIndex);
-	Render(commandBuffer, imageIndex);
-	commandBuffers_->End(imageIndex);
+	const auto commandBuffer = commandBuffers_->Begin(currentFrame_);
+	Render(commandBuffer, currentFrame_, imageIndex);
+	commandBuffers_->End(currentFrame_);
 
-	UpdateUniformBuffer(imageIndex);
+	UpdateUniformBuffer();
 
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -236,7 +236,7 @@ void Application::DrawFrame()
 	currentFrame_ = (currentFrame_ + 1) % inFlightFences_.size();
 }
 
-void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
+void Application::Render(VkCommandBuffer commandBuffer, const size_t currentFrame, const uint32_t imageIndex)
 {
 	std::array<VkClearValue, 2> clearValues = {};
 	clearValues[0].color = { {0.0f, 0.0f, 0.0f, 1.0f} };
@@ -255,7 +255,7 @@ void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageInde
 	{
 		const auto& scene = GetScene();
 
-		VkDescriptorSet descriptorSets[] = { graphicsPipeline_->DescriptorSet(imageIndex) };
+		VkDescriptorSet descriptorSets[] = { graphicsPipeline_->DescriptorSet(currentFrame) };
 		VkBuffer vertexBuffers[] = { scene.VertexBuffer().Handle() };
 		const VkBuffer indexBuffer = scene.IndexBuffer().Handle();
 		VkDeviceSize offsets[] = { 0 };
@@ -282,9 +282,9 @@ void Application::Render(VkCommandBuffer commandBuffer, const uint32_t imageInde
 	vkCmdEndRenderPass(commandBuffer);
 }
 
-void Application::UpdateUniformBuffer(const uint32_t imageIndex)
+void Application::UpdateUniformBuffer()
 {
-	uniformBuffers_[imageIndex].SetValue(GetUniformBufferObject(swapChain_->Extent()));
+	uniformBuffers_[currentFrame_].SetValue(GetUniformBufferObject(swapChain_->Extent()));
 }
 
 void Application::RecreateSwapChain()

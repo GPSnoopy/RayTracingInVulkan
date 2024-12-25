@@ -141,7 +141,7 @@ void RayTracer::DrawFrame()
 	Application::DrawFrame();
 }
 
-void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
+void RayTracer::Render(VkCommandBuffer commandBuffer, const size_t currentFrame, const uint32_t imageIndex)
 {
 	// Record delta time between calls to Render.
 	const auto prevTime = time_;
@@ -156,8 +156,8 @@ void RayTracer::Render(VkCommandBuffer commandBuffer, const uint32_t imageIndex)
 
 	// Render the scene
 	userSettings_.IsRayTraced
-		? Vulkan::RayTracing::Application::Render(commandBuffer, imageIndex)
-		: Vulkan::Application::Render(commandBuffer, imageIndex);
+		? Vulkan::RayTracing::Application::Render(commandBuffer, currentFrame, imageIndex)
+		: Vulkan::Application::Render(commandBuffer, currentFrame, imageIndex);
 
 	// Render the UI
 	Statistics stats = {};

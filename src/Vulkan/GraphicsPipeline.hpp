@@ -31,7 +31,7 @@ namespace Vulkan
 			bool isWireFrame);
 		~GraphicsPipeline();
 
-		VkDescriptorSet DescriptorSet(uint32_t index) const;
+		VkDescriptorSet DescriptorSet(size_t index) const;
 		bool IsWireFrame() const { return isWireFrame_; }
 		const class PipelineLayout& PipelineLayout() const { return *pipelineLayout_; }
 		const class RenderPass& RenderPass() const { return *renderPass_; }
