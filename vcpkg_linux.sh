@@ -24,7 +24,7 @@ mkdir -p build
 cd build
 git clone https://github.com/Microsoft/vcpkg.git vcpkg.linux
 cd vcpkg.linux
-git checkout 2024.03.25
+git checkout 2024.12.16
 ./bootstrap-vcpkg.sh
 
 ./vcpkg install \

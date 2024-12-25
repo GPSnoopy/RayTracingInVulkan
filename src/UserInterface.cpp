@@ -67,12 +67,13 @@ UserInterface::UserInterface(
 	vulkanInit.Queue = device.GraphicsQueue();
 	vulkanInit.PipelineCache = nullptr;
 	vulkanInit.DescriptorPool = descriptorPool_->Handle();
+	vulkanInit.RenderPass = renderPass_->Handle();
 	vulkanInit.MinImageCount = swapChain.MinImageCount();
 	vulkanInit.ImageCount = static_cast<uint32_t>(swapChain.Images().size());
 	vulkanInit.Allocator = nullptr;
 	vulkanInit.CheckVkResultFn = CheckVulkanResultCallback;
 
-	if (!ImGui_ImplVulkan_Init(&vulkanInit, renderPass_->Handle()))
+	if (!ImGui_ImplVulkan_Init(&vulkanInit))
 	{
 		Throw(std::runtime_error("failed to initialise ImGui vulkan adapter"));
 	}
