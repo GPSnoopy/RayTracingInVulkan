@@ -8,6 +8,8 @@ The real-time ray tracer can also load full geometry from OBJ files as well as r
 
 This personal project follows my own attempts at CPU ray tracing following Peter Shirley's books (see [here](https://github.com/GPSnoopy/RayTracingInOneWeekend) and [here](https://github.com/GPSnoopy/RayTracingTheNextWeek) if you are interested).
 
+Karim Sayed also wrote an [excellent CUDA implementation](https://github.com/karimsayedre/CUDA-Ray-Tracing-In-One-Weekend/), along with a [detailed step-by-step recount article](https://karimsayedre.github.io/RTIOW.html) of each iteration. It is a pretty detailed introduction to key CUDA performance considerations.
+
 ## Gallery
 
 <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/OneWeekend.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Planets.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/Heatmap.png" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/LucyHeatmap.png" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBox.jpg" width="49%"></img> <img src="https://github.com/GPSnoopy/RayTracingInVulkan/blob/master/gallery/CornellBoxLucy.jpg" width="49%"></img>
