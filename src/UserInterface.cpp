@@ -176,16 +176,34 @@ void UserInterface::DrawSettings()
 
 		const auto& window = descriptorPool_->Device().Surface().Instance().Window();
 
+		constexpr int GLFW_KEY_CODES[] = {
+			GLFW_KEY_W,
+			GLFW_KEY_A,
+			GLFW_KEY_S,
+			GLFW_KEY_D
+		};
+
+		const char FALLBACK_KEY_CHAR[4] = {'W', 'A', 'S', 'D'};
+		char glfw_key_display[4];
+
+		{
+			for (int i = 0; i < 4; ++i) {
+				auto name = window.GetKeyName(GLFW_KEY_CODES[i], 0);
+				char c = name ? name[0] : char(FALLBACK_KEY_CHAR[i]);       // fallback 'W','A','S','D'
+				glfw_key_display[i] = std::toupper(static_cast<unsigned char>(c));
+			}
+		}
+
 		ImGui::Text("Help");
 		ImGui::Separator();
 		ImGui::BulletText("F1: toggle Settings.");
 		ImGui::BulletText("F2: toggle Statistics.");
 		ImGui::BulletText(
 			"%c%c%c%c/SHIFT/CTRL: move camera.", 
-			std::toupper(window.GetKeyName(GLFW_KEY_W, 0)[0]),
-			std::toupper(window.GetKeyName(GLFW_KEY_A, 0)[0]),
-			std::toupper(window.GetKeyName(GLFW_KEY_S, 0)[0]),
-			std::toupper(window.GetKeyName(GLFW_KEY_D, 0)[0]));
+			glfw_key_display[0],
+			glfw_key_display[1],
+			glfw_key_display[2],
+			glfw_key_display[3]);
 		ImGui::BulletText("L/R Mouse: rotate camera/scene.");
 		ImGui::NewLine();
 
